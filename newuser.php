@@ -16,16 +16,16 @@ echo '<div style="padding:4px; border:1px solid red; color:red;">'.$error.'</div
 
 //check if its a post
 // connect to the database
-
-$user =  $_POST['username'];
-$email = $_POST['email'];
+include('config.php');
+$user =  $conn->real_escape_string($_POST['username']);
+$email =$conn->real_escape_string($_POST['email']);
 $p1 =  $_POST['password'];
 $p2 =  $_POST['password2'];
 
 if ($p1!= $p2){
   echo "<br>Passwords do not match</br>";
 }else {
- include('config.php');
+
 
  $encrypass = password_hash($p1, PASSWORD_DEFAULT);
   $sql = "INSERT INTO dharamkh_programs.usertbl (username, email, password)
