@@ -5,9 +5,6 @@
   </head>
 <body>
 
-Welcome! Please submit a program by filling out the fields below. 
-<br>
-
 <?php 
 if ($error != '')
 {
@@ -17,8 +14,7 @@ echo '<div style="padding:4px; border:1px solid red; color:red;">'.$error.'</div
 session_start();
 
 if ($_SESSION['user'] == null){
-  echo "User not logged in, please log in first. <br>";
-   header("Location: " . "http://vikramkhalsa.com/kirtanapp/login.php");
+   header("Location:" . "login.php");
    exit();
 }
 
@@ -47,6 +43,8 @@ echo $id;
 }
 ?>
 
+Welcome! Please submit a program by filling out the fields below. 
+<br>
 
 <form id="addprogram" action="commitprogram.php" method="post" >
   Title:<br>

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="datetimepicker_css.js"></script>
   </head>
 <body>
 
@@ -22,21 +21,23 @@ $email =$conn->real_escape_string($_POST['email']);
 $p1 =  $_POST['password'];
 $p2 =  $_POST['password2'];
 
+if (isset($_POST['submit'])){
+
 if ($p1!= $p2){
   echo "<br>Passwords do not match</br>";
 }else {
-
 
  $encrypass = password_hash($p1, PASSWORD_DEFAULT);
   $sql = "INSERT INTO dharamkh_programs.usertbl (username, email, password)
   VALUES ('$user', '$email', '$encrypass')";
   if ($conn->query($sql) === TRUE) {
-      echo "\nNew user registered successfully";
+      echo "\nNew user registered successfully.</br>";
+      echo 'Visit <a href="submitprogram.php"> this page </a> to submit a program. ';
   } else {
       echo "Error: " . $conn->error . "<br>";
   }
 }
-
+}
 ?>
 
 
@@ -49,7 +50,7 @@ if ($p1!= $p2){
   <input type="password" name="password"><br>
    Confirm Password:<br>
   <input type="password" name="password2"><br>
-  <input type="submit" value="Submit"> 
+  <input type="submit" value="Submit" name="submit"> 
 </form> 
 
 

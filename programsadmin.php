@@ -1,4 +1,3 @@
-<?php include("/home4/dharamkh/public_html/vsk/kirtanapp/password_protect.php"); ?>
 
 <style>
 table.db-table      { border-right:1px solid #ccc; border-bottom:1px solid #ccc; }
@@ -7,11 +6,18 @@ table.db-table td   { padding:5px; border-left:1px solid #ccc; border-top:1px so
 </style>
 
 <?php
+session_start();
+
+if ($_SESSION['user'] == null){
+  echo "User not logged in, please log in first. <br>";
+   header("Location: " . "http://vikramkhalsa.com/kirtanapp/login.php");
+   exit();
+}
 
 // connect to the database
     include('config.php');
 
- $sql = "SELECT * FROM dharamkh_programs.programtbl";
+ $sql = "SELECT * FROM dharamkh_programs.programtbl ORDER BY sd DESC";
     $result = mysqli_query($conn, $sql);
 
     $array = array();

@@ -17,6 +17,7 @@ echo '<div style="padding:4px; border:1px solid red; color:red;">'.$error.'</div
 //check if its a post ??
 
 // connect to the database
+if (isset($_POST['username'])){
 include('config.php');
 $user =  $conn->real_escape_string($_POST['username']);
 $p1 =  $_POST['password'];
@@ -47,7 +48,7 @@ else {
 $conn->close();
 
       //set in session
-
+}
 
 ?>
 
@@ -59,6 +60,8 @@ $conn->close();
   <input type="password" name="password"><br>
   <input type="submit" value="Submit"> 
 </form> 
+
+Don't have an account? Click <a href="newuser.php">here</a> to register.
 
 
 
