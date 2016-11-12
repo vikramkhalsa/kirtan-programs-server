@@ -13,11 +13,10 @@ body {
 .cell{
     width:100%;
     background-color: #EFEFFF;
-    min-height: 100px;
-    padding: 6px 11px;
+    padding: 6px 11px 20px 20px;
     border-bottom: 1px solid #95bce2;
-    vertical-align: top;
-    height:auto;
+    overflow:auto;
+
 }
 
 .cell:hover {
@@ -29,12 +28,22 @@ body {
 </head>
 <body>
 
+    <h2>Bay Area Kirtan Programs</h2>
+
+    <p>Welcome! Upcoming programs are listed below. 
+        We hope to expand to include more Gurdwaras and locations soon. 
+        Download the android app <a href="https://play.google.com/store/apps/details?id=com.vikramkhalsa.isangat"> here. </a>
+        If you are hosting a Kirtan event and would like to submit it to this list, 
+        please click <a href="submitprogram.php"> here. </a>
+         You will be asked to log in or create a user account. </p>
+
+
 <?php
 
 // connect to the database
 	include('config.php');
 //programtbl.sd >= DATE(NOW()) AND
- $sql = "SELECT * FROM dharamkh_programs.programtbl WHERE  programtbl.approved=1 ORDER BY sd ASC";
+ $sql = "SELECT * FROM dharamkh_programs.programtbl WHERE programtbl.sd >= DATE(NOW()) AND  programtbl.approved=1 ORDER BY sd ASC";
     $result = mysqli_query($conn, $sql);
 
     $array = array();
@@ -70,30 +79,13 @@ echo "<div>";
         echo"<br>";
         echo $value["phone"];
         echo"<br>";
-        echo '<a href="http://maps.google.com/?q='.$value["address"].'"><img src="http://isangat.org/map.png" border="0"></a><br>';
+        echo '<a class="" href="http://maps.google.com/?q='.$value["address"].'"><img src="http://isangat.org/map.png" border="0"></a><br>';
         echo '</div>
     </div>';
     
     }
 ?>
 
-
-<div> 
-    <div class="cell">
-        <div style="width:30%; float:left;">
-            Date
-            <br>
-            Time
-            <br>
-        </div> 
-        <div style="width:70%; float:left;"> 
-            Title <br>
-            subtitle <br>
-            Address <br>
-            Phone number<br>
-        </div>
-    </div>
-</div>
 
 </body>
 </html>

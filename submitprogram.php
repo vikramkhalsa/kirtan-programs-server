@@ -2,6 +2,7 @@
 <html>
 <head>
     <script src="datetimepicker_css.js"></script>
+    <meta name="viewport" content="user-scalable=yes, width=device-width" />
   </head>
 <body>
 

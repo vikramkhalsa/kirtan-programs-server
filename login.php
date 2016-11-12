@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="datetimepicker_css.js"></script>
+    <meta name="viewport" content="user-scalable=yes, width=device-width" />
   </head>
 <body>
 
@@ -37,7 +37,7 @@ if ($result->num_rows > 0) {
 
  }
  else {
-  echo "password is incorrect, please try again. <br>";
+  echo '<div style="padding:4px; border:1px solid red; color:red;">password is incorrect, please try again. </div>';
  }
 
 }      //check if password matches result
