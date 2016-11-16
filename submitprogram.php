@@ -3,6 +3,52 @@
 <head>
     <script src="datetimepicker_css.js"></script>
     <meta name="viewport" content="user-scalable=yes, width=device-width" />
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+ <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+ <script type="text/javascript">
+  var locations = null;
+  var locNames = [];
+$(document).ready(function () {
+
+
+    $.getJSON('locations.json', function (data) {
+  locations = data;
+  var select = document.createElement("select");
+//var locations = json.parse(loc);
+ for (var key in locations)
+{
+  locNames.push(key);
+  //if (!locations.hasOwnProperty(key)) {
+        //The current property is not a direct property of p
+       // continue;
+   // }
+    //var option = document.createElement("option");
+   // option.value = locations[key];
+  //option.text = locations[key];
+ //select.appendChild(option);
+}
+//var element = document.getElementById("a");
+//element.appendChild(select);
+       });
+
+$( "#location" ).on( "autocompleteselect", function( event, ui ) {
+  var key = ui.item.label;
+  $("#address").val(locations[key].Address);
+} );
+
+    $("#location").autocomplete({
+      source: locNames
+    });
+    });
+
+
+
+
+
+
+</script>
+
   </head>
 <body>
 
@@ -43,17 +89,16 @@ echo $id;
 }
 }
 ?>
-
 Welcome! Please submit a program by filling out the fields below. 
 <br>
 
 <form id="addprogram" action="commitprogram.php" method="post" >
   Title:<br>
   <input type="text" value="<?php echo $title; ?>" name="title"><br>
-  Subtitle:<br>
-  <input type="text" name="subtitle" value="<?php echo $subtitle; ?>"><br>
+  <label for="location">Location: </label><br>
+  <input id="location" name="subtitle" value="<?php echo $subtitle; ?>"><br>
    Address:<br>
-  <input type="text" name="address" value="<?php echo $address; ?>"><br>
+  <input type="text" id="address" name="address" value="<?php echo $address; ?>"><br>
    Phone Number:<br>
   <input type="text" name="phone" value="<?php echo  $phone; ?>"><br>
    
