@@ -34,16 +34,15 @@ if ($p1!= $p2){
   if ($conn->query($sql) === TRUE) {
       echo "\nNew user registered successfully.</br>";
       echo 'Visit <a href="submitprogram.php"> this page </a> to submit a program. ';
-$email;
-$subject = "Bay Area Kirtans Registration successful!";
-$body =  sprintf("WJKK WJKF,\n\n
-  Welcome %s, You have been successfully registered. You may now visit 
-  http://vikramkhalsa.com/kirtanapp/submitprogram.php to submit programs." $user);
+      $to = $email;
+      $subject = "Bay Area Kirtans Registration successful!";
+      $body =  sprintf("WJKK WJKF,\n\n
+         Welcome %s, You have been successfully registered. You may now visit 
+         http://vikramkhalsa.com/kirtanapp/submitprogram.php to submit programs.", $user);
 
- if (mail($to, $subject, $body)) {
-  } else {
-  }
-
+      if (mail($to, $subject, $body)) {
+         echo "";
+      } 
   } else {
       echo "Error: " . $conn->error . "<br>";
   }

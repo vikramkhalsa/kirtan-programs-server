@@ -1,3 +1,19 @@
+<html>
+
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+   <script type="text/javascript">
+$(document).ready(function () {
+
+
+    $.getJSON('locations.json', function (data) {
+  var locations = data;
+ for (var key in locations)
+{
+  locNames.push(key);
+}
+</script>
 
 <style>
 table.db-table      { border-right:1px solid #ccc; border-bottom:1px solid #ccc; }
@@ -5,6 +21,7 @@ table.db-table th   { background:#eee; padding:5px; border-left:1px solid #ccc; 
 table.db-table td   { padding:5px; border-left:1px solid #ccc; border-top:1px solid #ccc; }
 </style>
 </head>
+<body>
 <?php
 session_start();
 
@@ -60,3 +77,6 @@ echo '</table><br />';
  mysqli_close('$conn');
 
 ?>
+
+</body>
+</html>
