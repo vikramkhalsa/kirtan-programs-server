@@ -84,7 +84,7 @@ echo $id;
  $phone = $arr["phone"];
  $sd = $arr["sd"];
  $ed = $arr["ed"];
- $source = $arr["source"];
+ //$source = $arr["source"];
  $description = $arr["description"];
 }
 }
@@ -110,8 +110,8 @@ Welcome! Please submit a program by filling out the fields below.
   <input type="text" name="ed" value="<?php echo $ed; ?>" id="sd2">
   <img src="images2/cal.gif" onclick="javascript:NewCssCal('sd2','yyyyMMdd','dropdown',true,'24')" style="cursor:pointer"/><br>
 
-  Source:<br>
-  <input type="text" name="source" value="<?php echo  $source; ?>"><br>
+ <!--  Source:<br>
+  <input type="text" name="source" value="<?php echo  $source; ?>"><br> -->
   Description:<br>
   <input type="text" name="description" value="<?php echo $description; ?>"><br>
   <!--
@@ -120,6 +120,7 @@ Welcome! Please submit a program by filling out the fields below.
      -->
 
      <input type='hidden' name='id' value="<?php echo $id; ?>"/>
+     <br>
   <input type="submit" value="Submit"> 
   <?php if (!is_null($id)){
   echo  '<input type="submit" name="clone" value="Clone">';

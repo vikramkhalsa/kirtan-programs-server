@@ -8,7 +8,7 @@ table.db-table td   { padding:5px; border-left:1px solid #ccc; border-top:1px so
 <?php
 session_start();
 
-if ($_SESSION['user'] == null){
+if ($_SESSION['user'] != "vikram"){
    header("Location: " . "http://vikramkhalsa.com/kirtanapp/login.php");
    exit();
 }
