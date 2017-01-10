@@ -149,7 +149,7 @@ body {
 // connect to the database
   include('config.php');
 //programtbl.sd >= DATE(NOW()) AND
- $sql = "SELECT * FROM dharamkh_programs.programtbl WHERE programtbl.ed >= DATE(NOW()) AND  programtbl.approved=1 ORDER BY sd ASC";
+ $sql = "SELECT * FROM events_all.programtbl WHERE programtbl.ed >= DATE(NOW()) AND  programtbl.approved=1 ORDER BY sd ASC";
     $result = mysqli_query($conn, $sql);
 
     $array = array();
@@ -164,7 +164,7 @@ body {
 
 //echo $array;
 
- mysqli_close('$conn');
+ mysqli_close($conn);
 
 echo "<div>"; 
     

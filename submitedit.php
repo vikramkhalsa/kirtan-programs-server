@@ -38,13 +38,13 @@
 	$action = $_POST["action"];
 
 	if ($action == "approve"){
-	$sql = "UPDATE dharamkh_programs.programtbl SET approved='1' WHERE id = '$id'";
+	$sql = "UPDATE programs_all.programtbl SET approved='1' WHERE id = '$id'";
 	}
 	elseif ($action == "disprove"){
-			$sql = "UPDATE dharamkh_programs.programtbl SET approved='0' WHERE id = '$id'";
+			$sql = "UPDATE programs_all.programtbl SET approved='0' WHERE id = '$id'";
 	}
 	elseif ($action == "delete"){
-	$sql = "DELETE FROM dharamkh_programs.programtbl WHERE id = '$id'";
+	$sql = "DELETE FROM programs_all.programtbl WHERE id = '$id'";
 	}
 
 	if ($conn->query($sql) === TRUE) {
@@ -52,7 +52,7 @@
 	} else {
 	    echo "Error: " . $sql . "<br>" . $conn->error;
 	}
-	 mysqli_close('$conn');
+	 mysqli_close($conn);
  // once saved, redirect back to the view page
  header("Location: programsadmin.php"); 
 }

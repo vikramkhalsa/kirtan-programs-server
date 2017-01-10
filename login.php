@@ -1,13 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="user-scalable=yes, width=device-width" />
-  </head>
-<body>
-
-Welcome! Please enter your login details below.
-<br>
-
 <?php 
 if ($error != '')
 {
@@ -23,16 +13,16 @@ $user =  $conn->real_escape_string($_POST['username']);
 $p1 =  $_POST['password'];
 
  //$encrypass = password_hash($p1, PASSWORD_DEFAULT);
-  $sql = "SELECT password FROM dharamkh_programs.usertbl WHERE username = '$user'";
+  $sql = "SELECT password FROM events_all.usertbl WHERE username = '$user'";
   $result = mysqli_query($conn, $sql);
 
 if ($result->num_rows > 0) {
   $row = $result->fetch_assoc();
  if (password_verify($p1, $row["password"])){
-  echo "Login was successful. <br>";
+  //echo "Login was successful. <br>";
   session_start();
   $_SESSION["user"] = $user;
-  header("Location: " . "http://vikramkhalsa.com/kirtanapp/submitprogram.php");
+  header("Location: " . "http://sikh.events/submitprogram.php");
      exit();
 
  }
@@ -51,6 +41,17 @@ $conn->close();
 }
 
 ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="user-scalable=yes, width=device-width" />
+  </head>
+<body>
+
+Welcome! Please enter your login details below.
+<br>
+
 
 
 <form id="adduser" action="login.php" method="post" >

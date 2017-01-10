@@ -1,3 +1,17 @@
+<?php 
+if ($error != '')
+{
+echo '<div style="padding:4px; border:1px solid red; color:red;">'.$error.'</div>';
+}
+
+session_start();
+
+if ($_SESSION['user'] == null){
+   header("Location:" . "login.php");
+   exit();
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,17 +67,6 @@ $( "#location" ).on( "autocompleteselect", function( event, ui ) {
 <body>
 
 <?php 
-if ($error != '')
-{
-echo '<div style="padding:4px; border:1px solid red; color:red;">'.$error.'</div>';
-}
-
-session_start();
-
-if ($_SESSION['user'] == null){
-   header("Location:" . "login.php");
-   exit();
-}
 
 if (is_numeric($_POST['id'])) 
 {
@@ -73,7 +76,7 @@ echo $id;
 // connect to the database
    include('config.php');
 
- $sql = "SELECT * FROM dharamkh_programs.programtbl WHERE id = '$id'";
+ $sql = "SELECT * FROM events_all.programtbl WHERE id = '$id'";
  if ($result = mysqli_query($conn, $sql)){
   echo "success";
    $arr = $result->fetch_array();

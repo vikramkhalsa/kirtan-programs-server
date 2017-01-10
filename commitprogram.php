@@ -56,7 +56,7 @@ $user = $_SESSION['user'];
 
 	if ($id == "" or ($clone=="Clone")){
 //need to check if values are blank, validate form data in submit program page??
-	$sql = "INSERT INTO dharamkh_programs.programtbl (title, subtitle, address, phone, sd, ed, user, description)
+	$sql = "INSERT INTO events_all.programtbl (title, subtitle, address, phone, sd, ed, user, description)
 	VALUES ('$title', '$subtitle', '$address', '$phone', '$sd','$ed', '$user', '$description')";
 	if ($conn->query($sql) === TRUE) {
 	    echo "\nNew record created successfully";
@@ -67,7 +67,7 @@ $to = "vikramkhalsa@hotmail.com";
 $subject = "New BayAreaKirtan Program Submitted";
 $body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted: 
 	\n\n Title: %s \n Subtitle: %s \n $address %s\n  Phone: %s\n Start: %s\n End: %s\n  User: %s\n Description: %s \n\n 
-	To moderate, visit: http://vikramkhalsa.com/kirtanapp/programsadmin.php",
+	To moderate, visit: http://sikh.events/programsadmin.php",
 	$title, $subtitle, $address, $phone, $sd,$ed, $user, $description );
 
  if (mail($to, $subject, $body)) {
@@ -77,7 +77,7 @@ $body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted:
   }
 
 } else {
-	$sql = "UPDATE dharamkh_programs.programtbl SET title ='$title', subtitle ='$subtitle', address = '$address', phone ='$phone', 
+	$sql = "UPDATE events_all.programtbl SET title ='$title', subtitle ='$subtitle', address = '$address', phone ='$phone', 
 	sd = '$sd', ed ='$ed', user = '$user', description ='$description', approved = 1 WHERE id = '$id'";
 		if ($conn->query($sql) === TRUE) {
 	    echo "\nRecord updated successfully";

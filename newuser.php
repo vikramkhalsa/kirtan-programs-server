@@ -29,7 +29,7 @@ if ($p1!= $p2){
 }else {
 
  $encrypass = password_hash($p1, PASSWORD_DEFAULT);
-  $sql = "INSERT INTO dharamkh_programs.usertbl (username, email, password)
+  $sql = "INSERT INTO events_all.usertbl (username, email, password)
   VALUES ('$user', '$email', '$encrypass')";
   if ($conn->query($sql) === TRUE) {
       echo "\nNew user registered successfully.</br>";
@@ -38,7 +38,7 @@ if ($p1!= $p2){
       $subject = "Bay Area Kirtans Registration successful!";
       $body =  sprintf("WJKK WJKF,\n\n
          Welcome %s, You have been successfully registered. You may now visit 
-         http://vikramkhalsa.com/kirtanapp/submitprogram.php to submit programs.", $user);
+         http://sikh.events/submitprogram.php to submit programs.", $user);
 
       if (mail($to, $subject, $body)) {
          echo "";

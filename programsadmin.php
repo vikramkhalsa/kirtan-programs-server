@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+if ($_SESSION['user'] != "vikram"){
+   header("Location: " . "http://sikh.events/login.php");
+   exit();
+}
+?>
 <html>
 
 <head>
@@ -23,17 +31,10 @@ table.db-table td   { padding:5px; border-left:1px solid #ccc; border-top:1px so
 </head>
 <body>
 <?php
-session_start();
-
-if ($_SESSION['user'] != "vikram"){
-   header("Location: " . "http://vikramkhalsa.com/kirtanapp/login.php");
-   exit();
-}
-
 // connect to the database
     include('config.php');
 
- $sql = "SELECT * FROM dharamkh_programs.programtbl ORDER BY sd DESC";
+ $sql = "SELECT * FROM events_all.programtbl ORDER BY sd DESC";
     $result = mysqli_query($conn, $sql);
 
     $array = array();
@@ -74,7 +75,7 @@ echo '</table><br />';
 
 //echo json_encode($array); 
 
- mysqli_close('$conn');
+ mysqli_close($conn);
 
 ?>
 
