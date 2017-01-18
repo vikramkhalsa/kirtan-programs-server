@@ -9,8 +9,14 @@ if ($_SESSION['user'] != "vikram"){
 <html>
 
 <head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
+<meta name="viewport" content="user-scalable=yes, width=device-width" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+ <link href="navbar.css" rel="stylesheet">
    <script type="text/javascript">
 $(document).ready(function () {
 
@@ -31,6 +37,7 @@ table.db-table td   { padding:5px; border-left:1px solid #ccc; border-top:1px so
 </head>
 <body>
 <?php
+ include('header.html');
 // connect to the database
     include('config.php');
 
@@ -38,11 +45,8 @@ table.db-table td   { padding:5px; border-left:1px solid #ccc; border-top:1px so
     $result = mysqli_query($conn, $sql);
 
     $array = array();
-echo ' <head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>';
-echo '<meta name="viewport" content="user-scalable=yes, width=device-width" /></head> ';
-echo '<h3>Bay Area Kirtan Programs</h1> </br>';
-echo "<a href='submitprogram.php'>Add new program </a></br>";
+//<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>';
+
 echo '<table cellpadding="0" cellspacing="0" class="db-table">';
 echo '<tr><th>ID</th><th>SD</th><th>ED</th><th>Title</th><th>Subtitle<th>Address</th><th>Phone</th><th>Desc</th><th>source</th><th>Approved</th><th>Moderate</th></tr>';
     while($row=mysqli_fetch_assoc($result))

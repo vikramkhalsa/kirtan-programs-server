@@ -1,3 +1,9 @@
+<?php 
+session_start();
+$user = $_SESSION['user'];
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,8 +57,6 @@ $sd = $conn->real_escape_string($_POST["sd"]);
 $ed = $conn->real_escape_string($_POST["ed"]);
 //$source = $conn->real_escape_string($_POST["source"]);
 $description = $conn->real_escape_string($_POST["description"]);
-session_start();
-$user = $_SESSION['user'];
 
 	if ($id == "" or ($clone=="Clone")){
 //need to check if values are blank, validate form data in submit program page??

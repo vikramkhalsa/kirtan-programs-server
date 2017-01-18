@@ -9,13 +9,13 @@
   // check if the form has been submitted. If it has, process the form and save it to the database
  if (isset($_POST['id']))
  { 
-	echo $_POST['id'];
+	//echo $_POST['id'];
  // confirm that the 'id' value is a valid integer before getting the form data
  	if (is_numeric($_POST['id']))
  	{
  // get form data, making sure it is valid
  	$id = $_POST['id'];
-	 echo $id;
+	 //echo $id;
  //$firstname = mysql_real_escape_string(htmlspecialchars($_POST['firstname']));
  //$lastname = mysql_real_escape_string(htmlspecialchars($_POST['lastname']));
  
@@ -38,17 +38,17 @@
 	$action = $_POST["action"];
 
 	if ($action == "approve"){
-	$sql = "UPDATE programs_all.programtbl SET approved='1' WHERE id = '$id'";
+	$sql = "UPDATE events_all.programtbl SET approved='1' WHERE id = '$id'";
 	}
 	elseif ($action == "disprove"){
-			$sql = "UPDATE programs_all.programtbl SET approved='0' WHERE id = '$id'";
+			$sql = "UPDATE events_all.programtbl SET approved='0' WHERE id = '$id'";
 	}
 	elseif ($action == "delete"){
-	$sql = "DELETE FROM programs_all.programtbl WHERE id = '$id'";
+	$sql = "DELETE FROM events_all.programtbl WHERE id = '$id'";
 	}
 
 	if ($conn->query($sql) === TRUE) {
-	    echo "New record created successfully";
+	   // echo "New record created successfully";
 	} else {
 	    echo "Error: " . $sql . "<br>" . $conn->error;
 	}
