@@ -13,10 +13,12 @@ session_start();
 
  <link href="navbar.css" rel="stylesheet">
 
+
+
 </head>
 <body>
   <?php include('header.html'); ?>  
-      <div>
+      <div style="padding:10px;">
 
     <p>Welcome! Upcoming programs are listed below. 
         We hope to expand to include more Gurdwaras and locations soon. 

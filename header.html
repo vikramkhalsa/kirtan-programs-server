@@ -1,3 +1,15 @@
+      <script type="text/javascript">
+
+$(document).ready(function() {
+    // -----------------------------------------------------------------------
+    $.each($('#navbar').find('li'), function() {
+       $(this).toggleClass('active', window.location.pathname.indexOf($(this).find('a').attr('href')) > -1);
+    }); 
+    // -----------------------------------------------------------------------
+});
+     
+      </script>
+
   <nav class="navbar navbar-default">
         <div class="container-fluid">
           <div class="navbar-header">
@@ -11,7 +23,7 @@
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li><a href="index.php">San Jose Gurdwara Sahib</a></li>
+              <li><a href="index.php">All Programs</a></li>
               <li><a href="isangat.php">iSangat.org</a></li>
               <li><a href="submitprogram.php">Submit New Program</a></li>
               <?php
@@ -24,3 +36,4 @@ echo ' <li><a href="programsadmin.php">Admin</a></li>';
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
       </nav>
+

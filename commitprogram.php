@@ -64,9 +64,6 @@ $description = $conn->real_escape_string($_POST["description"]);
 	VALUES ('$title', '$subtitle', '$address', '$phone', '$sd','$ed', '$user', '$description')";
 	if ($conn->query($sql) === TRUE) {
 	    echo "\nNew record created successfully";
-	} else {
-	    echo "Error: " . $sql . "<br>" . $conn->error;
-	}
 $to = "vikramkhalsa@hotmail.com";
 $subject = "New BayAreaKirtan Program Submitted";
 $body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted: 
@@ -79,6 +76,11 @@ $body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted:
   } else {
    echo("<p>Failed to send moderation request.</p>");
   }
+
+
+	} else {
+	    echo "Error: " . $sql . "<br>" . $conn->error;
+	}
 
 } else {
 	$sql = "UPDATE events_all.programtbl SET title ='$title', subtitle ='$subtitle', address = '$address', phone ='$phone', 

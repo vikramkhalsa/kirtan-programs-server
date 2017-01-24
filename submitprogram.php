@@ -97,31 +97,32 @@ echo $id;
 }
 }
 ?>
+<div style="padding:10px">
 Welcome! Please submit a program by filling out the fields below. 
 <br>
 
 <form id="addprogram" action="commitprogram.php" method="post" >
   Title:<br>
-  <input type="text" value="<?php echo $title; ?>" name="title"><br>
+  <input type="text" value="<?php echo $title; ?>" name="title" class="form-control"><br>
   <label for="location">Location: </label><br>
-  <input id="location" name="subtitle" value="<?php echo $subtitle; ?>"><br>
+  <input id="location" name="subtitle" value="<?php echo $subtitle; ?>" class="form-control"><br>
    Address:<br>
-  <input type="text" id="address" name="address" value="<?php echo $address; ?>"><br>
+  <input type="text" id="address" name="address" value="<?php echo $address; ?>" class="form-control"><br>
    Phone Number:<br>
-  <input type="text" name="phone" value="<?php echo  $phone; ?>"><br>
+  <input type="text" name="phone" value="<?php echo  $phone; ?>" class="form-control"><br>
    
    Start Date:<br>
-  <input type="text" name="sd" value="<?php echo $sd; ?>" id="sd1">
+  <input type="text" name="sd" value="<?php echo $sd; ?>" id="sd1" class="form-control">
   <img src="images2/cal.gif" onclick="javascript:NewCssCal('sd1','yyyyMMdd','dropdown',true,'24')" style="cursor:pointer"/><br>
 
    EndDate:<br>  
-  <input type="text" name="ed" value="<?php echo $ed; ?>" id="sd2">
+  <input type="text" name="ed" value="<?php echo $ed; ?>" id="sd2" class="form-control">
   <img src="images2/cal.gif" onclick="javascript:NewCssCal('sd2','yyyyMMdd','dropdown',true,'24')" style="cursor:pointer"/><br>
 
  <!--  Source:<br>
   <input type="text" name="source" value="<?php echo  $source; ?>"><br> -->
   Description:<br>
-  <input type="text" name="description" value="<?php echo $description; ?>"><br>
+  <input type="text" name="description" value="<?php echo $description; ?>" class="form-control"><br>
   <!--
    Password(You must have authorization to submit a program):<br>
   <input type="password" name="password" value=""><br>
@@ -129,15 +130,15 @@ Welcome! Please submit a program by filling out the fields below.
 
      <input type='hidden' name='id' value="<?php echo $id; ?>"/>
      <br>
-  <input type="submit" value="Submit"> 
+  <button name="submit" value="Submit" class="btn btn-default">Submit</button>
   <?php if (!is_null($id)){
-  echo  '<input type="submit" name="clone" value="Clone">';
+  echo  '<button name="clone" value="Clone" class="btn btn-default">Clone</button>';
 	}
    ?>
 
 </form> 
 
-
+</div>
 
 </body>
 </html>
