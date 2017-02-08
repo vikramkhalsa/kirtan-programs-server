@@ -13,7 +13,15 @@ session_start();
 
  <link href="navbar.css" rel="stylesheet">
 
-
+<script type="text/javascript">
+function showDescription(id){
+    //var desc = document.getElementById(id);
+    //var value =  desc.innerHTML;
+     //alert(id);
+    $('#myModal').find(".modal-body").html(id);// = id;
+    $('#myModal').modal();
+}
+</script>
 
 </head>
 <body>
@@ -63,6 +71,7 @@ echo "<div>";
         $edate = strtotime($value['ed']);
         echo "<br>";
         echo date('g:ia', $edate);
+        echo '<br> <button class="infoBtn" onClick="showDescription(\''.$value["description"].'\')"><span class="glyphicon glyphicon-info-sign" aria-hidden="true" aria-label="description"></span></button>';
         echo '</div> 
         <div style="width:70%; float:left;">
         <div class="programTitle">';
@@ -81,6 +90,14 @@ echo "<div>";
     }
 ?>
 
+<div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+        <div class="modal-body">
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

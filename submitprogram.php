@@ -103,6 +103,8 @@ Welcome! Please submit a program by filling out the fields below.
 
 <form id="addprogram" action="commitprogram.php" method="post" >
   Title:<br>
+  <div class="row">
+    <div class="col-sm-6">
   <input type="text" value="<?php echo $title; ?>" name="title" class="form-control"><br>
   <label for="location">Location: </label><br>
   <input id="location" name="subtitle" value="<?php echo $subtitle; ?>" class="form-control"><br>
@@ -122,12 +124,14 @@ Welcome! Please submit a program by filling out the fields below.
  <!--  Source:<br>
   <input type="text" name="source" value="<?php echo  $source; ?>"><br> -->
   Description:<br>
-  <input type="text" name="description" value="<?php echo $description; ?>" class="form-control"><br>
+  <textarea name="description" class="form-control"><?php echo $description; ?></textarea>
+  <br>
   <!--
    Password(You must have authorization to submit a program):<br>
   <input type="password" name="password" value=""><br>
      -->
-
+</div>
+</div>
      <input type='hidden' name='id' value="<?php echo $id; ?>"/>
      <br>
   <button name="submit" value="Submit" class="btn btn-default">Submit</button>
