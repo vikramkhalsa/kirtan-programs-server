@@ -46,25 +46,36 @@ $conn->close();
 <html>
 <head>
     <meta name="viewport" content="user-scalable=yes, width=device-width" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+ 
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+ <link href="navbar.css" rel="stylesheet">
   </head>
 <body>
-
-Welcome! Please enter your login details below.
+ <?php include('header.html'); ?>  
+  <div style="padding:10px;">
+  Welcome! Please enter your login details below.
 <br>
-
-
-
+<br>
+<div class="row">
+    <div class="col-sm-6 col-md-4 col-2">
 <form id="adduser" action="login.php" method="post" >
-  username:<br>
-  <input type="text" name="username"><br> 
+  Username:<br>
+  <input type="text" name="username" class="form-control"><br> 
    Password:<br>
-  <input type="password" name="password"><br>
-  <input type="submit" value="Submit"> 
+  <input type="password" name="password" class="form-control"><br>
+  <input type="submit" value="Submit" class="btn btn-default"> 
 </form> 
-
+<br>
 Don't have an account? Click <a href="newuser.php">here</a> to register.
 
+</div>
 
+</div>
+
+</div>
 
 </body>
 </html>

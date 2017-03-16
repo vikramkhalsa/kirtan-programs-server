@@ -2,10 +2,19 @@
 <html>
 <head>
   <meta name="viewport" content="user-scalable=yes, width=device-width" />
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+ 
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+ <link href="navbar.css" rel="stylesheet">
+
 </head>
 <body>
-
+ <?php include('header.html'); ?>  
+  <div style="padding:10px;">
 Welcome! Please please fill out the fields below to register. 
+<br>
 <br>
 
 <?php 
@@ -50,20 +59,22 @@ if ($p1!= $p2){
 }
 ?>
 
-
+<div class="row">
+    <div class="col-sm-6 col-md-4 col-2">
 <form id="adduser" action="newuser.php" method="post" >
-  username:<br>
-  <input type="text" name="username"><br>
-  email address:<br>
-  <input type="text" name="email"><br>
+  Username:<br>
+  <input type="text" name="username" class="form-control"><br>
+  Email Address:<br>
+  <input type="text" name="email" class="form-control"><br>
    Password:<br>
-  <input type="password" name="password"><br>
+  <input type="password" name="password" class="form-control"><br>
    Confirm Password:<br>
-  <input type="password" name="password2"><br>
-  <input type="submit" value="Submit" name="submit"> 
+  <input type="password" name="password2" class="form-control"><br>
+  <input type="submit" value="Submit" name="submit" class="btn btn-default"> 
 </form> 
-
-
+</div>
+</div>
+</div>
 
 </body>
 </html>
