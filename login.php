@@ -13,7 +13,7 @@ $user =  $conn->real_escape_string($_POST['username']);
 $p1 =  $_POST['password'];
 
  //$encrypass = password_hash($p1, PASSWORD_DEFAULT);
-  $sql = "SELECT password FROM events_all.usertbl WHERE username = '$user'";
+  $sql = "SELECT password, type FROM events_all.usertbl WHERE username = '$user'";
   $result = mysqli_query($conn, $sql);
 
 if ($result->num_rows > 0) {
@@ -22,6 +22,7 @@ if ($result->num_rows > 0) {
   //echo "Login was successful. <br>";
   session_start();
   $_SESSION["user"] = $user;
+  $_SESSION["usertype"] = $row["type"];
   header("Location: " . "http://sikh.events/submitprogram.php");
      exit();
 

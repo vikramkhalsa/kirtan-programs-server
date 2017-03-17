@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if ($_SESSION['user'] != "vikram"){
+if ($_SESSION['usertype'] != "admin"){
    header("Location: " . "http://sikh.events/login.php");
    exit();
 }
