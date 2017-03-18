@@ -61,7 +61,16 @@ $( "#location" ).on( "autocompleteselect", function( event, ui ) {
     });
 
 
-
+function convertDates(){
+var form = document.getElementById("addProgram");
+var sd= document.getElementById("sd1");
+var ed = document.getElementById("sd2");
+var sdate = new Date(sd.value).toISOString();
+var edate = new Date(ed.value).toISOString();
+sd.value = sdate;
+ed.value = edate;
+form.submit();
+}
 
 
 
@@ -92,6 +101,7 @@ echo $id;
  $phone = $arr["phone"];
  $sd = $arr["sd"];
  $ed = $arr["ed"];
+ $type = $arr["type"];
  //$source = $arr["source"];
  $description = $arr["description"];
 }
@@ -114,12 +124,21 @@ Welcome! Please submit a program by filling out the fields below.
   <input type="text" name="phone" value="<?php echo  $phone; ?>" class="form-control"><br>
    
    Start Date:<br>
-  <input type="text" name="sd" value="<?php echo $sd; ?>" id="sd1" class="form-control">
+  <input type="text" name="sd" value="<?php echo $sd; ?>" id="sd1" class="form-control" realval="">
   <img src="images2/cal.gif" onclick="javascript:NewCssCal('sd1','yyyyMMdd','dropdown',true,'24')" style="cursor:pointer"/><br>
 
    EndDate:<br>  
-  <input type="text" name="ed" value="<?php echo $ed; ?>" id="sd2" class="form-control">
+  <input type="text" name="ed" value="<?php echo $ed; ?>" id="sd2" class="form-control" realval="">
   <img src="images2/cal.gif" onclick="javascript:NewCssCal('sd2','yyyyMMdd','dropdown',true,'24')" style="cursor:pointer"/><br>
+
+Type: <br>
+<select name="type" class="form-control" value="<?php echo $type; ?>">
+<option name=one value=kirtan selected> Kirtan </option>
+<option name=two value=katha> Katha </option>
+<option name=three value=fundraiser> Fundraiser </option>
+<option name=three value=discussion> Discussion </option>
+<option name=three value=samaagam> Samaagam </option>
+</select></br>
 
  <!--  Source:<br>
   <input type="text" name="source" value="<?php echo  $source; ?>"><br> -->

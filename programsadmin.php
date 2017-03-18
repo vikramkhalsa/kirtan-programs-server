@@ -48,7 +48,7 @@ table.db-table td   { padding:5px; border-left:1px solid #ccc; border-top:1px so
 //<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>';
 
 echo '<table cellpadding="0" cellspacing="0" class="db-table">';
-echo '<tr><th>ID</th><th>SD</th><th>ED</th><th>Title</th><th>Subtitle<th>Address</th><th>Phone</th><th>Desc</th><th>source</th><th>Approved</th><th>Moderate</th></tr>';
+echo '<tr><th>ID</th><th>SD</th><th>ED</th><th>Title</th><th>Subtitle<th>Address</th><th>Phone</th><th>Desc</th><th>source</th><th>Appr</th><th>type</th><th>Moderate</th></tr>';
     while($row=mysqli_fetch_assoc($result))
     {
     	echo '<tr>';
