@@ -48,7 +48,7 @@ table.db-table td   { padding:5px; border-left:1px solid #ccc; border-top:1px so
 //<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>';
 
 echo '<table cellpadding="0" cellspacing="0" class="db-table">';
-echo '<tr><th>ID</th><th>SD</th><th>ED</th><th>Title</th><th>Subtitle<th>Address</th><th>Phone</th><th>Desc</th><th>source</th><th>Appr</th><th>type</th><th>Moderate</th></tr>';
+echo '<tr><th>ID</th><th>Start</th><th>End</th><th>Title</th><th>Subtitle<th>Address</th><th>Phone</th><th>Desc</th><th>source</th><th>Appr</th><th>type</th><th>Zip</th><th>Moderate</th></tr>';
     while($row=mysqli_fetch_assoc($result))
     {
     	echo '<tr>';
@@ -69,8 +69,8 @@ else {
    echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='disprove'/><input type='submit' name='submit-btn' value='Disprove' /></form>";
  }
     echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='delete'/><input type='submit' name='submit-btn' value='Delete' /></form>";
-   echo "<form action='submitprogram.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='edit'/><input type='submit' name='submit-btn' value='Edit' /></form></td></tr>";
-
+   echo "<form action='submitprogram.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='edit'/><input type='submit' name='submit-btn' value='Edit' /></form>";
+ echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='saveloc'/><input type='submit' name='submit-btn' value='SaveLoc' /></form></td></tr>";
 	//echo '</tr>';
     }
 

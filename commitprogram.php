@@ -22,7 +22,7 @@ $user = $_SESSION['user'];
 <?php 
 include('header.html');
 ?>
-
+<div style="padding:10px">
 Welcome <br>
 
 <?php 
@@ -40,6 +40,8 @@ print "<br>";
 echo "End: ",$_POST["ed"]; 
 print "<br>";
 echo "Type: ",$_POST["type"];
+print "<br>";
+echo "Zip Code: ",$_POST["zip"];
 print "<br>";
 //echo "Source: ",$_POST["source"]; 
 //print "<br>";
@@ -70,16 +72,17 @@ $sd = $conn->real_escape_string($_POST["sd"]);
 $ed = $conn->real_escape_string($_POST["ed"]);
 //$ed = date ("Y-m-d H:i:s", strtotime($sd));
 $type = $conn->real_escape_string($_POST["type"]);
+$zip = $conn->real_escape_string($_POST["zip"]);
 //$source = $conn->real_escape_string($_POST["source"]);
 $description = $conn->real_escape_string($_POST["description"]);
 
 	if ($id == "" or ($clone=="Clone")){
 //need to check if values are blank, validate form data in submit program page??
-	$sql = "INSERT INTO events_all.programtbl (title, subtitle, address, phone, sd, ed, user, description, type)
-	VALUES ('$title', '$subtitle', '$address', '$phone', '$sd','$ed', '$user', '$description', '$type')";
+	$sql = "INSERT INTO events_all.programtbl (title, subtitle, address, phone, sd, ed, user, description, type, zip)
+	VALUES ('$title', '$subtitle', '$address', '$phone', '$sd','$ed', '$user', '$description', '$type', '$zip')";
 	if ($conn->query($sql) === TRUE) {
 	    echo "\nNew record created successfully";
-$to = "vikramkhalsa@hotmail.com";
+$to = "vikramkhalsa@gmail.com";
 $subject = "New BayAreaKirtan Program Submitted";
 $body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted: 
 	\n\n Title: %s \n Subtitle: %s \n $address %s\n  Phone: %s\n Start: %s\n End: %s\n  User: %s\n Description: %s \n\n 
@@ -99,7 +102,7 @@ $body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted:
 
 } else {
 	$sql = "UPDATE events_all.programtbl SET title ='$title', subtitle ='$subtitle', address = '$address', phone ='$phone', 
-	sd = '$sd', ed ='$ed', user = '$user', description ='$description', type ='$type' approved = 1 WHERE id = '$id'";
+	sd = '$sd', ed ='$ed', user = '$user', description ='$description', type ='$type', zip='$zip', approved = 1 WHERE id = '$id'";
 		if ($conn->query($sql) === TRUE) {
 	    echo "\nRecord updated successfully";
 	} else {
@@ -116,7 +119,7 @@ $body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted:
 <br>
 
 
-
+</div>
 
 </body>
 </html>

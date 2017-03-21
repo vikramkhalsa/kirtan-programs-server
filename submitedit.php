@@ -46,6 +46,23 @@
 	elseif ($action == "delete"){
 	$sql = "DELETE FROM events_all.programtbl WHERE id = '$id'";
 	}
+	elseif ($action == "saveloc"){
+	$sql = "SELECT subtitle, address, phone, zip FROM events_all.programtbl where id='$id'";
+	//now insert into location table
+	$result = mysqli_query($conn, $sql);
+
+    while($row=mysqli_fetch_assoc($result)){
+    	$name = $row["subtitle"];
+    	$addr = $row["address"];
+    	$phone = $row["phone"];
+    	$zip = $row["zip"];
+    	//echo $name.$addr.$phone;//.$zip;
+		$sql = "INSERT INTO events_all.locationtbl (name, address, phone, zip)
+		VALUES ('$name','$addr','$phone','$zip')";
+
+    }
+    	
+	}
 
 	if ($conn->query($sql) === TRUE) {
 	   // echo "New record created successfully";

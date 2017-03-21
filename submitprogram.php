@@ -102,6 +102,7 @@ echo $id;
  $sd = $arr["sd"];
  $ed = $arr["ed"];
  $type = $arr["type"];
+ $zip = $arr["zip"];
  //$source = $arr["source"];
  $description = $arr["description"];
 }
@@ -120,6 +121,8 @@ Welcome! Please submit a program by filling out the fields below.
   <input id="location" name="subtitle" value="<?php echo $subtitle; ?>" class="form-control"><br>
    Address:<br>
   <input type="text" id="address" name="address" value="<?php echo $address; ?>" class="form-control"><br>
+   Zip Code:<br>
+  <input type="text" id="zip" name="zip" value="<?php echo $zip; ?>" class="form-control"><br>
    Phone Number:<br>
   <input type="text" name="phone" value="<?php echo  $phone; ?>" class="form-control"><br>
    
@@ -138,6 +141,7 @@ Type: <br>
 <option name=three value=fundraiser> Fundraiser </option>
 <option name=three value=discussion> Discussion </option>
 <option name=three value=samaagam> Samaagam </option>
+<option name=three value=other> Other </option>
 </select></br>
 
  <!--  Source:<br>
