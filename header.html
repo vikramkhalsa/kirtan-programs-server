@@ -28,9 +28,10 @@ $(document).ready(function() {
                 <li><a href="ekhalsa.php">eKhalsa.com</a></li>
               <li><a href="submitprogram.php">Submit New Program</a></li>
               <?php
-if ($_SESSION['usertype'] == "admin"){
-echo ' <li><a href="programsadmin.php">Admin</a></li>';
-}
+            if ($_SESSION['user'] != null)
+              {
+              echo ' <li><a href="programsadmin.php">Account</a></li>';
+              }
 
               ?>
             </ul>

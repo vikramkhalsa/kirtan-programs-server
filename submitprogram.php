@@ -1,10 +1,11 @@
 <?php 
+session_start();
 if ($error != '')
 {
 echo '<div style="padding:4px; border:1px solid red; color:red;">'.$error.'</div>';
 }
 
-session_start();
+
 
 if ($_SESSION['user'] == null){
    header("Location:" . "login.php");
@@ -157,7 +158,7 @@ Type: <br>
 </div>
      <input type='hidden' name='id' value="<?php echo $id; ?>"/>
      <br>
-  <button name="submit" value="Submit" class="btn btn-default">Submit</button>
+  <button name="submit" value="Submit" class="btn btn-primary">Submit</button>
   <?php if (!is_null($id)){
   echo  '<button name="clone" value="Clone" class="btn btn-default">Clone</button>';
 	}

@@ -1,4 +1,7 @@
 <?php 
+
+session_start();
+
  // if there are any errors, display them
  if ($error != '')
  {
@@ -75,7 +78,17 @@
 }
 }
 else {
+if (isset($_POST['action'])){
+	$action = $_POST["action"];
+	if ($action =="logout"){
+$_SESSION['user'] = null;
+header("Location:" . "login.php");
+   exit();
+	}
+}else{
+
 	echo 'error';
+}
 }
 
  ?>
