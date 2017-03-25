@@ -63,13 +63,13 @@ if ($p1!= $p2){
     <div class="col-sm-6 col-md-4 col-2">
 <form id="adduser" action="newuser.php" method="post" >
   Username:<br>
-  <input type="text" name="username" class="form-control"><br>
+  <input type="text" name="username" class="form-control" required><br>
   Email Address:<br>
-  <input type="text" name="email" class="form-control"><br>
+  <input type="email" name="email" class="form-control" required><br>
    Password:<br>
-  <input type="password" name="password" class="form-control"><br>
+  <input type="password" name="password" class="form-control" required><br>
    Confirm Password:<br>
-  <input type="password" name="password2" class="form-control"><br>
+  <input type="password" name="password2" class="form-control" required><br>
   <input type="submit" value="Submit" name="submit" class="btn btn-default"> 
 </form> 
 </div>

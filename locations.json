@@ -1,8 +1,10 @@
 {
 	"San Jose Gurdwara Sahib": {
-		"Address":"3636 Murillo Ave, San Jose CA 95148"
+		"Address":"3636 Murillo Ave, San Jose CA",
+		"Zip": "95148"
 	},
 	"Fremont Gurdwara Sahib": {
-		"Address":"300 Gurdwara Rd, Fremont CA 94536"
+		"Address":"300 Gurdwara Rd, Fremont CA",
+		"Zip":"94536"
 	}
 }

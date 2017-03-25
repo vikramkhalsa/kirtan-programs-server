@@ -71,7 +71,8 @@ echo "<div>";
         $edate = strtotime($value['ed']);
         echo "<br>";
         echo date('g:ia', $edate);
-        echo '<br> <button class="infoBtn" onClick="showDescription(\''.$value["description"].'\')"><span class="glyphicon glyphicon-info-sign" aria-hidden="true" aria-label="description"></span></button>';
+        $desc = str_replace("'", "\'", $value["description"]);
+        echo '<br> <button class="infoBtn" onClick="showDescription(\''.$desc.'\')"><span class="glyphicon glyphicon-info-sign" aria-hidden="true" aria-label="description"></span></button>';
         echo '</div> 
         <div style="width:70%; float:left;">
         <div class="programTitle">';

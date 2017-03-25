@@ -16,6 +16,7 @@ if ($_SESSION['user'] == null){
 <!DOCTYPE html>
 <html>
 <head>
+<title>Submit a Program</title>
     <script src="datetimepicker_css.js"></script>
     <meta name="viewport" content="user-scalable=yes, width=device-width" />
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
@@ -54,11 +55,43 @@ $(document).ready(function () {
 $( "#location" ).on( "autocompleteselect", function( event, ui ) {
   var key = ui.item.label;
   $("#address").val(locations[key].Address);
+  $("#zip").val(locations[key].Zip);
 } );
 
     $("#location").autocomplete({
       source: locNames
     });
+
+$("[required]").before("<span style='color:red'>*</span>");
+
+$("#submit").click(function(event){
+//VALIDATE FORM
+var input = document.getElementById("#title")
+
+
+   // Valid input field for browsers which don't support `pattern` attribute.
+}
+//check phone number
+//var phonenum = $("#phone").val();
+//phonenum = phonenum.replace("-", "");
+
+//check/fix  dates and don't submit if they are invalid!~
+//alert(phonenum);
+
+//style invalid controls
+
+//alert("clicked!");
+
+ var form= $(this).closest('#addprogram');
+var ips =  form.find('[required]')
+ ips.addClass('notvalid');
+});
+
+
+
+
+
+
     });
 
 
@@ -76,6 +109,22 @@ form.submit();
 
 
 </script>
+
+<style>
+
+.notvalid{
+	border-color:red;
+}
+/*input[required]:invalid:focus { box-shadow: 0 0 3px 1px red }*/
+
+input[required]:valid{
+	border-color: green;
+}
+
+input[required]:after{
+	content:'*';
+}
+</style>
 
   </head>
 <body>
@@ -111,31 +160,45 @@ echo $id;
 ?>
 <div style="padding:10px">
 Welcome! Please submit a program by filling out the fields below. 
-<br>
+<br><br>
 
-<form id="addprogram" action="commitprogram.php" method="post" >
-  Title:<br>
+<form id="addprogram" action="commitprogram.php" method="post" class="form-group">
   <div class="row">
     <div class="col-sm-6">
-  <input type="text" value="<?php echo $title; ?>" name="title" class="form-control"><br>
-  <label for="location">Location: </label><br>
-  <input id="location" name="subtitle" value="<?php echo $subtitle; ?>" class="form-control"><br>
-   Address:<br>
+  <label for="title">Title: </label>
+  <input type="text" id="title" value="<?php echo $title; ?>" name="title" class="form-control" required placeholder="Kirtan Divaan"><br>
+  
+  <label for="location">Location: </label>
+  <input id="location" name="subtitle" value="<?php echo $subtitle; ?>" class="form-control" required placeholder="San Jose Gurdwara Sahib"><br>
+
+  <label for="address">Address: </label>
   <input type="text" id="address" name="address" value="<?php echo $address; ?>" class="form-control"><br>
-   Zip Code:<br>
-  <input type="text" id="zip" name="zip" value="<?php echo $zip; ?>" class="form-control"><br>
-   Phone Number:<br>
-  <input type="text" name="phone" value="<?php echo  $phone; ?>" class="form-control"><br>
+  
+  <label for="zip">Zip Code: </label>
+  <input type="text" id="zip" name="zip" value="<?php echo $zip; ?>" class="form-control" required maxlength=10 placeholder="12345" pattern="[0-9]{5}"><br>
+  
+  <label for="phone">Phone Number:</label>
+  <input type="tel" name="phone" id="phone" value="<?php echo  $phone; ?>" class="form-control" maxlength=16 placeholder="1234567890"><br>
    
-   Start Date:<br>
-  <input type="text" name="sd" value="<?php echo $sd; ?>" id="sd1" class="form-control" realval="">
-  <img src="images2/cal.gif" onclick="javascript:NewCssCal('sd1','yyyyMMdd','dropdown',true,'24')" style="cursor:pointer"/><br>
 
-   EndDate:<br>  
-  <input type="text" name="ed" value="<?php echo $ed; ?>" id="sd2" class="form-control" realval="">
-  <img src="images2/cal.gif" onclick="javascript:NewCssCal('sd2','yyyyMMdd','dropdown',true,'24')" style="cursor:pointer"/><br>
+  <label for="sd">Start Date and Time:</label>
+  <div class="input-group" required>
+  <input type="text" name="sd" value="<?php echo $sd; ?>" id="sd1" class="form-control" placeholder="yyyy-mm-dd hh:mm"
+  pattern="^[0-9]+-[0-9]+-[0-9]+\s[0-9]+:[0-9]+$" required>
+  <div class="input-group-addon" onclick="javascript:NewCssCal('sd1','yyyyMMdd','dropdown',true,'24')">
+    <span class="glyphicon glyphicon-calendar"  style="cursor:pointer"></span>
+   </div>
+ </div><br>
 
-Type: <br>
+  <label for="ed">End Date and Time:</label>
+    <div class="input-group" >
+  <input type="text" name="ed" value="<?php echo $ed; ?>" id="sd2" class="form-control" placeholder="yyyy-mm-dd hh:mm" 
+    pattern="^[0-9]+-[0-9]+-[0-9]+\s[0-9]+:[0-9]+$">
+   <div class="input-group-addon" onclick="javascript:NewCssCal('sd2','yyyyMMdd','dropdown',true,'24')">
+    <span class="glyphicon glyphicon-calendar"  style="cursor:pointer"></span>
+   </div>
+ </div><br>
+<label for="type">Event Type:</label>
 <select name="type" class="form-control" value="<?php echo $type; ?>">
 <option name=one value=kirtan selected> Kirtan </option>
 <option name=two value=katha> Katha </option>
@@ -147,18 +210,14 @@ Type: <br>
 
  <!--  Source:<br>
   <input type="text" name="source" value="<?php echo  $source; ?>"><br> -->
-  Description:<br>
+  <label for="description">Description:</label>
   <textarea name="description" class="form-control"><?php echo $description; ?></textarea>
   <br>
-  <!--
-   Password(You must have authorization to submit a program):<br>
-  <input type="password" name="password" value=""><br>
-     -->
 </div>
 </div>
      <input type='hidden' name='id' value="<?php echo $id; ?>"/>
      <br>
-  <button name="submit" value="Submit" class="btn btn-primary">Submit</button>
+  <button id="submit" type="submit" class="btn btn-primary">Submit</button>
   <?php if (!is_null($id)){
   echo  '<button name="clone" value="Clone" class="btn btn-default">Clone</button>';
 	}
