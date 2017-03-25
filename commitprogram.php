@@ -23,7 +23,8 @@ $user = $_SESSION['user'];
 include('header.html');
 ?>
 <div style="padding:10px">
-Welcome <br>
+
+You submitted the following: <br><br>
 
 <?php 
 
@@ -46,12 +47,12 @@ print "<br>";
 //echo "Source: ",$_POST["source"]; 
 //print "<br>";
 echo "Description: ",$_POST["description"];
-print "<br>";
+print "<br><br>";
 
 $id="";
 if (isset($_POST['id']))
  { 
-	echo $_POST['id'];
+	//echo $_POST['id'];
  // confirm that the 'id' value is a valid integer before getting the form data
  	if (is_numeric($_POST['id']))
  	{
@@ -76,37 +77,47 @@ $zip = $conn->real_escape_string($_POST["zip"]);
 //$source = $conn->real_escape_string($_POST["source"]);
 $description = $conn->real_escape_string($_POST["description"]);
 
-	if ($id == "" or ($clone=="Clone")){
+if ($id == "" or ($clone=="Clone")){
 //need to check if values are blank, validate form data in submit program page??
 	$sql = "INSERT INTO events_all.programtbl (title, subtitle, address, phone, sd, ed, user, description, type, zip)
 	VALUES ('$title', '$subtitle', '$address', '$phone', '$sd','$ed', '$user', '$description', '$type', '$zip')";
-	if ($conn->query($sql) === TRUE) {
-	    echo "\nNew record created successfully";
-$to = "vikramkhalsa@gmail.com";
-$subject = "New BayAreaKirtan Program Submitted";
-$body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted: 
-	\n\n Title: %s \n Subtitle: %s \n $address %s\n  Phone: %s\n Start: %s\n End: %s\n  User: %s\n Description: %s \n\n 
-	To moderate, visit: http://sikh.events/programsadmin.php",
-	$title, $subtitle, $address, $phone, $sd,$ed, $user, $description );
+	if ($conn->query($sql) === TRUE) 
+		{
+		echo "<div class='alert alert-success' role='alert'>New event submitted successfully! <br>";
+		
+		$to = "vsk@sikh.events";
+		$subject = "New BayAreaKirtan Program Submitted";
+		$body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted: 
+		\n\n Title: %s \n Subtitle: %s \n $address %s\n  Phone: %s\n Start: %s\n End: %s\n  User: %s\n Description: %s \n\n 
+		To moderate, visit: http://sikh.events/programsadmin.php",
+		$title, $subtitle, $address, $phone, $sd,$ed, $user, $description );
 
- if (mail($to, $subject, $body)) {
-   echo("<p>Your submission has been sent for moderation.</p>");
-  } else {
-   echo("<p>Failed to send moderation request.</p>");
-  }
+	 	if (mail($to, $subject, $body)) 
+	 	{
+	   	echo("<p>Your submission has been sent for moderation.</p>");
+	  	} 
+	  	else 
+	  	{
+	  	 echo("<p>Failed to send moderation request.</p>");
+	  	}
 
-
-	} else {
-	    echo "Error: " . $sql . "<br>" . $conn->error;
+		echo "</div>";
+	}
+	else 
+	{
+	    echo "<div class='alert alert-danger' role='alert'>Error: ". $conn->error;
+	    print "<br>Please try again.</div>";
 	}
 
-} else {
+} 
+else 
+{
 	$sql = "UPDATE events_all.programtbl SET title ='$title', subtitle ='$subtitle', address = '$address', phone ='$phone', 
 	sd = '$sd', ed ='$ed', user = '$user', description ='$description', type ='$type', zip='$zip', approved = 1 WHERE id = '$id'";
 		if ($conn->query($sql) === TRUE) {
-	    echo "\nRecord updated successfully";
+	    echo "<div class='alert alert-info' role='alert'>Event updated successfully!<br></div>";
 	} else {
-	    echo "Error: " . $sql . "<br>" . $conn->error;
+	    echo "<div class='alert alert-danger' role='alert'> Error: " . $sql . "<br>" . $conn->error."</div>";
 	}
 
 }
