@@ -63,6 +63,7 @@ $( "#location" ).on( "autocompleteselect", function( event, ui ) {
       source: locNames
     });
 
+$("[required]:not(#sd1):not(#sd2)").before("<span style='color:red'>*</span>");
 
 $("#submit").click(function(event){
 //VALIDATE FORM
