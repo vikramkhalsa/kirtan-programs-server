@@ -14,12 +14,50 @@ session_start();
  <link href="navbar.css" rel="stylesheet">
 
 <script type="text/javascript">
-function showDescription(id){
-    //var desc = document.getElementById(id);
-    //var value =  desc.innerHTML;
-     //alert(id);
-    $('#myModal').find(".modal-body").html(id);// = id;
+function showDescription(el){
+     var val = el.getAttribute("val");
+    $('#myModal').find(".modal-body").html(val);
     $('#myModal').modal();
+}
+
+function downloadiCal(id){
+    var cell = $('#'+id);
+    var title = cell.find('.programTitle').html();
+    var addr = cell.find('a').html();
+    var start = cell.find('.sd').attr("start");
+    var desc = cell.find('.infoBtn').attr("val");
+    var end = cell.find('.sd').attr("end");
+  
+    var filedata =""; 
+var header = "BEGIN:VCALENDAR\nVERSION:2.0\nMETHOD:PUBLISH\nPRODID:-//sikh.events//NONSGML DDay.iCal 1.0//EN\nBEGIN:VEVENT\n";
+var sd = "DTSTART:" + start + "\n";
+var ed = "DTEND:" + end + "\n";
+var loc = "LOCATION:" +addr + "\n";
+var sum = "SUMMARY:"+title + "\n";
+var uid = "UID:" + 123 + "\n";
+var des = "DESCRIPTION:" + desc + "\n"; 
+var footer = "END:VEVENT\nEND:VCALENDAR";
+
+filedata = header + sd + ed + loc + sum + uid + des +footer;
+
+save("sikhevent.ics", filedata);
+//window.open( "data:text/calendar;charset=utf8," + escape( filedata ) , "sikhevent.ics");
+
+}
+
+function save(filename, data) {
+    var blob = new Blob([data], {type: 'text/calendar'});
+    if(window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveBlob(blob, filename);
+    }
+    else{
+        var elem = window.document.createElement('a');
+        elem.href = window.URL.createObjectURL(blob);
+        elem.download = filename;        
+        document.body.appendChild(elem);
+        elem.click();        
+        document.body.removeChild(elem);
+    }
 }
 </script>
 
@@ -35,7 +73,6 @@ function showDescription(id){
         please click <a href="submitprogram.php"> Submit a program. </a>
          You will be asked to log in or create a user account. </p>
 </div>
-
 <?php
 
 // connect to the database
@@ -62,19 +99,22 @@ echo "<div>";
     
 
     foreach($array as $value){
-        echo '<div class="cell">
-        <div style="width:30%; float:left; font-size:1.1em;  top: 50%; ">';
-        $sdate = strtotime($value['sd']);
+        echo '<div class="cell" id="'.$value['id'].'">
+        <div class="left" style="width:30%; float:left; font-size:1.1em;  top: 50%; ">';
+        $sdate = strtotime($value['sd']); // date('D M d Y H:i:s -0000', $sdate)
+        $edate = strtotime($value['ed']);
+        echo '<div class="sd" start="'.date('Ymd\THis', $sdate).'" end="'.date('Ymd\THis', $edate).'">'; //saving in this format for export to iCal
         echo date('D, M j', $sdate);
         echo "<br><br>";
         echo date('g:ia', $sdate).' to ';
-        $edate = strtotime($value['ed']);
         echo "<br>";
         echo date('g:ia', $edate);
         $desc = str_replace("'", "\'", $value["description"]);
-        echo '<br> <button class="infoBtn" onClick="showDescription(\''.$desc.'\')"><span class="glyphicon glyphicon-info-sign" aria-hidden="true" aria-label="description"></span></button>';
+        echo "</div>";
+        echo '<br> <button class="infoBtn" onClick="showDescription(this)" val="'.$desc.'""><span class="glyphicon glyphicon-info-sign" aria-hidden="true" aria-label="description"></span></button>';
+        echo '<button class="infoBtn" onclick="downloadiCal('.$value['id'].')"><span class="glyphicon glyphicon-calendar" aria-hidden="true" aria-label="Export to Calendar"></span></button>';
         echo '</div> 
-        <div style="width:70%; float:left;">
+        <div class="right" style="width:70%; float:left;">
         <div class="programTitle">';
         echo $value["title"];
         echo'</div><br><div class="programSubtitle">';

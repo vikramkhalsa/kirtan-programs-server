@@ -28,49 +28,47 @@ if ($_SESSION['user'] == null){
  <link href="navbar.css" rel="stylesheet">
  <script type="text/javascript">
   var locations = null;
-  var locNames = [];
+ // var locNames = [];
+
+    <?php 
+//var data = // connect to the database
+    include('config.php');
+     $sql = "SELECT * FROM events_all.locationtbl";   
+     $result = mysqli_query($conn, $sql);
+    $array = array();
+    $names = array();
+    while($row=mysqli_fetch_assoc($result))
+    {
+        $array[$row["name"]] = $row;
+        $names[] = $row["name"];
+    }
+print "var data ='".json_encode($array)."';\n";
+print "var locNames = ".json_encode($names).";\n";
+ mysqli_close($conn);
+    ?>
+
 $(document).ready(function () {
 
-
-    $.getJSON('locations.json', function (data) {
-  locations = data;
   var select = document.createElement("select");
-//var locations = json.parse(loc);
- for (var key in locations)
-{
-  locNames.push(key);
-  //if (!locations.hasOwnProperty(key)) {
-        //The current property is not a direct property of p
-       // continue;
-   // }
-    //var option = document.createElement("option");
-   // option.value = locations[key];
-  //option.text = locations[key];
- //select.appendChild(option);
-}
-//var element = document.getElementById("a");
-//element.appendChild(select);
-       });
+  locations = JSON.parse(data);
 
 $( "#location" ).on( "autocompleteselect", function( event, ui ) {
   var key = ui.item.label;
-  $("#address").val(locations[key].Address);
-  $("#zip").val(locations[key].Zip);
+  $("#address").val(locations[key].address);
+  $("#zip").val(locations[key].zip);
+  $("#phone").val(locations[key].phone);
 } );
 
     $("#location").autocomplete({
       source: locNames
     });
 
-$("[required]").before("<span style='color:red'>*</span>");
 
 $("#submit").click(function(event){
 //VALIDATE FORM
-var input = document.getElementById("#title")
-
-
+var input = document.getElementById("#title");
    // Valid input field for browsers which don't support `pattern` attribute.
-}
+//}
 //check phone number
 //var phonenum = $("#phone").val();
 //phonenum = phonenum.replace("-", "");
@@ -78,12 +76,9 @@ var input = document.getElementById("#title")
 //check/fix  dates and don't submit if they are invalid!~
 //alert(phonenum);
 
-//style invalid controls
-
-//alert("clicked!");
-
+//style invalid controls only after submitting
  var form= $(this).closest('#addprogram');
-var ips =  form.find('[required]')
+var ips =  form.find('[required]');
  ips.addClass('notvalid');
 });
 
@@ -98,7 +93,7 @@ var ips =  form.find('[required]')
 function convertDates(){
 var form = document.getElementById("addProgram");
 var sd= document.getElementById("sd1");
-var ed = document.getElementById("sd2");
+var ed = document.getElementById("sd2");  
 var sdate = new Date(sd.value).toISOString();
 var edate = new Date(ed.value).toISOString();
 sd.value = sdate;
@@ -113,17 +108,15 @@ form.submit();
 <style>
 
 .notvalid{
-	border-color:red;
-}
+ box-shadow: 0 0 3px 1px red }
+
+  
 /*input[required]:invalid:focus { box-shadow: 0 0 3px 1px red }*/
 
-input[required]:valid{
-	border-color: green;
+.notvalid:valid{
+box-shadow: 0 0 3px 1px green }
 }
 
-input[required]:after{
-	content:'*';
-}
 </style>
 
   </head>
@@ -182,18 +175,20 @@ Welcome! Please submit a program by filling out the fields below.
    
 
   <label for="sd">Start Date and Time:</label>
-  <div class="input-group" required>
+  <span style='color:red'>*</span>  
+  <div class="input-group">
   <input type="text" name="sd" value="<?php echo $sd; ?>" id="sd1" class="form-control" placeholder="yyyy-mm-dd hh:mm"
-  pattern="^[0-9]+-[0-9]+-[0-9]+\s[0-9]+:[0-9]+$" required>
+  pattern="^[0-9]{4}-[0-9]+-[0-9]+\s[0-9]+:[0-9]{2}:?[0-9]*$" required>
   <div class="input-group-addon" onclick="javascript:NewCssCal('sd1','yyyyMMdd','dropdown',true,'24')">
     <span class="glyphicon glyphicon-calendar"  style="cursor:pointer"></span>
    </div>
  </div><br>
 
   <label for="ed">End Date and Time:</label>
+          <span style='color:red'>*</span>  
     <div class="input-group" >
   <input type="text" name="ed" value="<?php echo $ed; ?>" id="sd2" class="form-control" placeholder="yyyy-mm-dd hh:mm" 
-    pattern="^[0-9]+-[0-9]+-[0-9]+\s[0-9]+:[0-9]+$">
+    pattern="^[0-9]{4}-[0-9]+-[0-9]+\s[0-9]+:[0-9]{2}:?[0-9]*$" required>
    <div class="input-group-addon" onclick="javascript:NewCssCal('sd2','yyyyMMdd','dropdown',true,'24')">
     <span class="glyphicon glyphicon-calendar"  style="cursor:pointer"></span>
    </div>
