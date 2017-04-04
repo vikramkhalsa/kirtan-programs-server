@@ -17,7 +17,7 @@ if ($_SESSION['user'] == null){
 <html>
 <head>
 <title>Submit a Program</title>
-    <script src="datetimepicker_css.js"></script>
+ <script src="datetimepicker_css.js"></script>
     <meta name="viewport" content="user-scalable=yes, width=device-width" />
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
@@ -26,12 +26,15 @@ if ($_SESSION['user'] == null){
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
  <link href="navbar.css" rel="stylesheet">
+ <script src="jquery-ui-timepicker-addon.js"></script>
+ <link href="jquery-ui-timepicker-addon.css" rel="stylesheet">
+
  <script type="text/javascript">
   var locations = null;
  // var locNames = [];
 
     <?php 
-//var data = // connect to the database
+
     include('config.php');
      $sql = "SELECT * FROM events_all.locationtbl";   
      $result = mysqli_query($conn, $sql);
@@ -47,7 +50,59 @@ print "var locNames = ".json_encode($names).";\n";
  mysqli_close($conn);
     ?>
 
+function setTimes(prefix){
+
+  var sdate = $("#" + prefix + "d").val();
+var stime = $("#"+prefix + "t").val();
+var sm = $("#s" + prefix +"m").val();
+//handle midnight and noon still!!! use val for 12 =0
+var hrs = parseInt(stime.substring(0,2));
+
+if (sm=="PM"){
+  if (hrs < 12)
+    stime = (hrs + 12) + stime.substring(2,5);
+}else {
+if (hrs >=12)
+    stime = (hrs -12) + stime.substring(2,5);
+}
+
+var date = sdate + " " + stime;
+$("#" + prefix + "dfull").val(date);
+
+}
+
+
 $(document).ready(function () {
+
+$("#sd1").datetimepicker({
+  controlType: 'select',
+  timeFormat: 'hh:mm tt',
+  dateFormat: 'yy-mm-dd',
+  stepMinute: 15,
+  oneLine: true,
+  altField: "#sd",
+  altFieldTimeOnly: false,
+  altFormat: "yy-mm-dd",
+  altTimeFormat: "HH:mm",
+});
+
+$("#ed1").datetimepicker({
+  controlType: 'select',
+  timeFormat: 'hh:mm tt',
+  dateFormat: 'yy-mm-dd',
+  stepMinute: 15,
+  oneLine: true,
+  altField: "#ed",
+  altFieldTimeOnly: false,
+  altFormat: "yy-mm-dd",
+  altTimeFormat: "HH:mm",
+});
+
+/*$("#sd1").on("change", function(){
+  var time = $(this).datetimepicker('getDate');
+  time = time.setHours(time.getHours() + 2);
+ // $("#ed1").datetimepicker('setDate', time);
+})*/
 
   var select = document.createElement("select");
   locations = JSON.parse(data);
@@ -63,9 +118,10 @@ $( "#location" ).on( "autocompleteselect", function( event, ui ) {
       source: locNames
     });
 
-$("[required]:not(#sd1):not(#sd2)").before("<span style='color:red'>*</span>");
+$("[required]").before("<span style='color:red'>*</span>");
 
-$("#submit").click(function(event){
+
+/*$("#submit").click(function(event){
 //VALIDATE FORM
 var input = document.getElementById("#title");
    // Valid input field for browsers which don't support `pattern` attribute.
@@ -81,7 +137,9 @@ var input = document.getElementById("#title");
  var form= $(this).closest('#addprogram');
 var ips =  form.find('[required]');
  ips.addClass('notvalid');
-});
+
+
+});*/
 
 
 
@@ -90,11 +148,33 @@ var ips =  form.find('[required]');
 
     });
 
+function submitForm(){
+  //VALIDATE FORM
+
+var input = document.getElementById("#title");
+   // Valid input field for browsers which don't support `pattern` attribute.
+//}
+//check phone number
+//var phonenum = $("#phone").val();
+//phonenum = phonenum.replace("-", "");
+
+//check/fix  dates and don't submit if they are invalid!~
+//alert(phonenum);
+
+//style invalid controls only after submitting
+ var form= $(this).closest('#addprogram');
+var ips =  form.find('[required]');
+ ips.addClass('notvalid');
+
+ //setTimes("s");
+ //setTimes("e");
+}
+
 
 function convertDates(){
 var form = document.getElementById("addProgram");
 var sd= document.getElementById("sd1");
-var ed = document.getElementById("sd2");  
+var ed = document.getElementById("ed1");  
 var sdate = new Date(sd.value).toISOString();
 var edate = new Date(ed.value).toISOString();
 sd.value = sdate;
@@ -156,7 +236,7 @@ echo $id;
 Welcome! Please submit a program by filling out the fields below. 
 <br><br>
 
-<form id="addprogram" action="commitprogram.php" method="post" class="form-group">
+<form id="addprogram" action="commitprogram.php" method="post" class="form-group" onsubmit="submitForm()">
   <div class="row">
     <div class="col-sm-6">
   <label for="title">Title: </label>
@@ -172,28 +252,24 @@ Welcome! Please submit a program by filling out the fields below.
   <input type="text" id="zip" name="zip" value="<?php echo $zip; ?>" class="form-control" required maxlength=10 placeholder="12345" pattern="[0-9]{5}"><br>
   
   <label for="phone">Phone Number:</label>
-  <input type="tel" name="phone" id="phone" value="<?php echo  $phone; ?>" class="form-control" maxlength=16 placeholder="1234567890"><br>
-   
+  <input type="tel" name="phone" id="phone" value="<?php echo  $phone; ?>" class="form-control" maxlength=16 placeholder="1234567890"><br>  
 
-  <label for="sd">Start Date and Time:</label>
-  <span style='color:red'>*</span>  
-  <div class="input-group">
-  <input type="text" name="sd" value="<?php echo $sd; ?>" id="sd1" class="form-control" placeholder="yyyy-mm-dd hh:mm"
-  pattern="^[0-9]{4}-[0-9]+-[0-9]+\s[0-9]+:[0-9]{2}:?[0-9]*$" required>
-  <div class="input-group-addon" onclick="javascript:NewCssCal('sd1','yyyyMMdd','dropdown',true,'24')">
-    <span class="glyphicon glyphicon-calendar"  style="cursor:pointer"></span>
-   </div>
- </div><br>
+
+<input type='hidden' name='sd' id='sdfull'>
+<input type='hidden' name='ed' id='edfull'>
+
+
+   <label for="sd">Start Date and Time:</label>
+  <input type="text" name="sd1" value="<?php echo $sd; ?>" id="sd1" class="form-control" placeholder="yyyy-mm-dd hh:mm pm"
+  pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}" required>
+<br>
 
   <label for="ed">End Date and Time:</label>
-          <span style='color:red'>*</span>  
-    <div class="input-group" >
-  <input type="text" name="ed" value="<?php echo $ed; ?>" id="sd2" class="form-control" placeholder="yyyy-mm-dd hh:mm" 
-    pattern="^[0-9]{4}-[0-9]+-[0-9]+\s[0-9]+:[0-9]{2}:?[0-9]*$" required>
-   <div class="input-group-addon" onclick="javascript:NewCssCal('sd2','yyyyMMdd','dropdown',true,'24')">
-    <span class="glyphicon glyphicon-calendar"  style="cursor:pointer"></span>
-   </div>
- </div><br>
+  <input type="text" name="ed1" value="<?php echo $ed; ?>" id="ed1" class="form-control" placeholder="yyyy-mm-dd hh:mm am" 
+    pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}">
+
+
+ <br>
 <label for="type">Event Type:</label>
 <select name="type" class="form-control" value="<?php echo $type; ?>">
 <option name=one value=kirtan selected> Kirtan </option>
@@ -216,7 +292,7 @@ Welcome! Please submit a program by filling out the fields below.
   <button id="submit" type="submit" class="btn btn-primary">Submit</button>
   <?php if (!is_null($id)){
   echo  '<button name="clone" value="Clone" class="btn btn-default">Clone</button>';
-	}
+  }
    ?>
 
 </form> 
@@ -224,4 +300,6 @@ Welcome! Please submit a program by filling out the fields below.
 </div>
 
 </body>
+
+
 </html>
