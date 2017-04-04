@@ -224,7 +224,9 @@ echo $id;
  $address = $arr["address"];
  $phone = $arr["phone"];
  $sd = $arr["sd"];
+ $sd1 = date_format(new DateTime($sd),'Y-m-d h:i a');
  $ed = $arr["ed"];
+ $ed1 = date_format(new DateTime($ed),'Y-m-d h:i a');
  $type = $arr["type"];
  $zip = $arr["zip"];
  //$source = $arr["source"];
@@ -255,17 +257,17 @@ Welcome! Please submit a program by filling out the fields below.
   <input type="tel" name="phone" id="phone" value="<?php echo  $phone; ?>" class="form-control" maxlength=16 placeholder="1234567890"><br>  
 
 
-<input type='hidden' name='sd' id='sdfull'>
-<input type='hidden' name='ed' id='edfull'>
+<input type='hidden' name='sd' id='sd' value="<?php echo $sd; ?>">
+<input type='hidden' name='ed' id='ed' value = "<?php echo $ed; ?>">
 
 
-   <label for="sd">Start Date and Time:</label>
-  <input type="text" name="sd1" value="<?php echo $sd; ?>" id="sd1" class="form-control" placeholder="yyyy-mm-dd hh:mm pm"
+   <label for="sd1">Start Date and Time:</label>
+  <input type="text" name="sd1" value="<?php echo $sd1; ?>" id="sd1" class="form-control" placeholder="yyyy-mm-dd hh:mm pm"
   pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}" required>
 <br>
 
-  <label for="ed">End Date and Time:</label>
-  <input type="text" name="ed1" value="<?php echo $ed; ?>" id="ed1" class="form-control" placeholder="yyyy-mm-dd hh:mm am" 
+  <label for="ed1">End Date and Time:</label>
+  <input type="text" name="ed1" value="<?php echo $ed1; ?>" id="ed1" class="form-control" placeholder="yyyy-mm-dd hh:mm am" 
     pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}">
 
 
