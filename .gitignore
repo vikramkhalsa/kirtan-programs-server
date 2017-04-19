@@ -2,5 +2,4 @@ $ cat .gitignore
 
 config.php
 flights.php
-test.php
 password_protect.php
