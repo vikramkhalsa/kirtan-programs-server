@@ -74,7 +74,32 @@ $("#" + prefix + "dfull").val(date);
 
 $(document).ready(function () {
 
+$("#sd1").datetimepicker({
+  controlType: 'select',
+  timeFormat: 'hh:mm tt',
+  dateFormat: 'yy-mm-dd',
+  stepMinute: 15,
+  oneLine: true,
+  altField: "#sd",
+  altFieldTimeOnly: false,
+  altFormat: "yy-mm-dd",
+  altTimeFormat: "HH:mm",
+});
 
+
+$("#ed1").datetimepicker({
+  controlType: 'select',
+  timeFormat: 'hh:mm tt',
+  dateFormat: 'yy-mm-dd',
+  stepMinute: 15,
+  oneLine: true,
+  altField: "#ed",
+  altFieldTimeOnly: false,
+  altFormat: "yy-mm-dd",
+  altTimeFormat: "HH:mm",
+});
+
+/*
 $("#st").timepicker({
   controlType: 'select',
   timeFormat: 'hh:mm tt',
@@ -94,15 +119,23 @@ $("#et").timepicker({
 
 $("#sd2").datepicker({
   dateFormat: 'yy-mm-dd',
-});
+});*/
 
 $("#ed2").datepicker({
-  dateFormat: 'yy-mm-dd',
+  dateFormat: 'yy-mm-dd'
 });
 
 
-$("#sd2").on("change", function(){
-  $('#ed2').val($(this).val());
+/*$('#repeat').on('change', function(){
+
+var tim = $('#ed1').datetimepicker('getDate')- $('#sd1').datetimepicker('getDate');
+  var mins = tim/(1000*60);
+
+
+});*/
+
+$("#sd1").on("change", function(){
+  $('#ed1').val($(this).val());
   //var time = $(this).datetimepicker('getDate');
   //time = time.setHours(time.getHours() + 2);
  // $("#ed1").datetimepicker('setDate', time);
@@ -142,14 +175,23 @@ var input = document.getElementById("#title");
 var ips =  form.find('[required]');
  ips.addClass('notvalid');
 
-var sdt = $('#sd2').val() + $('#sd').val();
-var edt = $('#ed2').val() + $('#ed').val();
-$('#sd').val(sdt);
-$('#ed').val(edt);
+//var sdt = $('#sd2').val() + $('#sd').val();
+//var edt = $('#ed2').val() + $('#ed').val();
+//$('#sd').val(sdt);
+//$('#ed').val(edt);
 
-var repeat = $('#repeat').prop('checked').val();
+var repeat = $('#repeat').is(":checked");
 if(repeat){
+  var dur=
   $('#repeat').val("FREQ=DAILY");
+ // alert($('#sd1').datetimepicker('getDate')- $('#ed1').datetimepicker('getDate'));
+  var tim = $('#ed1').datetimepicker('getDate')- $('#sd1').datetimepicker('getDate');
+  var mins = tim/(1000*60);
+    $('#repeat').val("FREQ=DAILY;DURATION="+mins);
+var newed = $('#ed2').val();
+var oldet =$('#ed').val().slice(10)
+$('#ed').val(newed+ oldet);
+
 }
  //setTimes("s");
  //setTimes("e");
@@ -242,19 +284,24 @@ Welcome! Please submit a program by filling out the fields below.
   <input type="tel" name="phone" id="phone" value="<?php echo  $phone; ?>" class="form-control" maxlength=16 placeholder="1234567890"><br>  
 
 
-<input type='text' name='sd' id='sd' value="<?php echo $sd; ?>">
-<input type='text' name='ed' id='ed' value = "<?php echo $ed; ?>">
-Start Time
-  <input type="text" name="st" id="st" class="form-control">
-  End Time
-    <input type="text" name="et" id="et" class="form-control">
-    Date
-     <input type="text" name="sd2" id="sd2" class="form-control">
+
+<input type='hidden' name='sd' id='sd' value="<?php echo $sd; ?>">
+<input type='hidden' name='ed' id='ed' value = "<?php echo $ed; ?>">
+   <label for="sd1">Start Date and Time:</label>
+  <input type="text" name="sd1" value="<?php echo $sd1; ?>" id="sd1" class="form-control" placeholder="yyyy-mm-dd hh:mm pm"
+  pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}" required>
+<br>
+
+  <label for="ed1">End Date and Time:</label>
+  <input type="text" name="ed1" value="<?php echo $ed1; ?>" id="ed1" class="form-control" placeholder="yyyy-mm-dd hh:mm am" 
+    pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}">
+
+
    
 Repeat Daily
-<input type="checkbox" id="repeat"  value="repeat">
+<input type="checkbox" id="repeat" name="repeat" value="">
 Until:
-    <input type="text" name="ed2" id="ed2" class="form-control">
+    <input type="text" id="ed2" class="form-control">
 
 
  <br>

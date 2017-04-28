@@ -33,14 +33,11 @@ function getRecurEvents($event){
 
 $events = array();
 
-//$rulestr = $event['rrule'];//"FREQ=DAILY";//;COUNT=5;INTERVAL=3";
-$rulestr = "FREQ=DAILY;UNTIL=2017-05-10";//;COUNT=5;INTERVAL=3";
+$rulestr = $event['rrule'];//"FREQ=DAILY";//;COUNT=5;INTERVAL=3";
+//$rulestr = "FREQ=DAILY;DURATION=60";//;COUNT=5;INTERVAL=3";
 $startdate = new DateTime($event['sd']);
 $enddate = new DateTime($event['ed']);
-$duration = "2:30";
-$duration = explode(':',$duration);
-$durHrs = $duration[0];
-$durMins = $duration[1];
+
   // Recurring event, parse RRULE and add appropriate duplicate events
 $rrules = array();
 $rruleStrings = explode(';', $rulestr);
@@ -52,6 +49,15 @@ foreach ($rruleStrings as $s) {
 // Get frequency
 $frequency = $rrules['FREQ'];            
 
+
+ //get duration
+   $duration = (isset($rrules['DURATION']) && $rrules['DURATION'] !== '')
+                    ? $rrules['DURATION']
+                    : "120";
+//$duration = explode(':',$duration);
+//$durHrs = $duration[0];
+//$durMins = $duration[1];
+
      // Get Interval
       $interval = (isset($rrules['INTERVAL']) && $rrules['INTERVAL'] !== '')
                     ? $rrules['INTERVAL']
@@ -62,31 +68,34 @@ $frequency = $rrules['FREQ'];
                     : 1;
 
 $until=$enddate;
-                if (isset($rrules['UNTIL'])) {
+$currdate = new DateTime(null,(new DateTimeZone("America/Los_Angeles")));
+              //  if (isset($rrules['UNTIL'])) {
                     // Get Until
-                    $until = new DateTime($rrules['UNTIL']);    
-                    }           
+                //    $until = new DateTime($rrules['UNTIL']);    
+                  //  }           
  // Decide how often to add events and do so
                 switch ($frequency) {
                     case 'DAILY':
                       $newsd = $startdate;//->add(new DateInterval('P'.$interval.'D'));
                       $tempd = clone $newsd;
-                       $newed = $tempd->add(new DateInterval('PT'.$durHrs.'H'.$durMins.'M'));
-                    while ($newsd<=$until){
+                       $newed = $tempd->add(new DateInterval('PT'.$duration.'M'));
+                    while ($newed<=$until){
                       //for($i=0;$i<$count;$i++){
+                      if($newed>=$currdate){
                       $tempevent = $event;
                       $tempevent['sd'] = $newsd->format('Y-m-d H:i'); 
                       $tempevent['ed'] = $newed->format('Y-m-d H:i');
-                      echo $tempevent['sd'].' '.$tempevent['ed'];
-                      echo '<br>';
+                     // echo $tempevent['sd'].' '.$tempevent['ed'];
+                      //echo '<br>';
                       $events[] = $tempevent;
+                    }
 
                       //echo json_encode($tempevent);
                         //echo $newsd->format('Y-m-d H:i');
                         //echo '<br>';
                         $newsd = $startdate->add(new DateInterval('P'.$interval.'D'));
                               $tempd = clone $newsd;
-                         $newed = $tempd->add(new DateInterval('PT'.$durHrs.'H'.$durMins.'M'));
+                         $newed = $tempd->add(new DateInterval('PT'.$duration.'M'));
                       } 
                     break;
                }

@@ -49,6 +49,9 @@ print "<br>";
 echo "Description: ",$_POST["description"];
 print "<br><br>";
 
+//echo "Repeat",$_POST['repeat'];
+
+
 $id="";
 if (isset($_POST['id']))
  { 
@@ -77,10 +80,13 @@ $zip = $conn->real_escape_string($_POST["zip"]);
 //$source = $conn->real_escape_string($_POST["source"]);
 $description = $conn->real_escape_string($_POST["description"]);
 
+$rrule= $conn->real_escape_string($_POST["repeat"]);
+
+
 if ($id == "" or ($clone=="Clone")){
 //need to check if values are blank, validate form data in submit program page??
-	$sql = "INSERT INTO events_all.programtbl (title, subtitle, address, phone, sd, ed, user, description, type, zip)
-	VALUES ('$title', '$subtitle', '$address', '$phone', '$sd','$ed', '$user', '$description', '$type', '$zip')";
+	$sql = "INSERT INTO events_all.programtbl (title, subtitle, address, phone, sd, ed, user, description, type, zip, rrule)
+	VALUES ('$title', '$subtitle', '$address', '$phone', '$sd','$ed', '$user', '$description', '$type', '$zip', '$rrule')";
 	if ($conn->query($sql) === TRUE) 
 		{
 		echo "<div class='alert alert-success' role='alert'>New event submitted successfully! <br>";
