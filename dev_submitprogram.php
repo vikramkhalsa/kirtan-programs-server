@@ -99,40 +99,19 @@ $("#ed1").datetimepicker({
   altTimeFormat: "HH:mm",
 });
 
-/*
-$("#st").timepicker({
-  controlType: 'select',
-  timeFormat: 'hh:mm tt',
-  stepMinute: 15,
-  oneLine: true,
-  altField: "#sd",
-  altTimeFormat: " HH:mm",
-});
-$("#et").timepicker({
-  controlType: 'select',
-  timeFormat: 'hh:mm tt',
-  stepMinute: 15,
-  oneLine: true,
-  altField: "#ed",
-  altTimeFormat: " HH:mm",
-});
-
-$("#sd2").datepicker({
-  dateFormat: 'yy-mm-dd',
-});*/
-
 $("#ed2").datepicker({
   dateFormat: 'yy-mm-dd'
 });
 
 
-/*$('#repeat').on('change', function(){
-
-var tim = $('#ed1').datetimepicker('getDate')- $('#sd1').datetimepicker('getDate');
-  var mins = tim/(1000*60);
-
-
-});*/
+$('#repeat').on('change', function(){
+if ($(this).is(":checked")){
+  $('#recurrence-panel').show();
+}
+else{
+   $('#recurrence-panel').hide();
+}
+});
 
 $("#sd1").on("change", function(){
   $('#ed1').val($(this).val());
@@ -158,9 +137,6 @@ $( "#location" ).on( "autocompleteselect", function( event, ui ) {
 $("[required]").before("<span style='color:red'>*</span>");
 
 
-/*$("#submit").click(function(event){
-});*/
-
     });
 
 function submitForm(){
@@ -175,16 +151,9 @@ var input = document.getElementById("#title");
 var ips =  form.find('[required]');
  ips.addClass('notvalid');
 
-//var sdt = $('#sd2').val() + $('#sd').val();
-//var edt = $('#ed2').val() + $('#ed').val();
-//$('#sd').val(sdt);
-//$('#ed').val(edt);
 
 var repeat = $('#repeat').is(":checked");
 if(repeat){
-  var dur=
-  $('#repeat').val("FREQ=DAILY");
- // alert($('#sd1').datetimepicker('getDate')- $('#ed1').datetimepicker('getDate'));
   var tim = $('#ed1').datetimepicker('getDate')- $('#sd1').datetimepicker('getDate');
   var mins = tim/(1000*60);
     $('#repeat').val("FREQ=DAILY;DURATION="+mins);
@@ -193,8 +162,6 @@ var oldet =$('#ed').val().slice(10)
 $('#ed').val(newed+ oldet);
 
 }
- //setTimes("s");
- //setTimes("e");
 }
 
 
@@ -295,14 +262,26 @@ Welcome! Please submit a program by filling out the fields below.
   <label for="ed1">End Date and Time:</label>
   <input type="text" name="ed1" value="<?php echo $ed1; ?>" id="ed1" class="form-control" placeholder="yyyy-mm-dd hh:mm am" 
     pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}">
+<br>
 
-
-   
-Repeat Daily
+   <label for="repeat">Repeat </label>
 <input type="checkbox" id="repeat" name="repeat" value="">
-Until:
-    <input type="text" id="ed2" class="form-control">
+<br>
+ <div style="display: none" id="recurrence-panel">
 
+    <div class="row">
+     <div class="col-xs-6">
+          Frequency
+  <select class="form-control" id="freq">
+  <option value="DAILY" selected>Daily</option>
+  </select>
+     </div>
+     <div class="col-xs-6">
+      Until
+  <input type="text" id="ed2" class="form-control">
+     </div>
+  </div>
+</div>
 
  <br>
 <label for="type">Event Type:</label>

@@ -1,5 +1,19 @@
 <?php
+if(isset($_GET['source'])){
+$src = $_GET['source'];
 
+//if all sources requested, append programs from isangat as well
+if ($src =="isangat"){
+$returned_content = get_data('http://www.isangat.org/json.php');
+echo $returned_content;
+}
+
+if ($src =="ekhalsa"){
+$returned_content = get_data('http://www.sikh.events/source_parser.php');
+echo $returned_content;
+}
+}
+else {
 
 
 // connect to the database
@@ -21,7 +35,7 @@ $sql = $sql." ORDER BY sd ASC";
 
         if ($row['rrule']!=null){
           //echo $row['title'];
-          array_push($array,getRecurEvents($row));
+          $array = array_merge($array,getRecurEvents($row));
         }else {
 
          $array[] = $row;
@@ -29,6 +43,24 @@ $sql = $sql." ORDER BY sd ASC";
     }
 
 echo json_encode($array);
+
+}
+
+
+ function get_data($url) {
+  $ch = curl_init();
+  $timeout = 5;
+  curl_setopt($ch, CURLOPT_URL, $url);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+  $data = curl_exec($ch);
+  curl_close($ch);
+  return $data;
+}
+
+
+
+
 function getRecurEvents($event){
 
 $events = array();
@@ -79,15 +111,19 @@ $currdate = new DateTime(null,(new DateTimeZone("America/Los_Angeles")));
                       $newsd = $startdate;//->add(new DateInterval('P'.$interval.'D'));
                       $tempd = clone $newsd;
                        $newed = $tempd->add(new DateInterval('PT'.$duration.'M'));
+                    
+                    $ii = 0;
                     while ($newed<=$until){
                       //for($i=0;$i<$count;$i++){
                       if($newed>=$currdate){
                       $tempevent = $event;
+                      $tempevent['id'] = $event["id"]."0".$ii;
                       $tempevent['sd'] = $newsd->format('Y-m-d H:i'); 
                       $tempevent['ed'] = $newed->format('Y-m-d H:i');
                      // echo $tempevent['sd'].' '.$tempevent['ed'];
                       //echo '<br>';
                       $events[] = $tempevent;
+                                          $ii++;
                     }
 
                       //echo json_encode($tempevent);

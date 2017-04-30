@@ -68,10 +68,12 @@ function save(filename, data) {
 
     <p>Welcome! Upcoming programs are listed below. 
         We hope to expand to include more Gurdwaras and locations soon. 
-        Download the android app <a href="https://play.google.com/store/apps/details?id=com.vikramkhalsa.isangat"> here. </a>
         If you are hosting a Kirtan event and would like to submit it to this list, 
         please click <a href="submitprogram.php"> Submit a program. </a>
          You will be asked to log in or create a user account. </p>
+         Mobile apps are available for iOS and Android. <br>
+         <a href="https://play.google.com/store/apps/details?id=com.vikramkhalsa.isangat"> <img src="images/googleplay.png" style="width:150px; padding:5px"></a>
+         <a href="https://itunes.apple.com/us/app/sikh-events/id1220078093?mt=8"> <img src="images/appstore.png" style="width:150px; padding:5px"></a>
 </div>
 <?php
 

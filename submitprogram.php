@@ -86,6 +86,7 @@ $("#sd1").datetimepicker({
   altTimeFormat: "HH:mm",
 });
 
+
 $("#ed1").datetimepicker({
   controlType: 'select',
   timeFormat: 'hh:mm tt',
@@ -98,11 +99,26 @@ $("#ed1").datetimepicker({
   altTimeFormat: "HH:mm",
 });
 
-/*$("#sd1").on("change", function(){
-  var time = $(this).datetimepicker('getDate');
-  time = time.setHours(time.getHours() + 2);
+$("#ed2").datepicker({
+  dateFormat: 'yy-mm-dd'
+});
+
+
+$('#repeat').on('change', function(){
+if ($(this).is(":checked")){
+  $('#recurrence-panel').show();
+}
+else{
+   $('#recurrence-panel').hide();
+}
+});
+
+$("#sd1").on("change", function(){
+  $('#ed1').val($(this).val());
+  //var time = $(this).datetimepicker('getDate');
+  //time = time.setHours(time.getHours() + 2);
  // $("#ed1").datetimepicker('setDate', time);
-})*/
+});
 
   var select = document.createElement("select");
   locations = JSON.parse(data);
@@ -121,53 +137,31 @@ $( "#location" ).on( "autocompleteselect", function( event, ui ) {
 $("[required]").before("<span style='color:red'>*</span>");
 
 
-/*$("#submit").click(function(event){
-//VALIDATE FORM
-var input = document.getElementById("#title");
-   // Valid input field for browsers which don't support `pattern` attribute.
-//}
-//check phone number
-//var phonenum = $("#phone").val();
-//phonenum = phonenum.replace("-", "");
-
-//check/fix  dates and don't submit if they are invalid!~
-//alert(phonenum);
-
-//style invalid controls only after submitting
- var form= $(this).closest('#addprogram');
-var ips =  form.find('[required]');
- ips.addClass('notvalid');
-
-
-});*/
-
-
-
-
-
-
     });
 
 function submitForm(){
   //VALIDATE FORM
 
 var input = document.getElementById("#title");
-   // Valid input field for browsers which don't support `pattern` attribute.
-//}
-//check phone number
-//var phonenum = $("#phone").val();
-//phonenum = phonenum.replace("-", "");
 
 //check/fix  dates and don't submit if they are invalid!~
-//alert(phonenum);
 
 //style invalid controls only after submitting
  var form= $(this).closest('#addprogram');
 var ips =  form.find('[required]');
  ips.addClass('notvalid');
 
- //setTimes("s");
- //setTimes("e");
+
+var repeat = $('#repeat').is(":checked");
+if(repeat){
+  var tim = $('#ed1').datetimepicker('getDate')- $('#sd1').datetimepicker('getDate');
+  var mins = tim/(1000*60);
+    $('#repeat').val("FREQ=DAILY;DURATION="+mins);
+var newed = $('#ed2').val();
+var oldet =$('#ed').val().slice(10)
+$('#ed').val(newed+ oldet);
+
+}
 }
 
 
@@ -227,10 +221,40 @@ echo $id;
  $sd1 = date_format(new DateTime($sd),'Y-m-d h:i a');
  $ed = $arr["ed"];
  $ed1 = date_format(new DateTime($ed),'Y-m-d h:i a');
+$ed2 = date_format(new DateTime($ed),'Y-m-d');
  $type = $arr["type"];
  $zip = $arr["zip"];
  //$source = $arr["source"];
  $description = $arr["description"];
+$recurr = ($arr["rrule"] != null && $arr["rrule"] !== '')
+                    ? true
+                    : false;
+
+ $repeat =  ($recurr) ? "checked" : "";
+ $showpanel = ($recurr) ? "" : 'style="display: none"';
+$rrule = $arr['rrule'];
+if ($recurr){
+  $rrules = array();
+$rruleStrings = explode(';', $rrule);
+foreach ($rruleStrings as $s) {
+         list($k, $v) = explode('=', $s);
+           $rrules[$k] = $v;
+         }
+
+          //get duration
+   $duration = (isset($rrules['DURATION']) && $rrules['DURATION'] !== '')
+                    ? $rrules['DURATION']
+                    : "120";
+ //echo "DURATION";
+ echo $duration;
+
+ //update end date 
+  $ed3 = new DateTime($sd);
+  $ed3->add(new DateInterval('PT'.$duration.'M'));
+   $ed1 = date_format($ed3,'Y-m-d h:i a');
+echo $ed1;
+}
+
 }
 }
 ?>
@@ -257,10 +281,9 @@ Welcome! Please submit a program by filling out the fields below.
   <input type="tel" name="phone" id="phone" value="<?php echo  $phone; ?>" class="form-control" maxlength=16 placeholder="1234567890"><br>  
 
 
+
 <input type='hidden' name='sd' id='sd' value="<?php echo $sd; ?>">
 <input type='hidden' name='ed' id='ed' value = "<?php echo $ed; ?>">
-
-
    <label for="sd1">Start Date and Time:</label>
   <input type="text" name="sd1" value="<?php echo $sd1; ?>" id="sd1" class="form-control" placeholder="yyyy-mm-dd hh:mm pm"
   pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}" required>
@@ -269,7 +292,26 @@ Welcome! Please submit a program by filling out the fields below.
   <label for="ed1">End Date and Time:</label>
   <input type="text" name="ed1" value="<?php echo $ed1; ?>" id="ed1" class="form-control" placeholder="yyyy-mm-dd hh:mm am" 
     pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}">
+<br>
 
+   <label for="repeat">Repeat </label>
+<input type="checkbox" id="repeat" name="repeat" value="" <?php echo $repeat; ?> >
+<br>
+ <div <?php echo $showpanel; ?>  id="recurrence-panel">
+
+    <div class="row">
+     <div class="col-xs-6">
+          Frequency
+  <select class="form-control" id="freq">
+  <option value="DAILY" selected>Daily</option>
+  </select>
+     </div>
+     <div class="col-xs-6">
+      Until
+  <input type="text" id="ed2" class="form-control" value="<?php echo $ed2; ?>">
+     </div>
+  </div>
+</div>
 
  <br>
 <label for="type">Event Type:</label>
