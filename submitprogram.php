@@ -156,11 +156,13 @@ var repeat = $('#repeat').is(":checked");
 if(repeat){
   var tim = $('#ed1').datetimepicker('getDate')- $('#sd1').datetimepicker('getDate');
   var mins = tim/(1000*60);
-    $('#repeat').val("FREQ=DAILY;DURATION="+mins);
-var newed = $('#ed2').val();
-var oldet =$('#ed').val().slice(10)
-$('#ed').val(newed+ oldet);
-
+  $('#repeat').val("FREQ=DAILY;DURATION="+mins);
+  var newed = $('#ed2').val();
+  var oldet =$('#ed').val().slice(10)
+  $('#ed').val(newed+ oldet);
+}
+else {
+  $('#repeat').val("");
 }
 }
 

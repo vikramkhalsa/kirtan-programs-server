@@ -76,7 +76,7 @@ function save(filename, data) {
          <a href="https://itunes.apple.com/us/app/sikh-events/id1220078093?mt=8"> <img src="images/appstore.png" style="width:150px; padding:5px"></a>
 </div>
 <?php
-
+/*
 // connect to the database
   include('config.php');
 //programtbl.sd >= DATE(NOW()) AND
@@ -96,6 +96,10 @@ function save(filename, data) {
 //echo $array;
 
  mysqli_close($conn);
+*/
+$contents = file_get_contents('http://www.sikh.events/getprograms.php');
+$array = json_decode($contents, true);
+
 
 echo "<div>"; 
     
