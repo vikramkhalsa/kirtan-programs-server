@@ -8,6 +8,11 @@ session_start();
  echo '<div style="padding:4px; border:1px solid red; color:red;">'.$error.'</div>';
  }
 
+ if ($_SESSION['user'] == null){
+   header("Location:" . "login.php");
+   exit();
+}
+$user = $_SESSION['user'];
 
   // check if the form has been submitted. If it has, process the form and save it to the database
  if (isset($_POST['id']))

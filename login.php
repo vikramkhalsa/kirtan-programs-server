@@ -13,28 +13,27 @@ $user =  $conn->real_escape_string($_POST['username']);
 $p1 =  $_POST['password'];
 
  //$encrypass = password_hash($p1, PASSWORD_DEFAULT);
-  $sql = "SELECT password, type FROM events_all.usertbl WHERE username = '$user'";
-  $result = mysqli_query($conn, $sql);
+ $sql = "SELECT password, type FROM events_all.usertbl WHERE username = '$user'";
+ $result = mysqli_query($conn, $sql);
 
 if ($result->num_rows > 0) {
   $row = $result->fetch_assoc();
- if (password_verify($p1, $row["password"])){
-  //echo "Login was successful. <br>";
-  session_start();
-  $_SESSION["user"] = $user;
-  $_SESSION["usertype"] = $row["type"];
-  header("Location: " . "http://sikh.events/submitprogram.php");
+  if (password_verify($p1, $row["password"])){
+    //echo "Login was successful. <br>";
+    session_start();
+    $_SESSION["user"] = $user;
+    $_SESSION["usertype"] = $row["type"];
+    header("Location: " . "/submitprogram.php");
      exit();
-
- }
- else {
-  echo '<div style="padding:4px; border:1px solid red; color:red;">password is incorrect, please try again. </div>';
- }
-
-}      //check if password matches result
+  }
+  else {
+    echo '<div style="padding:4px; border:1px solid red; color:red;">Username or Password is incorrect, please try again. </div>';
+  }
+}      
 else {
-    echo "username is incorrect <br>";
+      echo '<div style="padding:4px; border:1px solid red; color:red;">Username or Password is incorrect, please try again. </div>';
 }
+
 
 $conn->close();
 
