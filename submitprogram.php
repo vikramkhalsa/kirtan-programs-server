@@ -206,13 +206,13 @@ if (is_numeric($_POST['id']))
 {
 $id = $_POST['id'];
 
-echo $id;
+//echo $id;
 // connect to the database
    include('config.php');
 
  $sql = "SELECT * FROM events_all.programtbl WHERE id = '$id'";
  if ($result = mysqli_query($conn, $sql)){
-  echo "success";
+ // echo "success";
    $arr = $result->fetch_array();
 
  $title = $arr["title"];
@@ -317,13 +317,23 @@ Welcome! Please submit a program by filling out the fields below.
 
  <br>
 <label for="type">Event Type:</label>
-<select name="type" class="form-control" value="<?php echo $type; ?>">
-<option name=one value=kirtan selected> Kirtan </option>
+
+
+<?php $plan = array("kirtan","katha","fundraiser","discussion","samaagam","other"); ?>
+
+<select name="type" class="form-control">
+<?php foreach ($plan as $value) { ?>
+  <option value="<?php echo $value;?>" <?php echo ($value== $type) ? ' selected="selected"' : '';?>><?php echo ucfirst($value);?></option>
+<?php } ?>
+
+
+<!-- <option name=one value=kirtan> Kirtan </option>
 <option name=two value=katha> Katha </option>
 <option name=three value=fundraiser> Fundraiser </option>
 <option name=three value=discussion> Discussion </option>
 <option name=three value=samaagam> Samaagam </option>
-<option name=three value=other> Other </option>
+<option name=three value=other> Other </option> -->
+
 </select></br>
 
  <!--  Source:<br>

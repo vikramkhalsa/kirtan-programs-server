@@ -122,7 +122,7 @@ if ($id == "" or ($clone=="Clone")){
 else 
 {
 	$sql = "UPDATE events_all.programtbl SET title ='$title', subtitle ='$subtitle', address = '$address', phone ='$phone', 
-	sd = '$sd', ed ='$ed', description ='$description', type ='$type', zip='$zip', rrule='$rrule', approved = 1 WHERE id = '$id'";
+	sd = '$sd', ed ='$ed', description ='$description', type ='$type', zip='$zip', rrule='$rrule' WHERE id = '$id'";
 		if ($conn->query($sql) === TRUE) {
 	    echo "<div class='alert alert-info' role='alert'>Event updated successfully!<br></div>";
 	} else {

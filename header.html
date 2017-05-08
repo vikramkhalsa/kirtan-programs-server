@@ -19,7 +19,8 @@ $(document).ready(function() {
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Bay Area Kirtan Programs</a>
+            <a href="#" class="navbar-left"><img src="images/sikhevents_site_text_small.png" width="200px" style="margin-top:9px"></a>
+            <a class="navbar-brand" href="#"></a>
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
@@ -27,6 +28,7 @@ $(document).ready(function() {
               <li><a href="isangat.php">iSangat.org</a></li>
                 <li><a href="ekhalsa.php">eKhalsa.com</a></li>
               <li><a href="submitprogram.php">Submit New Program</a></li>
+              <li><a href="help.php">Help</a></li>
               <?php
             if ($_SESSION['user'] != null)
               {
@@ -39,3 +41,4 @@ $(document).ready(function() {
         </div><!--/.container-fluid -->
       </nav>
 
+<?php include_once("analyticstracking.php") ?>
