@@ -201,7 +201,7 @@ box-shadow: 0 0 3px 1px green }
 <?php 
 include('header.html');
 
-
+$showpanel = 'style="display: none"';
 if (is_numeric($_POST['id'])) 
 {
 $id = $_POST['id'];
@@ -232,8 +232,9 @@ $recurr = ($arr["rrule"] != null && $arr["rrule"] !== '')
                     ? true
                     : false;
 
- $repeat =  ($recurr) ? "checked" : "";
- $showpanel = ($recurr) ? "" : 'style="display: none"';
+ $repeat =  $recurr ? "checked" : "";
+ if ($recurr)
+  $showpanel = "";
 $rrule = $arr['rrule'];
 if ($recurr){
   $rrules = array();

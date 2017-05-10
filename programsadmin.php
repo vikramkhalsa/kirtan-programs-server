@@ -1,11 +1,6 @@
 <?php
 session_start();
 
-//if ($_SESSION['usertype'] != "admin"){
- //  header("Location: " . "http://sikh.events/login.php");
-  // exit();
-//}
-
 if ($_SESSION['user'] == null){
    header("Location:" . "login.php");
    exit();
@@ -90,11 +85,6 @@ echo '<th>Moderate</th></tr>';
           echo '<td>'.$row["user"]."</td>";
         }
 			
-			
-            //echo '<td><a href="submitedit.php?id=' . $row['id'] . '">Approve</a></td>';
-         // echo '<td>',$row["id"],'</td>';
- //echo "<td> <input type='button' value='Approve'/> </td>";
- //echo "<td><form action='submitedit.php' method='POST'><input type='hidden' name='approveID' value='".$row["id"]."'/><input type='submit' name='submit-btn' value='View/Update Details' /><form></td>";
      echo "<td>";
 
 if ($_SESSION['usertype'] == "admin")

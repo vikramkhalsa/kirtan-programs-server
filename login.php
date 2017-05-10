@@ -1,8 +1,9 @@
 <?php 
 if ($error != '')
 {
-echo '<div style="padding:4px; border:1px solid red; color:red;">'.$error.'</div>';
+echo "div class='alert alert-danger' role='alert'>".$error."</div>";
 }
+$loginer = "";
 
 //check if its a post ??
 
@@ -27,11 +28,11 @@ if ($result->num_rows > 0) {
      exit();
   }
   else {
-    echo '<div style="padding:4px; border:1px solid red; color:red;">Username or Password is incorrect, please try again. </div>';
+   $loginer = "<div class='alert alert-danger' role='alert'>Username or Password is incorrect, please try again. </div>";
   }
 }      
 else {
-      echo '<div style="padding:4px; border:1px solid red; color:red;">Username or Password is incorrect, please try again. </div>';
+       $loginer =  "<div class='alert alert-danger' role='alert'>Username or Password is incorrect, please try again. </div>";
 }
 
 
@@ -57,10 +58,11 @@ $conn->close();
  <?php include('header.html'); ?>  
   <div style="padding:10px;">
   Welcome! Please enter your login details below.
-<br>
-<br>
+  <br>
+  <br>
 <div class="row">
     <div class="col-sm-6 col-md-4 col-2">
+        <?php echo $loginer; ?>
 <form id="adduser" action="login.php" method="post" >
   Username:<br>
   <input type="text" name="username" class="form-control"><br> 

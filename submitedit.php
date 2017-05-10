@@ -27,23 +27,15 @@ $user = $_SESSION['user'];
  //$firstname = mysql_real_escape_string(htmlspecialchars($_POST['firstname']));
  //$lastname = mysql_real_escape_string(htmlspecialchars($_POST['lastname']));
  
- // check that firstname/lastname fields are both filled in
- //if ($firstname == '' || $lastname == '')
- //{
- // generate error message
- //$error = 'ERROR: Please fill in all required fields!';
- 
- //error, display form
- //renderForm($id, $firstname, $lastname, $error);
- //}
- //else
- //{
- // save the data to the database
 
 // connect to the database
 	include('config.php');
 
 	$action = $_POST["action"];
+
+
+if ($_SESSION['usertype'] == "admin")
+    {
 
 	if ($action == "approve"){
 	$sql = "UPDATE events_all.programtbl SET approved='1' WHERE id = '$id'";
@@ -51,28 +43,28 @@ $user = $_SESSION['user'];
 	elseif ($action == "disprove"){
 			$sql = "UPDATE events_all.programtbl SET approved='0' WHERE id = '$id'";
 	}
-	elseif ($action == "delete"){
-	$sql = "DELETE FROM events_all.programtbl WHERE id = '$id'";
-	}
 	elseif ($action == "saveloc"){
 	$sql = "SELECT subtitle, address, phone, zip FROM events_all.programtbl where id='$id'";
 	//now insert into location table
 	$result = mysqli_query($conn, $sql);
 
-    while($row=mysqli_fetch_assoc($result)){
-    	$name = $row["subtitle"];
-    	$addr = $row["address"];
-    	$phone = $row["phone"];
-    	$zip = $row["zip"];
-    	//echo $name.$addr.$phone;//.$zip;
-		$sql = "INSERT INTO events_all.locationtbl (name, address, phone, zip)
-		VALUES ('$name','$addr','$phone','$zip')";
-
-    }
-    	
+	    while($row=mysqli_fetch_assoc($result)){
+	    	$name = $row["subtitle"];
+	    	$addr = $row["address"];
+	    	$phone = $row["phone"];
+	    	$zip = $row["zip"];
+	    	//echo $name.$addr.$phone;//.$zip;
+			$sql = "INSERT INTO events_all.locationtbl (name, address, phone, zip)
+			VALUES ('$name','$addr','$phone','$zip')";
+	    }
 	}
+}
+if ($action == "delete"){
+	$sql = "DELETE FROM events_all.programtbl WHERE id = '$id'";
+}	
+	
 
-	if ($conn->query($sql) === TRUE) {
+if ($conn->query($sql) === TRUE) {
 	   // echo "New record created successfully";
 	} else {
 	    echo "Error: " . $sql . "<br>" . $conn->error;
@@ -86,7 +78,10 @@ else {
 if (isset($_POST['action'])){
 	$action = $_POST["action"];
 	if ($action =="logout"){
-$_SESSION['user'] = null;
+$_SESSION = array(); 
+session_destroy();
+setcookie(session_name(),'',1);
+
 header("Location:" . "login.php");
    exit();
 	}
