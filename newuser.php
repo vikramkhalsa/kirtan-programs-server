@@ -41,19 +41,34 @@ if ($p1!= $p2){
   $sql = "INSERT INTO events_all.usertbl (username, email, password)
   VALUES ('$user', '$email', '$encrypass')";
   if ($conn->query($sql) === TRUE) {
-      echo "\nNew user registered successfully.</br>";
-      echo 'Visit <a href="submitprogram.php"> this page </a> to submit a program. ';
+
+    echo "<div class='alert alert-success' role='alert'>
+     </br>New user registered successfully.
+     </br>Visit <a href='submitprogram.php'> this page</a> to submit a program. 
+     </div>";
+      
+      //first send email to user
       $to = $email;
-      $subject = "Bay Area Kirtans Registration successful!";
-      $body =  sprintf("WJKK WJKF,\n\n
+      $subject = "Sikh.Events Registration successful!";
+      $body =  sprintf("Waheguru Ji Ka Khalsa Waheguru Ji Ki Fateh,\n\n
          Welcome %s, You have been successfully registered. You may now visit 
          http://sikh.events/submitprogram.php to submit programs.", $user);
 
       if (mail($to, $subject, $body)) {
          echo "";
-      } 
+      }
+
+      //then send email to admin
+      $to = "vsk@sikh.events";
+      $subject = "New User Registered!";
+      $body =  sprintf("WJKK WJKF,\n\n
+         New user %s has been successfully registered.", $user);
+      mail($to, $subject, $body);
+
   } else {
-      echo "Error: " . $conn->error . "<br>";
+     echo "<div class='alert alert-danger' role='alert'> 
+      Error: " . $conn->error . 
+      "<br> Please try again. </div>";
   }
 }
 }
@@ -63,9 +78,9 @@ if ($p1!= $p2){
     <div class="col-sm-6 col-md-4 col-2">
 <form id="adduser" action="newuser.php" method="post" >
   Username:<br>
-  <input type="text" name="username" class="form-control" required><br>
+  <input type="text" name="username" class="form-control" maxlength='16' required><br>
   Email Address:<br>
-  <input type="email" name="email" class="form-control" required><br>
+  <input type="email" name="email" class="form-control" maxlength='36' required><br>
    Password:<br>
   <input type="password" name="password" class="form-control" required><br>
    Confirm Password:<br>

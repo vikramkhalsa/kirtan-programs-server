@@ -156,7 +156,9 @@ var repeat = $('#repeat').is(":checked");
 if(repeat){
   var tim = $('#ed1').datetimepicker('getDate')- $('#sd1').datetimepicker('getDate');
   var mins = tim/(1000*60);
-  $('#repeat').val("FREQ=DAILY;DURATION="+mins);
+  //var interval = $('#interval').val();
+  var freq = $('#freq').val();
+  $('#repeat').val("FREQ="+freq+";DURATION="+mins);
   var newed = $('#ed2').val();
   var oldet =$('#ed').val().slice(10)
   $('#ed').val(newed+ oldet);
@@ -215,17 +217,17 @@ $id = $_POST['id'];
  // echo "success";
    $arr = $result->fetch_array();
 
- $title = $arr["title"];
- $subtitle = $arr["subtitle"];
- $address = $arr["address"];
- $phone = $arr["phone"];
- $sd = $arr["sd"];
+ $title = htmlspecialchars($arr["title"]);
+ $subtitle = htmlspecialchars($arr["subtitle"]);
+ $address = htmlspecialchars($arr["address"]);
+ $phone = htmlspecialchars($arr["phone"]);
+ $sd = htmlspecialchars($arr["sd"]);
  $sd1 = date_format(new DateTime($sd),'Y-m-d h:i a');
- $ed = $arr["ed"];
+ $ed = htmlspecialchars($arr["ed"]);
  $ed1 = date_format(new DateTime($ed),'Y-m-d h:i a');
-$ed2 = date_format(new DateTime($ed),'Y-m-d');
- $type = $arr["type"];
- $zip = $arr["zip"];
+  $ed2 = date_format(new DateTime($ed),'Y-m-d');
+ $type = htmlspecialchars($arr["type"]);
+ $zip = htmlspecialchars($arr["zip"]);
  //$source = $arr["source"];
  $description = $arr["description"];
 $recurr = ($arr["rrule"] != null && $arr["rrule"] !== '')
@@ -235,7 +237,7 @@ $recurr = ($arr["rrule"] != null && $arr["rrule"] !== '')
  $repeat =  $recurr ? "checked" : "";
  if ($recurr)
   $showpanel = "";
-$rrule = $arr['rrule'];
+$rrule = htmlspecialchars($arr['rrule']);
 if ($recurr){
   $rrules = array();
 $rruleStrings = explode(';', $rrule);
@@ -248,6 +250,7 @@ foreach ($rruleStrings as $s) {
    $duration = (isset($rrules['DURATION']) && $rrules['DURATION'] !== '')
                     ? $rrules['DURATION']
                     : "120";
+  $freq = $rrules["FREQ"];
  //echo "DURATION";
  echo $duration;
 
@@ -304,11 +307,22 @@ Welcome! Please submit a program by filling out the fields below.
 
     <div class="row">
      <div class="col-xs-6">
-          Frequency
+          Repeat
+
+  <?php $freqOpts= array("DAILY","WEEKLY"); ?>
   <select class="form-control" id="freq">
-  <option value="DAILY" selected>Daily</option>
+  <?php foreach ($freqOpts as $value) { ?>
+  <option value="<?php echo $value;?>" <?php echo ($value== $freq) ? ' selected="selected"' : '';?>><?php echo ucfirst($value);?></option>
+<?php } ?>
   </select>
-     </div>
+       </div>
+
+<!-- <div class="col-xs-4">
+      Every # of days
+  <input type="text" id="interval" class="form-control" value="1" maxlength="3">
+     </div> -->
+
+
      <div class="col-xs-6">
       Until
   <input type="text" id="ed2" class="form-control" value="<?php echo $ed2; ?>">

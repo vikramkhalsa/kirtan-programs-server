@@ -142,6 +142,34 @@ $currdate = new DateTime(null,(new DateTimeZone("America/Los_Angeles")));
                          $newed = $tempd->add(new DateInterval('PT'.$duration.'M'));
                       } 
                     break;
+                        case 'WEEKLY':
+                        $interval = 7; //if weekly, just do same thing as daily but add 7 days
+                      $newsd = $startdate;//->add(new DateInterval('P'.$interval.'D'));
+                      $tempd = clone $newsd;
+                       $newed = $tempd->add(new DateInterval('PT'.$duration.'M'));
+                    
+                    $ii = 0;
+                    while ($newed<=$until){
+                      //for($i=0;$i<$count;$i++){
+                      if($newed>=$currdate){
+                      $tempevent = $event;
+                      $tempevent['id'] = $event["id"]."0".$ii;
+                      $tempevent['sd'] = $newsd->format('Y-m-d H:i:s'); 
+                      $tempevent['ed'] = $newed->format('Y-m-d H:i:s');
+                     // echo $tempevent['sd'].' '.$tempevent['ed'];
+                      //echo '<br>';
+                      $events[] = $tempevent;
+                                          $ii++;
+                    }
+
+                      //echo json_encode($tempevent);
+                        //echo $newsd->format('Y-m-d H:i');
+                        //echo '<br>';
+                        $newsd = $startdate->add(new DateInterval('P'.$interval.'D'));
+                              $tempd = clone $newsd;
+                         $newed = $tempd->add(new DateInterval('PT'.$duration.'M'));
+                      } 
+                    break;
                }
                return $events;
 }
