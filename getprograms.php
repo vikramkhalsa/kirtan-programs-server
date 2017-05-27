@@ -23,8 +23,23 @@ else {
     /* gets the data from a URL */
 
 
-    $sql = "SELECT * FROM events_all.programtbl WHERE programtbl.ed >= DATE(NOW())";  
+    $sql = "SELECT * FROM events_all.programtbl WHERE programtbl.ed >= DATE(NOW())"; 
+
+if (isset($_GET['location']))
+{
+   $loc =  $conn->real_escape_string($_GET['location']);
+   $sql = $sql." AND programtbl.subtitle LIKE '{$loc}%' "; 
+}
+if (isset($_GET['type']))
+{
+   $type =  $conn->real_escape_string($_GET['type']);
+   $sql = $sql." AND programtbl.type LIKE '{$type}%' "; 
+}
+if(!isset($_GET["status"])){ //"secret" api to allow getting all programs for debugging
+
 $sql = $sql." AND programtbl.approved=1 "; 
+}
+
 $sql = $sql." ORDER BY sd ASC";
     $result = mysqli_query($conn, $sql);
     $array = array();

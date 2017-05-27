@@ -77,7 +77,14 @@ function save(filename, data) {
 </div>
 <?php
 
-$contents = file_get_contents('http://www.sikh.events/getprograms.php');
+$filter = "";
+if (isset($_GET["type"])){
+$filter = "?type=".$_GET["type"];
+}
+
+$contents = file_get_contents('http://www.sikh.events/getprograms.php'.$filter);
+
+
 $array = json_decode($contents, true);
 
 

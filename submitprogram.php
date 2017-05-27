@@ -42,8 +42,10 @@ if ($_SESSION['user'] == null){
     $names = array();
     while($row=mysqli_fetch_assoc($result))
     {
+      if($row['privateowner']== null){
         $array[$row["name"]] = $row;
         $names[] = $row["name"];
+      }
     }
 print "var data ='".json_encode($array)."';\n";
 print "var locNames = ".json_encode($names).";\n";
@@ -114,10 +116,15 @@ else{
 });
 
 $("#sd1").on("change", function(){
-  $('#ed1').val($(this).val());
-  //var time = $(this).datetimepicker('getDate');
-  //time = time.setHours(time.getHours() + 2);
- // $("#ed1").datetimepicker('setDate', time);
+  if($('#ed1').val()){
+  }
+  else{
+     var time = $(this).datetimepicker('getDate');
+     time.setHours(time.getHours() + 2);
+     $("#ed1").datetimepicker('setDate', time);
+    //$('#ed1').val($(this).val());
+  }
+  
 });
 
   var select = document.createElement("select");
@@ -125,7 +132,7 @@ $("#sd1").on("change", function(){
 
 $( "#location" ).on( "autocompleteselect", function( event, ui ) {
   var key = ui.item.label;
-  $("#address").val(locations[key].address);
+  $("#address").val(locations[key].address +', ' + locations[key].city + ' ' + locations[key].state);
   $("#zip").val(locations[key].zip);
   $("#phone").val(locations[key].phone);
 } );
@@ -334,7 +341,7 @@ Welcome! Please submit a program by filling out the fields below.
 <label for="type">Event Type:</label>
 
 
-<?php $plan = array("kirtan","katha","fundraiser","discussion","samaagam","other"); ?>
+<?php $plan = array("kirtan","katha","fundraiser","discussion","samaagam","camp", "other"); ?>
 
 <select name="type" class="form-control">
 <?php foreach ($plan as $value) { ?>

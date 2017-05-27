@@ -24,7 +24,15 @@ $(document).ready(function() {
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li><a href="index.php">All Programs</a></li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="index.php">All Programs
+                <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="index.php">All Programs</a></li>
+                  <li><a href="index.php?type=kirtan">Kirtan</a></li>
+                  <li><a href="index.php?type=katha">Katha</a></li>
+                </ul>
+            </li>
               <li><a href="isangat.php">iSangat.org</a></li>
                 <li><a href="ekhalsa.php">eKhalsa.com</a></li>
               <li><a href="submitprogram.php">Submit New Program</a></li>
