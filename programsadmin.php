@@ -51,7 +51,10 @@ table.db-table td   { padding:5px; border-left:1px solid #ccc; border-top:1px so
 // connect to the database
     include('config.php');
 
- $sql = "SELECT * FROM events_all.programtbl";
+ $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
+programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user,  
+locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address
+FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid";
 
 if ($_SESSION['usertype'] != "admin"){
   $user =$_SESSION['user'];
@@ -64,7 +67,7 @@ $sql = $sql." WHERE user='$user'";
 //<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>';
 
 echo '<table cellpadding="0" cellspacing="0" class="db-table">';
-echo '<tr><th>ID</th><th>Start/End</th><th>Title</th><th>Location<th>Address</th><th>Zip</th><th>Phone</th><th>Description</th><th>type</th>';
+echo '<tr><th>ID</th><th>Start/End</th><th>Title</th><th>Location<th>Address</th><th>Phone</th><th>Description</th><th>type</th>';
 if ($_SESSION['usertype'] == "admin"){
     echo '<th>User</th>';
   }
@@ -79,7 +82,7 @@ echo '<th>Moderate</th></tr>';
         { echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/></br>
           <input type='hidden' name='action' value='saveloc'/><input type='submit' name='submit-btn' value='Save' class='btn btn-default'/></form>";
         }
-      echo '</td><td>'.$row["address"].'</td><td>'. $row["zip"].'</td><td>'.$row["phone"].
+      echo '</td><td>'.$row["address"].'</td><td>'.$row["phone"].
       '</td><td>'.$row["description"].'</td><td>'.$row["type"].'</td>';
     if ($_SESSION['usertype'] == "admin"){
           echo '<td>'.$row["user"]."</td>";

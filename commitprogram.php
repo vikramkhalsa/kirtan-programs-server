@@ -6,7 +6,6 @@ if ($_SESSION['user'] == null){
 }
 $user = $_SESSION['user'];
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,10 +32,10 @@ You submitted the following: <br><br>
 
 echo "Title: ",$_POST["title"]; 
 print "<br>";
-echo "Subtitle: ",$_POST["subtitle"]; 
+echo "Location: ",$_POST["subtitle"]; 
 print "<br>";
-echo "Address: ",$_POST["address"]; 
-print "<br>";
+//echo "Address: ",$_POST["address"]; 
+//print "<br>";
 echo "Phone Number: ",$_POST["phone"];
 print "<br>"; 
 echo "Start: ",$_POST["sd"]; 
@@ -45,8 +44,8 @@ echo "End: ",$_POST["ed"];
 print "<br>";
 echo "Type: ",$_POST["type"];
 print "<br>";
-echo "Zip Code: ",$_POST["zip"];
-print "<br>";
+//echo "Zip Code: ",$_POST["zip"];
+//print "<br>";
 //echo "Source: ",$_POST["source"]; 
 //print "<br>";
 echo "Description: ",$_POST["description"];
@@ -71,18 +70,18 @@ if (isset($_POST['id']))
 
 $clone = $_POST["clone"];
 $title = $conn->real_escape_string($_POST["title"]);
-$subtitle = $conn->real_escape_string($_POST["subtitle"]);
-$address = $conn->real_escape_string($_POST["address"]);
+//$subtitle = $conn->real_escape_string($_POST["subtitle"]);
+//$address = $conn->real_escape_string($_POST["address"]);
 $phone = $conn->real_escape_string($_POST["phone"]);
 $sd = $conn->real_escape_string($_POST["sd"]);
 //$sd = date ("Y-m-d H:i:s", strtotime($sd));
 $ed = $conn->real_escape_string($_POST["ed"]);
 //$ed = date ("Y-m-d H:i:s", strtotime($sd));
 $type = $conn->real_escape_string($_POST["type"]);
-$zip = $conn->real_escape_string($_POST["zip"]);
+//$zip = $conn->real_escape_string($_POST["zip"]);
 //$source = $conn->real_escape_string($_POST["source"]);
 $description = $conn->real_escape_string($_POST["description"]);
-
+$locationid = $conn->real_escape_string($_POST["locationid"]);
 $rrule= $conn->real_escape_string($_POST["repeat"]);
 if ($rrule ==""){
 	$rrule = null;
@@ -91,8 +90,8 @@ if ($rrule ==""){
 
 if ($id == "" or ($clone=="Clone")){
 //need to check if values are blank, validate form data in submit program page??
-	$sql = "INSERT INTO events_all.programtbl (title, subtitle, address, phone, sd, ed, user, description, type, zip, rrule)
-	VALUES ('$title', '$subtitle', '$address', '$phone', '$sd','$ed', '$user', '$description', '$type', '$zip', '$rrule')";
+	$sql = "INSERT INTO events_all.programtbl (title, locationid, phone, sd, ed, user, description, type, rrule)
+	VALUES ('$title', '$locationid','$phone', '$sd','$ed', '$user', '$description', '$type', '$rrule')";
 	if ($conn->query($sql) === TRUE) 
 		{
 		echo "<div class='alert alert-success' role='alert'>New event submitted successfully! <br>";
@@ -124,8 +123,8 @@ if ($id == "" or ($clone=="Clone")){
 } 
 else 
 {
-	$sql = "UPDATE events_all.programtbl SET title ='$title', subtitle ='$subtitle', address = '$address', phone ='$phone', 
-	sd = '$sd', ed ='$ed', description ='$description', type ='$type', zip='$zip', rrule='$rrule' WHERE id = '$id'";
+	$sql = "UPDATE events_all.programtbl SET title ='$title', locationid='$locationid', phone ='$phone', 
+	sd = '$sd', ed ='$ed', description ='$description', type ='$type', rrule='$rrule' WHERE id = '$id'";
 		if ($conn->query($sql) === TRUE) {
 	    echo "<div class='alert alert-info' role='alert'>Event updated successfully!<br></div>";
 	} else {

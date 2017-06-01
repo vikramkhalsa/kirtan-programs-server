@@ -108,10 +108,10 @@ $("#ed2").datepicker({
 
 $('#repeat').on('change', function(){
 if ($(this).is(":checked")){
-  $('#recurrence-panel').show();
+  $('#recurrence-panel').show(400);
 }
 else{
-   $('#recurrence-panel').hide();
+   $('#recurrence-panel').hide(400);
 }
 });
 
@@ -132,8 +132,11 @@ $("#sd1").on("change", function(){
 
 $( "#location" ).on( "autocompleteselect", function( event, ui ) {
   var key = ui.item.label;
-  $("#address").val(locations[key].address +', ' + locations[key].city + ' ' + locations[key].state);
-  $("#zip").val(locations[key].zip);
+    $("#address-info").html("Address: " + locations[key].address +', ' + locations[key].city + ' ' + locations[key].state);
+  $("#locationid").val(locations[key].locationid);
+  //locations[key].locationid;  
+  //$("#address").val(locations[key].address +', ' + locations[key].city + ' ' + locations[key].state);
+  //$("#zip").val(locations[key].zip);
   $("#phone").val(locations[key].phone);
 } );
 
@@ -176,18 +179,101 @@ else {
 }
 
 
-function convertDates(){
-var form = document.getElementById("addProgram");
-var sd= document.getElementById("sd1");
-var ed = document.getElementById("ed1");  
-var sdate = new Date(sd.value).toISOString();
-var edate = new Date(ed.value).toISOString();
-sd.value = sdate;
-ed.value = edate;
-form.submit();
+//not used. Was used to get dates in correct format from date controls
+// function convertDates(){
+// var form = document.getElementById("addProgram");
+// var sd= document.getElementById("sd1");
+// var ed = document.getElementById("ed1");  
+// var sdate = new Date(sd.value).toISOString();
+// var edate = new Date(ed.value).toISOString();
+// sd.value = sdate;
+// ed.value = edate;
+// form.submit();
+// }
+
+//show Add New Location panel
+function showlocpanel(){
+
+   $('#location-panel').show(400);
+}
+
+//hide Add New Location panel
+function hidelocpanel(){
+
+   $('#location-panel').hide(400);
 }
 
 
+    // process the form
+function savelocation() {
+
+//this needs to be done in a better way
+ // if(!$('#loc-name').get(0).checkValidity()){
+ //  return;
+ // }
+ //  if(!$('#loc-address').get(0).checkValidity()){
+ //  return;
+ // }
+ //  if(!$('#loc-zip').get(0).checkValidity()){
+ //  return;
+ // }
+ //  if(!$('#loc-city').get(0).checkValidity()){
+ //  return;
+ // }
+ //  if(!$('#loc-state').get(0).checkValidity()){
+ //  return;
+ // }
+
+        // get the form data
+        // there are many ways to get this data using jQuery (you can use the class or id also)
+        var formData = {
+            'name'          : $('#loc-name').val(),
+            'address'       : $('#loc-address').val(),
+            'zip'           : $('#loc-zip').val(),
+            'city'           : $('#loc-city').val(),
+            'state'           : $('#loc-state').val(),
+            'public'           : $('#loc-public').get(0).checked
+        };
+
+        // process the form
+        $.ajax({
+            type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+            url         : 'addlocation.php', // the url where we want to POST
+            data        : formData, // our data object
+            dataType    : 'json', // what type of data do we expect back from the server
+                        encode          : true
+        })
+            // using the done promise callback
+            .done(function(data) {
+
+                // log data to the console so we can see
+                //console.log(data); 
+                $('#location-message').html('');
+                $('#location-message').removeClass();
+if(data.success){
+   $('#location-message').addClass("alert alert-success");
+  $('#location-message').html("Location added successfully!");
+$("#location").val($('#loc-name').val());
+      $("#locationid").val(data.locationid);
+      $("#location-panel").fadeOut(1000);
+//add id to hidden field
+}else {
+   $('#location-message').addClass("alert alert-danger");
+
+ for (var error in data.errors){
+    $('#location-message').append(data.errors[error] +"<br>");
+}
+  $('#location-message').append(data.message);
+
+}
+
+
+
+                // here we will handle errors and validation messages
+            });
+
+        // stop the form from submitting the normal way and refreshing the page
+    }
 
 </script>
 
@@ -219,7 +305,10 @@ $id = $_POST['id'];
 // connect to the database
    include('config.php');
 
- $sql = "SELECT * FROM events_all.programtbl WHERE id = '$id'";
+ $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
+programtbl.type, programtbl.rrule, programtbl.locationid, 
+locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address
+FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE id = '$id'";
  if ($result = mysqli_query($conn, $sql)){
  // echo "success";
    $arr = $result->fetch_array();
@@ -234,7 +323,8 @@ $id = $_POST['id'];
  $ed1 = date_format(new DateTime($ed),'Y-m-d h:i a');
   $ed2 = date_format(new DateTime($ed),'Y-m-d');
  $type = htmlspecialchars($arr["type"]);
- $zip = htmlspecialchars($arr["zip"]);
+ //$zip = htmlspecialchars($arr["zip"]);
+ $locationid = htmlspecialchars($arr["locationid"]);
  //$source = $arr["source"];
  $description = $arr["description"];
 $recurr = ($arr["rrule"] != null && $arr["rrule"] !== '')
@@ -284,12 +374,53 @@ Welcome! Please submit a program by filling out the fields below.
   <label for="location">Location: </label>
   <input id="location" name="subtitle" value="<?php echo $subtitle; ?>" class="form-control" required placeholder="San Jose Gurdwara Sahib"><br>
 
-  <label for="address">Address: </label>
+  <input type='hidden' name='locationid' id='locationid' value="<?php echo $locationid; ?>">
+
+<span id="address-info">
+<?php echo "Address: ".$address; ?>
+</span>
+<input type="button"  class="btn" value="Add New" onclick="showlocpanel()"/>
+ <br>
+<div id="location-panel" class="panel" style="background-color:#EEE; padding:10px; display:none">
+    <div class="row">
+     <div class="col-sm-12">
+<h4>Add New Location</h4> 
+<div id="location-message"> </div>
+  <label for="loc-name">Name: </label>
+  <input type="text" id="loc-name" class="form-control" placeholder="Sri Guru Singh Sabha"><br> 
+
+  <label for="address">Street Address: </label>
+  <input type="text" id="loc-address" class="form-control"><br>
+  
+ <label for="loc-city">City: </label>
+  <input type="text" id="loc-city" class="form-control"><br>
+   </div>
+     </div>
+
+<div class="row">
+     <div class="col-xs-6">
+  <label for="loc-city">State: </label>
+  <input type="text" id="loc-state" class="form-control" maxlength=3 placeholder="CA"><br>
+</div>
+ <div class="col-xs-6">
+  <label for="loc-zip">Postal Code: </label>
+  <input type="text" id="loc-zip" class="form-control" maxlength=10 placeholder="12345" pattern="[0-9]{5}"><br>
+       </div>
+     </div>
+
+<input type="checkbox" id="loc-public" checked>
+  Make this location available to other event creators
+<br><br>
+ <input type="button" id="submit-loc" class="btn btn-success" value="Save Location" onclick="savelocation()"/>
+ <input type="button" class="btn btn-default" onclick="hidelocpanel()" value="Cancel" />
+   </div>
+
+ <!--  <label for="address">Address: </label>
   <input type="text" id="address" name="address" value="<?php echo $address; ?>" class="form-control"><br>
   
   <label for="zip">Zip Code: </label>
   <input type="text" id="zip" name="zip" value="<?php echo $zip; ?>" class="form-control" required maxlength=10 placeholder="12345" pattern="[0-9]{5}"><br>
-  
+   -->
   <label for="phone">Phone Number:</label>
   <input type="tel" name="phone" id="phone" value="<?php echo  $phone; ?>" class="form-control" maxlength=16 placeholder="1234567890"><br>  
 
