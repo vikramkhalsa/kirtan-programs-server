@@ -115,6 +115,14 @@ else{
 }
 });
 
+$("#location").blur(function() {
+
+  if (locNames.indexOf($("#location").val()) < 0){
+        $("#address-info").addClass("redfont");
+        $("#address-info").html("Please select an existing location or add a new location");
+    }
+  });
+
 $("#sd1").on("change", function(){
   if($('#ed1').val()){
   }
@@ -132,6 +140,7 @@ $("#sd1").on("change", function(){
 
 $( "#location" ).on( "autocompleteselect", function( event, ui ) {
   var key = ui.item.label;
+   $("#address-info").removeClass("redfont");
     $("#address-info").html("Address: " + locations[key].address +', ' + locations[key].city + ' ' + locations[key].state);
   $("#locationid").val(locations[key].locationid);
   //locations[key].locationid;  
@@ -144,12 +153,16 @@ $( "#location" ).on( "autocompleteselect", function( event, ui ) {
       source: locNames
     });
 
-$("[required]").before("<span style='color:red'>*</span>");
+//$("[required]").before("<span style='color:red'>*</span>");
 
 
     });
 
 function submitForm(){
+if(!$("#locationid").val()){
+//$("#address-info").html("Please select an existing location or add a new location");
+return false;
+}
   //VALIDATE FORM
 
 var input = document.getElementById("#title");
@@ -255,7 +268,9 @@ if(data.success){
   $('#location-message').html("Location added successfully!");
 $("#location").val($('#loc-name').val());
       $("#locationid").val(data.locationid);
-      $("#location-panel").fadeOut(1000);
+      $("#address-info").removeClass("redfont");
+    $("#address-info").html("Address: " + formData.address +', ' + formData.city + ' ' + formData.state);
+      $("#location-panel").delay(2000).fadeOut(500);
 //add id to hidden field
 }else {
    $('#location-message').addClass("alert alert-danger");
@@ -280,13 +295,24 @@ $("#location").val($('#loc-name').val());
 <style>
 
 .notvalid{
- box-shadow: 0 0 3px 1px red }
+ box-shadow: 0 0 3px 1px red; 
+}
 
   
 /*input[required]:invalid:focus { box-shadow: 0 0 3px 1px red }*/
 
 .notvalid:valid{
-box-shadow: 0 0 3px 1px green }
+box-shadow: 0 0 3px 1px green; 
+}
+
+.redfont {
+   color:red;
+ }
+
+
+.require::after{
+content :"*";
+color:red;
 }
 
 </style>
@@ -365,22 +391,28 @@ echo $ed1;
 Welcome! Please submit a program by filling out the fields below. 
 <br><br>
 
-<form id="addprogram" action="commitprogram.php" method="post" class="form-group" onsubmit="submitForm()">
+<form id="addprogram" action="commitprogram.php" method="post" class="form-group" onsubmit="return submitForm()">
   <div class="row">
     <div class="col-sm-6">
-  <label for="title">Title: </label>
+  <label for="title" class="require">Title: </label>
   <input type="text" id="title" value="<?php echo $title; ?>" name="title" class="form-control" required placeholder="Kirtan Divaan"><br>
-  
-  <label for="location">Location: </label>
-  <input id="location" name="subtitle" value="<?php echo $subtitle; ?>" class="form-control" required placeholder="San Jose Gurdwara Sahib"><br>
+
+
+  <label for="location" class="require">Location: </label> 
+<div class="input-group">
+                  <input type="text" class="form-control" id="location" name="subtitle" value="<?php echo $subtitle; ?>" placeholder="San Jose Gurdwara Sahib" required>
+                  <span class="input-group-btn">
+                  <input type="button"  class="btn btn-default" value="Add New" onclick="showlocpanel()"/>
+                  </span>
+              </div>
 
   <input type='hidden' name='locationid' id='locationid' value="<?php echo $locationid; ?>">
 
 <span id="address-info">
 <?php echo "Address: ".$address; ?>
 </span>
-<input type="button"  class="btn" value="Add New" onclick="showlocpanel()"/>
- <br>
+
+ <br><br>
 <div id="location-panel" class="panel" style="background-color:#EEE; padding:10px; display:none">
     <div class="row">
      <div class="col-sm-12">
@@ -428,12 +460,12 @@ Welcome! Please submit a program by filling out the fields below.
 
 <input type='hidden' name='sd' id='sd' value="<?php echo $sd; ?>">
 <input type='hidden' name='ed' id='ed' value = "<?php echo $ed; ?>">
-   <label for="sd1">Start Date and Time:</label>
+   <label for="sd1" class="require">Start Date and Time: </label>
   <input type="text" name="sd1" value="<?php echo $sd1; ?>" id="sd1" class="form-control" placeholder="yyyy-mm-dd hh:mm pm"
   pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}" required>
 <br>
 
-  <label for="ed1">End Date and Time:</label>
+  <label for="ed1">End Date and Time: </label>
   <input type="text" name="ed1" value="<?php echo $ed1; ?>" id="ed1" class="form-control" placeholder="yyyy-mm-dd hh:mm am" 
     pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}">
 <br>
@@ -478,7 +510,7 @@ Welcome! Please submit a program by filling out the fields below.
 <?php foreach ($plan as $value) { ?>
   <option value="<?php echo $value;?>" <?php echo ($value== $type) ? ' selected="selected"' : '';?>><?php echo ucfirst($value);?></option>
 <?php } ?>
-
+</select></br>
 
 <!-- <option name=one value=kirtan> Kirtan </option>
 <option name=two value=katha> Katha </option>
@@ -487,7 +519,7 @@ Welcome! Please submit a program by filling out the fields below.
 <option name=three value=samaagam> Samaagam </option>
 <option name=three value=other> Other </option> -->
 
-</select></br>
+
 
  <!--  Source:<br>
   <input type="text" name="source" value="<?php echo  $source; ?>"><br> -->
