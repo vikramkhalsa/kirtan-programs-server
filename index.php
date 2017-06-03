@@ -81,13 +81,20 @@ function save(filename, data) {
     if (isset($_GET["type"])){
         $filter = "?type=".$_GET["type"];
     }
+    else if (isset($_GET["source"])){
+        $filter = "?source=".$_GET["source"];
+    }
+
+
+
 
     $contents = file_get_contents('http://www.sikh.events/getprograms.php'.$filter);
 
-
     $array = json_decode($contents, true);
 
-
+if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
+        $array = $array["programs"];
+}
     echo "<div>"; 
     
 
@@ -102,9 +109,11 @@ function save(filename, data) {
         echo date('g:ia', $sdate).' to ';
         echo "<br>";
         echo date('g:ia', $edate);
-        $desc = str_replace("'", "\'", $value["description"]);
         echo "</div>";
+        $desc = str_replace("'", "\'", $value["description"]);
+        if(!($desc == "")){
         echo '<br> <button class="infoBtn" onClick="showDescription(this)" val="'.$desc.'""><span class="glyphicon glyphicon-info-sign" aria-hidden="true" aria-label="description"></span></button>';
+        }
         echo '<button class="infoBtn" onclick="downloadiCal('.$value['id'].')"><span class="glyphicon glyphicon-calendar" aria-hidden="true" aria-label="Export to Calendar"></span></button>';
         echo '</div> 
         <div class="right" style="width:70%; float:left;">

@@ -4,8 +4,8 @@ if(isset($_GET['source'])){
 
 //if all sources requested, append programs from isangat as well
   if ($src =="isangat"){
-    $returned_content = get_data('http://www.isangat.org/json.php');
-    echo $returned_content;
+    $returned_content = get_data('http://www.isangat.org/json2.php');
+        echo $output = str_replace(array("\r\n", "\r"), "", $returned_content);
   }
 
   if ($src =="ekhalsa"){
