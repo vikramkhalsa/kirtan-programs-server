@@ -245,6 +245,7 @@ function hidelocpanel(){
           'zip'           : $('#loc-zip').val(),
           'city'           : $('#loc-city').val(),
           'state'           : $('#loc-state').val(),
+          'region'           : $('#loc-region').val(),
           'public'           : $('#loc-public').get(0).checked
         };
 
@@ -386,6 +387,12 @@ $('#location-message').append(data.message);
 
  }
 }
+
+
+    $contents = file_get_contents('http://www.sikh.events/getlocations.php'.$filter);
+
+    $regions = json_decode($contents, true);
+
 ?>
 <div style="padding:10px">
   Welcome! Please submit a program by filling out the fields below. 
@@ -422,10 +429,10 @@ $('#location-message').append(data.message);
             <input type="text" id="loc-name" class="form-control" placeholder="Sri Guru Singh Sabha"><br> 
 
             <label for="address">Street Address: </label>
-            <input type="text" id="loc-address" class="form-control"><br>
+            <input type="text" id="loc-address" class="form-control" placeholder="123 Gurdwara Rd"><br>
             
             <label for="loc-city">City: </label>
-            <input type="text" id="loc-city" class="form-control"><br>
+            <input type="text" id="loc-city" class="form-control" placeholder="Begampura"><br>
           </div>
         </div>
 
@@ -438,6 +445,18 @@ $('#location-message').append(data.message);
           <label for="loc-zip">Postal Code: </label>
           <input type="text" id="loc-zip" class="form-control" maxlength=10 placeholder="12345" pattern="[0-9]{5}"><br>
         </div>
+      </div>
+        <div class="row">
+         <div class="col-xs-6">
+          <label for="loc-city">Region: </label>
+         <!--  dynamically populate available regions from DB with region ids and names -->
+            <select class="form-control" id="loc-region">
+              <?php foreach ($regions as $region) { ?>
+              <option value="<?php echo $region['regionid'];?>"> <?php echo $region['name'];?></option>
+              <?php } ?>
+            </select>
+          </div>
+        
       </div>
 
       <input type="checkbox" id="loc-public" checked>

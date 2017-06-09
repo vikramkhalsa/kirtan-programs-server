@@ -3,8 +3,14 @@ session_start();
 ?>
 <html>
 <head>
-    <title>Bay Area Kirtan Programs</title>
+    <title>Sikh Events - Everything in one place!</title>
+    <meta name="description" content="View kirtan programs, camps and other Sikh Events all over the Bay Area in one place!">
+    <meta property="og:title" content="All Sikh Event in one app!" />
+    <meta property="og:url" content="https://www.sikh.events" />
+    <meta property="og:image" content="https://www.sikh.events/images/og_icon.jpg">
+
     <meta name="viewport" content="user-scalable=yes, width=device-width" />
+
 
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     
@@ -59,6 +65,16 @@ function save(filename, data) {
         document.body.removeChild(elem);
     }
 }
+
+function onselectchange(){
+    var e = $('#loc-region')[0];
+    var regid = e.options[e.selectedIndex].value;
+    if(regid == 0)
+        window.location.href="index.php";
+    else{
+    window.location.href="index.php?region="+regid;
+    }
+}
 </script>
 
 </head>
@@ -74,29 +90,52 @@ function save(filename, data) {
         Mobile apps are available for iOS and Android. <br>
         <a href="https://play.google.com/store/apps/details?id=com.vikramkhalsa.isangat"> <img src="images/googleplay.png" style="width:150px; padding:5px"></a>
         <a href="https://itunes.apple.com/us/app/sikh-events/id1220078093?mt=8"> <img src="images/appstore.png" style="width:150px; padding:5px"></a>
-    </div>
+  
     <?php
 
     $filter = "";
+    $regid = "";
     if (isset($_GET["type"])){
         $filter = "?type=".$_GET["type"];
     }
     else if (isset($_GET["source"])){
         $filter = "?source=".$_GET["source"];
     }
+    else if (isset($_GET["region"])){
+        $filter = "?region=".$_GET["region"];
+        $regid = $_GET["region"];
+    }
+
 
 
 
 
     $contents = file_get_contents('http://www.sikh.events/getprograms.php'.$filter);
-
     $array = json_decode($contents, true);
+
+    $regions = file_get_contents('http://www.sikh.events/getlocations.php?regions=current'.$filter);
+    $regions = json_decode($regions, true);
 
 if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
         $array = $array["programs"];
 }
-    echo "<div>"; 
+ ?>
+ <br>
+<label for="loc-city">Show Regions </label>
+            <select class="form-control" id="loc-region" onchange="onselectchange()">
+                <option value="" selected>All Events</option>
+              <?php foreach ($regions as $region) { ?>
+              <option value="<?php echo $region['regionid'];?>"  <?php echo ($region["regionid"] == $regid) ? ' selected="selected"' : '';?>>      <?php echo $region['name'];?></option>
+              <?php } ?>
+            </select>
+
+              </div>
+
+ <div>
+
     
+
+    <?php
 
     foreach($array as $value){
         echo '<div class="cell" id="'.$value['id'].'">
@@ -105,6 +144,9 @@ if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
         $edate = strtotime($value['ed']);
         echo '<div class="sd" start="'.date('Ymd\THis', $sdate).'" end="'.date('Ymd\THis', $edate).'">'; //saving in this format for export to iCal
         echo date('D, M j', $sdate);
+        if(date('d',$sdate) != date('d',$edate)){
+             echo ' - '.date('D, M j', $edate);
+        }
         echo "<br><br>";
         echo date('g:ia', $sdate).' to ';
         echo "<br>";

@@ -25,6 +25,12 @@ else {
   $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description, programtbl.type, programtbl.rrule, locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE programtbl.ed >= DATE(NOW())";
 // $sql = "SELECT * FROM events_all.programtbl WHERE programtbl.ed >= DATE(NOW())"; 
 
+ if (isset($_GET['region']))
+ {
+   $region =  $conn->real_escape_string($_GET['region']);
+   $sql = $sql."  AND locationtbl.region = {$region} "; 
+ }
+
   if (isset($_GET['location']))
   {
    $loc =  $conn->real_escape_string($_GET['location']);
@@ -36,7 +42,6 @@ else {
    $sql = $sql." AND programtbl.type LIKE '{$type}%' "; 
  }
 if(!isset($_GET["status"])){ //"secret" api to allow getting all programs for debugging
-
 $sql = $sql." AND programtbl.approved=1 "; 
 }
 

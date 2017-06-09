@@ -31,6 +31,9 @@ if (empty($_POST['city']))
 if (empty($_POST['state']))
     $errors['state'] = 'State is required.';
 
+if (empty($_POST['region']))
+    $errors['state'] = 'Region is required.';
+
 // return a response ===========================================================
 
     // if there are any errors in our errors array, return a success boolean of false
@@ -54,6 +57,7 @@ if ( ! empty($errors)) {
     $city = $conn->real_escape_string($_POST['city']);
     $state = $conn->real_escape_string($_POST['state']);
     $zip = $conn->real_escape_string($_POST['zip']);
+    $regionid = $conn->real_escape_string($_POST['region']);
 
 $public = $conn->real_escape_string($_POST['public']);;//check if not public, then owner is user, otherwise blank
 $owner = null;
@@ -63,8 +67,8 @@ if($public == "false")
 
 //post values to database
 
-$sql = "INSERT INTO events_all.locationtbl (name, address, city, state, zip, addedby, privateowner)
-VALUES ('$name', '$address', '$city', '$state', '$zip', '$user', '$owner')";
+$sql = "INSERT INTO events_all.locationtbl (name, address, city, state, zip, addedby, privateowner, region)
+VALUES ('$name', '$address', '$city', '$state', '$zip', '$user', '$owner', '$regionid')";
 
 if ($conn->query($sql) === TRUE) {
         // show a message of success and provide a true success variable
