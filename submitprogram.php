@@ -333,7 +333,7 @@ $('#location-message').append(data.message);
     include('config.php');
 
     $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
-    programtbl.type, programtbl.rrule, programtbl.locationid, 
+    programtbl.type, programtbl.rrule, programtbl.imageurl, programtbl.siteurl, programtbl.locationid, 
     locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address
     FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE id = '$id'";
     if ($result = mysqli_query($conn, $sql)){
@@ -354,6 +354,8 @@ $('#location-message').append(data.message);
      $locationid = htmlspecialchars($arr["locationid"]);
  //$source = $arr["source"];
      $description = $arr["description"];
+     $imageurl = $arr["imageurl"];
+     $siteurl = $arr["siteurl"];
      $recurr = ($arr["rrule"] != null && $arr["rrule"] !== '')
      ? true
      : false;
@@ -407,9 +409,9 @@ $('#location-message').append(data.message);
 
         <label for="location" class="require">Location: </label> 
         <div class="input-group">
-          <input type="text" class="form-control" id="location" name="subtitle" value="<?php echo $subtitle; ?>" placeholder="San Jose Gurdwara Sahib" required>
+          <input type="text" class="form-control" id="location" name="subtitle" value="<?php echo $subtitle; ?>" placeholder="San Jose Gurdwara Sahib" required style="z-index: 1;">
           <span class="input-group-btn">
-            <input type="button"  class="btn btn-default" value="Add New" onclick="showlocpanel()"/>
+            <input type="button"  class="btn btn-default" value="Add New" onclick="showlocpanel()" style="z-index: 1;"/>
           </span>
         </div>
 
@@ -545,6 +547,16 @@ pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}">
  <label for="description">Description:</label>
  <textarea name="description" class="form-control"><?php echo $description; ?></textarea>
  <br>
+
+<label for="poster">Link to event poster or image:</label>
+<input type="text" name="imageurl" id="imageurl" value="<?php echo  $imageurl; ?>" class="form-control">
+<br>  
+
+<label for="poster">Website Url:</label>
+<input type="text" name="siteurl" id="siteurl" value="<?php echo  $siteurl; ?>" class="form-control">
+<br>
+
+
 </div>
 </div>
 <input type='hidden' name='id' value="<?php echo $id; ?>"/>

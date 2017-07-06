@@ -168,6 +168,18 @@ if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
                 echo"</a><br>";
                 echo $value["phone"];
                 echo"<br>";
+                if ($value["imageurl"]){
+                    echo '<a  href="'.$value["imageurl"].'">View Poster</a>';
+                    echo "<br>";
+                }
+                if ($value["siteurl"]){
+                    $siteurl = $value["siteurl"];
+                     if(strpos($siteurl, "http://") !== false && strpos($siteurl, "https://") !== false){ }
+                    else { $siteurl = "http://".$siteurl; }
+                    echo '<a  href="'.$siteurl.'">'.$value["siteurl"].'</a>';
+                    echo "<br>";
+                }
+
         //echo '<a class="" href="http://maps.google.com/?q='.$value["address"].'"><img src="http://isangat.org/map.png" border="0"></a><br>';
                 echo '</div>
             </div>';

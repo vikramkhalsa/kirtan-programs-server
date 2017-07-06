@@ -1,10 +1,11 @@
 <?php 
 session_start();
 if ($_SESSION['user'] == null){
+
 	header("Location:" . "login.php");
 	exit();
 }
-$user = $_SESSION['user'];
+	$user = $_SESSION['user'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -70,17 +71,16 @@ $user = $_SESSION['user'];
 
 		$clone = $_POST["clone"];
 		$title = $conn->real_escape_string($_POST["title"]);
-//$subtitle = $conn->real_escape_string($_POST["subtitle"]);
-//$address = $conn->real_escape_string($_POST["address"]);
 		$phone = $conn->real_escape_string($_POST["phone"]);
 		$sd = $conn->real_escape_string($_POST["sd"]);
-//$sd = date ("Y-m-d H:i:s", strtotime($sd));
+		//$sd = date ("Y-m-d H:i:s", strtotime($sd));
 		$ed = $conn->real_escape_string($_POST["ed"]);
-//$ed = date ("Y-m-d H:i:s", strtotime($sd));
+		//$ed = date ("Y-m-d H:i:s", strtotime($sd));
 		$type = $conn->real_escape_string($_POST["type"]);
-//$zip = $conn->real_escape_string($_POST["zip"]);
-//$source = $conn->real_escape_string($_POST["source"]);
+		//$source = $conn->real_escape_string($_POST["source"]);
 		$description = $conn->real_escape_string($_POST["description"]);
+		$imageurl = $conn->real_escape_string($_POST["imageurl"]);
+		$siteurl = $conn->real_escape_string($_POST["siteurl"]);
 		$locationid = $conn->real_escape_string($_POST["locationid"]);
 		$rrule= $conn->real_escape_string($_POST["repeat"]);
 		if ($rrule ==""){
@@ -89,9 +89,9 @@ $user = $_SESSION['user'];
 
 
 		if ($id == "" or ($clone=="Clone")){
-//need to check if values are blank, validate form data in submit program page??
-			$sql = "INSERT INTO events_all.programtbl (title, locationid, phone, sd, ed, user, description, type, rrule)
-			VALUES ('$title', '$locationid','$phone', '$sd','$ed', '$user', '$description', '$type', '$rrule')";
+		//need to check if values are blank, validate form data in submit program page??
+			$sql = "INSERT INTO events_all.programtbl (title, locationid, phone, sd, ed, user, description, type, rrule, imageurl, siteurl)
+			VALUES ('$title', '$locationid','$phone', '$sd','$ed', '$user', '$description', '$type', '$rrule', '$imageurl', '$siteurl')";
 			if ($conn->query($sql) === TRUE) 
 			{
 				echo "<div class='alert alert-success' role='alert'>New event submitted successfully! <br>";
@@ -99,9 +99,9 @@ $user = $_SESSION['user'];
 				$to = "vsk@sikh.events";
 				$subject = "New BayAreaKirtan Program Submitted";
 				$body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted: 
-					\n\n Title: %s \n Subtitle: %s \n Phone: %s\n Start: %s\n End: %s\n  User: %s\n Description: %s \n\n 
+					\n\n Title: %s \n Location: %s \n Phone: %s\n Start: %s\n End: %s\n  User: %s\n Description: %s \n\n 
 					To moderate, visit: http://sikh.events/programsadmin.php",
-					$title, $subtitle, $phone, $sd,$ed, $user, $description );
+					$title, $locationid, $phone, $sd,$ed, $user, $description );
 
 				if (mail($to, $subject, $body)) 
 				{
@@ -124,7 +124,7 @@ $user = $_SESSION['user'];
 		else 
 		{
 			$sql = "UPDATE events_all.programtbl SET title ='$title', locationid='$locationid', phone ='$phone', 
-			sd = '$sd', ed ='$ed', description ='$description', type ='$type', rrule='$rrule' WHERE id = '$id'";
+			sd = '$sd', ed ='$ed', description ='$description', type ='$type', rrule='$rrule', imageurl='$imageurl', siteurl='$siteurl' WHERE id = '$id'";
 			if ($conn->query($sql) === TRUE) {
 				echo "<div class='alert alert-info' role='alert'>Event updated successfully!<br></div>";
 			} else {

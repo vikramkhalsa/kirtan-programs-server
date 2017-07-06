@@ -1,46 +1,50 @@
 <?php
+//check source filter
 if(isset($_GET['source'])){
   $src = $_GET['source'];
 
-//if all sources requested, append programs from isangat as well
-  if ($src =="isangat"){
+  if ($src =="isangat"){ //return only isangat programs
     $returned_content = get_data('http://www.isangat.org/json2.php');
         echo $output = str_replace(array("\r\n", "\r"), "", $returned_content);
   }
 
-  if ($src =="ekhalsa"){
+  if ($src =="ekhalsa"){ //return only ekhalsa programs
     $returned_content = get_data('http://www.sikh.events/source_parser.php');
     echo $returned_content;
   }
 }
-else {
+else { //get all sikh.events programs
 
 
 // connect to the database
   include('config.php');
 
-
-  /* gets the data from a URL */
-
-  $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description, programtbl.type, programtbl.rrule, locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE programtbl.ed >= DATE(NOW())";
+  //get specific fields and address from joined location tables so as to return in the format mobile apps expect
+  $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description, programtbl.type, programtbl.rrule, programtbl.imageurl, programtbl.siteurl, locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE programtbl.ed >= DATE(NOW())";
 // $sql = "SELECT * FROM events_all.programtbl WHERE programtbl.ed >= DATE(NOW())"; 
 
+//check region filter
  if (isset($_GET['region']))
  {
    $region =  $conn->real_escape_string($_GET['region']);
    $sql = $sql."  AND locationtbl.region = {$region} "; 
  }
 
+//check filter by name
   if (isset($_GET['location']))
   {
    $loc =  $conn->real_escape_string($_GET['location']);
-   $sql = $sql." AND locationtbl.state LIKE '{$loc}' "; 
+   $sql = $sql." AND locationtbl.name LIKE '{$loc}' "; 
  }
+
+ //check filter by type
  if (isset($_GET['type']))
  {
    $type =  $conn->real_escape_string($_GET['type']);
    $sql = $sql." AND programtbl.type LIKE '{$type}%' "; 
  }
+
+ //filter by status to allow showing unapproved programs.
 if(!isset($_GET["status"])){ //"secret" api to allow getting all programs for debugging
 $sql = $sql." AND programtbl.approved=1 "; 
 }
@@ -54,7 +58,7 @@ while($row=mysqli_fetch_assoc($result))
 {
 
   if ($row['rrule']!=null){
-          //echo $row['title'];
+    //if event has an rrule, parse rule, generate recurring instances and add to array of events
     $array = array_merge($array,getRecurEvents($row));
   }else {
 
@@ -62,11 +66,16 @@ while($row=mysqli_fetch_assoc($result))
  }
 }
 
+//sorty events again by date, because of recurring instances
 usort($array, 'date_compare');
-echo json_encode($array);
+$output = json_encode($array);
+//replace newlines with html tags so they show up in popup views
+echo $output1 = str_replace('\r\n', "<br>", $output);
+//echo $output;
 
 }
 
+//compares string dates to order events by date
 function date_compare($a, $b)
 {
   $t1 = strtotime($a['sd']);
@@ -74,7 +83,7 @@ function date_compare($a, $b)
   return ($t1 -$t2);
 } 
 
-
+//used to curl and get events from external sources
 function get_data($url) {
   $ch = curl_init();
   $timeout = 5;
@@ -88,7 +97,7 @@ function get_data($url) {
 
 
 
-
+//parses and generates recurring events 
 function getRecurEvents($event){
 
   $events = array();
@@ -102,13 +111,12 @@ $enddate = new DateTime($event['ed']);
 $rrules = array();
 $rruleStrings = explode(';', $rulestr);
 foreach ($rruleStrings as $s) {
- list($k, $v) = explode('=', $s);
- $rrules[$k] = $v;
+  list($k, $v) = explode('=', $s);
+  $rrules[$k] = $v;
 }
 
 // Get frequency
 $frequency = $rrules['FREQ'];            
-
 
  //get duration
 $duration = (isset($rrules['DURATION']) && $rrules['DURATION'] !== '')
@@ -118,16 +126,18 @@ $duration = (isset($rrules['DURATION']) && $rrules['DURATION'] !== '')
 //$durHrs = $duration[0];
 //$durMins = $duration[1];
 
-     // Get Interval
+// Get Interval
 $interval = (isset($rrules['INTERVAL']) && $rrules['INTERVAL'] !== '')
 ? $rrules['INTERVAL']
 : 1;
+
  //get Count
 $count = (isset($rrules['COUNT']) && $rrules['COUNT'] !== '')
 ? $rrules['COUNT']
 : 1;
 
 $until=$enddate;
+
 $currdate = new DateTime(null,(new DateTimeZone("America/Los_Angeles")));
               //  if (isset($rrules['UNTIL'])) {
                     // Get Until
@@ -149,7 +159,6 @@ switch ($frequency) {
               $tempevent['sd'] = $newsd->format('Y-m-d H:i:s'); 
               $tempevent['ed'] = $newed->format('Y-m-d H:i:s');
          // echo $tempevent['sd'].' '.$tempevent['ed'];
-          //echo '<br>';
               $events[] = $tempevent;
               $ii++;
             }
@@ -162,8 +171,8 @@ switch ($frequency) {
             $newed = $tempd->add(new DateInterval('PT'.$duration.'M'));
           } 
           break;
-       case 'WEEKLY':
-          $interval = 7; //if weekly, just do same thing as daily but add 7 days
+    case 'WEEKLY':
+        $interval = 7; //if weekly, just do same thing as daily but add 7 days
         $newsd = $startdate;//->add(new DateInterval('P'.$interval.'D'));
         $tempd = clone $newsd;
         $newed = $tempd->add(new DateInterval('PT'.$duration.'M'));
@@ -182,13 +191,15 @@ switch ($frequency) {
             $ii++;
           }
 
-        //echo json_encode($tempevent);
+          //echo json_encode($tempevent);
           //echo $newsd->format('Y-m-d H:i');
           //echo '<br>';
           $newsd = $startdate->add(new DateInterval('P'.$interval.'D'));
           $tempd = clone $newsd;
           $newed = $tempd->add(new DateInterval('PT'.$duration.'M'));
         } 
+        break;
+    case 'MONTHLY'://handle by weekday case, also need to handle for weekly.. hmm
         break;
       }
       return $events;
