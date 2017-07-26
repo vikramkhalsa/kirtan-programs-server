@@ -20,15 +20,24 @@ session_start();
     <link href="navbar.css" rel="stylesheet">
 
     <script type="text/javascript">
+
         function showDescription(el){
            var val = el.getAttribute("val");
            $('#myModal').find(".modal-body").html(val);
            $('#myModal').modal();
        }
 
+            function showImage(el){
+           var val = el.getAttribute("val");
+           var img = $('<img id="dynamic" class="img-responsive" style="display:block; margin:auto;">'); //Equivalent: $(document.createElement('img'))
+            img.attr('src', val);
+           $('#myModal').find(".modal-body").html(img);
+           $('#myModal').modal();
+       }
+
        function downloadiCal(id){
         var cell = $('#'+id);
-        var title = cell.find('.programTitle').html();
+        var title = cell.find('.programTitle').find('a').html();
         var addr = cell.find('a').html();
         var start = cell.find('.sd').attr("start");
         var desc = cell.find('.infoBtn').attr("val");
@@ -138,8 +147,10 @@ if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
     <?php
 
     foreach($array as $value){
+        echo '<div class="row">';
         echo '<div class="cell" id="'.$value['id'].'">
-        <div class="left" style="width:30%; float:left; font-size:1.1em;  top: 50%; ">';
+        <div class="col-xs-4 col-sm-3">';
+       // <div class="left" style="width:30%; float:left; font-size:1.1em;  top: 50%; ">';
         $sdate = strtotime($value['sd']); // date('D M d Y H:i:s -0000', $sdate)
         $edate = strtotime($value['ed']);
         echo '<div class="sd" start="'.date('Ymd\THis', $sdate).'" end="'.date('Ymd\THis', $edate).'">'; //saving in this format for export to iCal
@@ -158,9 +169,9 @@ if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
         }
         echo '<button class="infoBtn" onclick="downloadiCal('.$value['id'].')"><span class="glyphicon glyphicon-calendar" aria-hidden="true" aria-label="Export to Calendar"></span></button>';
         echo '</div> 
-        <div class="right" style="width:70%; float:left;">
+        <div class="col-xs-8 col-sm-6">
             <div class="programTitle">';
-                echo $value["title"];
+                echo '<a href="eventdetails.php?id='.$value['id'].'">' . $value["title"] . '</a>';
                 echo'</div><br><div class="programSubtitle">';
                 echo $value["subtitle"];
                 echo'</div><br> <a href="http://maps.google.com/?q='.$value["address"].'">';
@@ -169,7 +180,8 @@ if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
                 echo $value["phone"];
                 echo"<br>";
                 if ($value["imageurl"]){
-                    echo '<a  href="'.$value["imageurl"].'">View Poster</a>';
+                    echo '<div class="visible-xs" onclick="showImage(this)" val="'.$value["imageurl"].'">View Poster</div>';
+                   // echo '<a  href="'.$value["imageurl"].'">View Poster</a>';
                     echo "<br>";
                 }
                 if ($value["siteurl"]){
@@ -181,14 +193,18 @@ if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
                 }
 
         //echo '<a class="" href="http://maps.google.com/?q='.$value["address"].'"><img src="http://isangat.org/map.png" border="0"></a><br>';
-                echo '</div>
-            </div>';
+                echo '</div>';
+        //</div>';
+        echo '<div class="col-sm-3 visible-sm visible-md visible-lg">  <img class="img-thumbnail" src="'.$value["imageurl"].'" style="max-height:200px" onclick="showImage(this)" val="'.$value["imageurl"].'"/></div></div>';
+
+        echo '</div>'; //end row
+
             
         }
         ?>
 
-        <div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-          <div class="modal-dialog modal-sm" role="document">
+        <div id="myModal" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+          <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-body">
                 </div>

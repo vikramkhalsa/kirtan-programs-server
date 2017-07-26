@@ -49,6 +49,14 @@ if(!isset($_GET["status"])){ //"secret" api to allow getting all programs for de
 $sql = $sql." AND programtbl.approved=1 "; 
 }
 
+//check id filter
+ if (isset($_GET['id']))
+ {
+   $id =  $conn->real_escape_string($_GET['id']);
+   $sql = $sql."  AND programtbl.id = {$id} "; 
+ }
+
+
 $sql = $sql." ORDER BY programtbl.sd ASC";
 //echo $sql;
 $result = mysqli_query($conn, $sql) or die(mysqli_error($conn));

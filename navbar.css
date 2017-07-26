@@ -34,9 +34,14 @@ body {
 
 }
 
-.cell:hover {
-    background-color: #bcd4ec;
+/*.cell:hover {
+    background-color: #ebaa2d;
+}*/
+
+.img-thumbnail:hover{
+  background-color: #ebaa2d;
 }
+
 
 .navbar-default {
   background-color: #1c2e4a;
