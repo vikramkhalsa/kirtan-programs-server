@@ -69,6 +69,39 @@ if (isset($_POST['id']))
 		} else {
 			echo "Error: " . $sql . "<br>" . $conn->error;
 		}
+
+		if ($action == "approve"){
+			$sql = "SELECT programtbl.user, programtbl.title, programtbl.sd, programtbl.ed, programtbl.description, usertbl.email FROM events_all.programtbl  JOIN usertbl on programtbl.user = usertbl.username where programtbl.id ='$id'";
+			
+				//get values of this event
+				$result = mysqli_query($conn, $sql);
+				$name = "";
+				$email = "";
+				$title="";
+				$sd="";
+				$ed = "";
+				$desc = "";
+
+				while($row=mysqli_fetch_assoc($result)){
+					$name = $row["user"];
+					$email = $row["email"];
+					$title = $row["title"];
+					$sd = $row["sd"];
+					$ed = $row["ed"];
+					$desc = $row["description"];
+				}
+				//send email to user who submitted it;
+				$subject = "Your event has been approved!";
+				$body =  sprintf("Waheguru Ji Ka Khalsa, Waheguru Ji Ki Fateh,
+					\n\nCongratulations, the following event has been approved: 
+					\n\n Title: %s \n Start: %s\n End: %s\n  Description: %s 
+					\n\n You can now share the event using this link: http://sikh.events/eventdetails.php?id=%s
+					\n To Edit, Clone, or Delete, please visit: http://sikh.events/programsadmin.php",
+					$title, $sd,$ed, $desc, $id);
+
+				mail($email, $subject, $body, "From: vsk@sikh.events");
+		}
+		
 		mysqli_close($conn);
  // once saved, redirect back to the view page
 		header("Location: programsadmin.php"); 

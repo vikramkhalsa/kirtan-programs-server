@@ -20,7 +20,7 @@ else { //get all sikh.events programs
   include('config.php');
 
   //get specific fields and address from joined location tables so as to return in the format mobile apps expect
-  $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description, programtbl.type, programtbl.rrule, programtbl.imageurl, programtbl.siteurl, locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE programtbl.ed >= DATE(NOW())";
+  $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description, programtbl.type, programtbl.rrule, programtbl.imageurl, programtbl.siteurl, locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE programtbl.ed >= DATE(NOW() - INTERVAL 1 WEEK)";
 // $sql = "SELECT * FROM events_all.programtbl WHERE programtbl.ed >= DATE(NOW())"; 
 
 //check region filter
@@ -74,12 +74,35 @@ while($row=mysqli_fetch_assoc($result))
  }
 }
 
+
+
 //sorty events again by date, because of recurring instances
 usort($array, 'date_compare');
+
+header('Content-Type: application/json; charset=utf-8');
+if(isset($_GET['alexa']))
+{
+
+
+$array2 = array();
+$dt = gmdate("Y-m-d\TH:i:s\Z");
+foreach($array as $row){
+  $row1 = array();
+  $row1["uid"] =  $row["id"];
+    $row1["updateDate"] = $dt;//"2017-07-30T00:00:00.0Z";//$row['sd'];
+  $row1["titleText"] =  $row["title"];
+  $row1["mainText"] = $row["title"].' on '.date('l, M j \a\t g:ia', strtotime($row['sd']));//$row["description"];
+  $row1["redirectionUrl"] = "http://www.sikh.events/eventdetails.php?id=".$row['id'];
+  $array2[] = $row1;
+}
+echo $output = json_encode($array2);
+
+}else {
 $output = json_encode($array);
 //replace newlines with html tags so they show up in popup views
 echo $output1 = str_replace('\r\n', "<br>", $output);
 //echo $output;
+}
 
 }
 
