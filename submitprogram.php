@@ -115,6 +115,15 @@ $(document).ready(function () {
    }
  });
 
+  $('#freq').on('change', function(){
+    if ($(this).val() =="MONTHLY"){
+      $('#monthrow').show(200);
+    }
+    else{
+     $('#monthrow').hide(200);
+   }
+ });
+
   $("#location").blur(function() {
 
     if (locNames.indexOf($("#location").val()) < 0){
@@ -181,7 +190,17 @@ if(repeat){
   var mins = tim/(1000*60);
   //var interval = $('#interval').val();
   var freq = $('#freq').val();
-  $('#repeat').val("FREQ="+freq+";DURATION="+mins);
+ 
+var rep = "FREQ="+freq+";DURATION="+mins;
+//for monthly recurrence, get day of week and number
+if (freq=="MONTHLY"){
+  const weekno = $('#weekno').val();
+  const day = $('#weekday').val();
+rep = rep+";BYDAY="+weekno+day;
+
+}
+
+ $('#repeat').val(rep);
   var newed = $('#ed2').val();
   var oldet =$('#ed').val().slice(10)
   $('#ed').val(newed+ oldet);
@@ -324,6 +343,7 @@ $('#location-message').append(data.message);
   include('header.html');
 
   $showpanel = 'style="display: none"';
+  $showmonth = 'style="display: none"';
   if (is_numeric($_POST['id'])) 
   {
     $id = $_POST['id'];
@@ -377,6 +397,18 @@ $('#location-message').append(data.message);
      ? $rrules['DURATION']
      : "120";
      $freq = $rrules["FREQ"];
+
+$weekno = null;
+$dayofweek = null;
+
+     if (isset($rrules['BYDAY']) && $rrules['BYDAY']!= null){
+
+      $byday = $rrules['BYDAY'];
+        $weekno = intval($byday);
+          $dayofweek = substr($byday,-2);
+          $showmonth = '';
+     }
+
  //echo "DURATION";
      echo $duration;
 
@@ -458,7 +490,6 @@ $('#location-message').append(data.message);
               <?php } ?>
             </select>
           </div>
-        
       </div>
 
       <input type="checkbox" id="loc-public" checked>
@@ -500,12 +531,13 @@ pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}">
    <div class="col-xs-6">
     Repeat
 
-    <?php $freqOpts= array("DAILY","WEEKLY"); ?>
+    <?php $freqOpts= array("DAILY","WEEKLY", "MONTHLY"); ?>
     <select class="form-control" id="freq">
       <?php foreach ($freqOpts as $value) { ?>
       <option value="<?php echo $value;?>" <?php echo ($value== $freq) ? ' selected="selected"' : '';?>><?php echo ucfirst($value);?></option>
       <?php } ?>
     </select>
+
   </div>
 
 <!-- <div class="col-xs-4">
@@ -518,7 +550,38 @@ pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}">
   Until
   <input type="text" id="ed2" class="form-control" value="<?php echo $ed2; ?>">
 </div>
+
 </div>
+
+<div class="row" id="monthrow" <?php echo $showmonth; ?> >
+
+   <div class="col-xs-6">Every
+<?php $weeknos = array("First", "Second","Third","Fourth","Fifth"); 
+    $weekcount = 0;?>
+    <select class='form-control' id="weekno">
+ <?php foreach ($weeknos as $value) {
+       $weekcount +=1; 
+  ?>
+      <option value="<?php echo $weekcount;?>" <?php echo ($weekcount == $weekno) ? ' selected="selected"' : '';?>><?php echo ucfirst($value);?></option>
+
+      <?php } ?>
+    </select>
+     </div>
+    <div class="col-xs-6">
+Day of week
+    <?php $weekdays = array('SU'=>'sunday','MO'=> 'monday','TU'=>'tuesday','WE'=>'wednesday','TH'=>'thursday','FR'=>'friday','SA'=>'saturday'); ?>
+    <select class='form-control' id="weekday">
+ <?php foreach ($weekdays as $value=>$day) { ?>
+      <option value="<?php echo $value;?>" <?php echo ($value== $dayofweek) ? ' selected="selected"' : '';?>><?php echo ucfirst($day);?></option>
+      <?php } ?>
+    </select>
+   
+
+
+
+
+   </div>
+  </div>
 </div>
 
 <br>

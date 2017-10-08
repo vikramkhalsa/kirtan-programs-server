@@ -99,6 +99,7 @@ function onselectchange(){
         Mobile apps are available for iOS and Android. <br>
         <a href="https://play.google.com/store/apps/details?id=com.vikramkhalsa.isangat"> <img src="images/googleplay.png" style="width:150px; padding:5px"></a>
         <a href="https://itunes.apple.com/us/app/sikh-events/id1220078093?mt=8"> <img src="images/appstore.png" style="width:150px; padding:5px"></a>
+        <a href="https://www.amazon.com/VSK-Sikh-Events/dp/B07541QG26/ref=sr_1_1?s=mobile-apps&ie=UTF8&qid=1506234517&sr=1-1&keywords=sikh+events"> <img src="images/amazon.png" style="height:53px; padding:5px"></a>
   
     <?php
 
@@ -125,9 +126,6 @@ function onselectchange(){
     $regions = file_get_contents('http://www.sikh.events/getlocations.php?regions=current'.$filter);
     $regions = json_decode($regions, true);
 
-if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
-        $array = $array["programs"];
-}
  ?>
  <br>
 <label for="loc-city">Show Regions </label>
@@ -149,8 +147,8 @@ if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
     foreach($array as $value){
         echo '<div class="row">';
         echo '<div class="cell" id="'.$value['id'].'">
-        <div class="col-xs-4 col-sm-3">';
-       // <div class="left" style="width:30%; float:left; font-size:1.1em;  top: 50%; ">';
+        <div class="col-xs-3 col-sm-2">';
+       // <div class="left" stye="width:30%; float:left; font-size:1.1em;  top: 50%; ">';
         $sdate = strtotime($value['sd']); // date('D M d Y H:i:s -0000', $sdate)
         $edate = strtotime($value['ed']);
         echo '<div class="sd" start="'.date('Ymd\THis', $sdate).'" end="'.date('Ymd\THis', $edate).'">'; //saving in this format for export to iCal
@@ -169,16 +167,16 @@ if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
         }
         echo '<button class="infoBtn" onclick="downloadiCal('.$value['id'].')"><span class="glyphicon glyphicon-calendar" aria-hidden="true" aria-label="Export to Calendar"></span></button>';
         echo '</div> 
-        <div class="col-xs-8 col-sm-6">
+        <div class="col-xs-9 col-sm-7">
             <div class="programTitle">';
                 echo '<a href="eventdetails.php?id='.$value['id'].'">' . $value["title"] . '</a>';
-                echo'</div><br><div class="programSubtitle">';
+                echo'</div><div class="programSubtitle">';
                 echo $value["subtitle"];
-                echo'</div><br> <a href="http://maps.google.com/?q='.$value["address"].'">';
+                echo'</div><a href="http://maps.google.com/?q='.$value["address"].'">';
                 echo $value["address"];
-                echo"</a><br>";
+                echo"</a><div class='phone'>";
                 echo $value["phone"];
-                echo"<br>";
+                echo"</div>";
                 if ($value["imageurl"]){
                     echo '<div class="visible-xs" onclick="showImage(this)" val="'.$value["imageurl"].'">View Poster</div>';
                    // echo '<a  href="'.$value["imageurl"].'">View Poster</a>';
@@ -186,8 +184,14 @@ if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
                 }
                 if ($value["siteurl"]){
                     $siteurl = $value["siteurl"];
-                     if(strpos($siteurl, "http://") !== false && strpos($siteurl, "https://") !== false){ }
-                    else { $siteurl = "http://".$siteurl; }
+                    if((strpos($siteurl, "http://") != false) && (strpos($siteurl, "https://") != false))
+                    {
+                     $a=0;
+                    }
+                    else 
+                    { 
+                       // $siteurl = "https://".$siteurl; 
+                    }
                     echo '<a  href="'.$siteurl.'">'.$value["siteurl"].'</a>';
                     echo "<br>";
                 }
@@ -195,7 +199,7 @@ if (isset($_GET["source"]) && ($_GET["source"] == "isangat")){
         //echo '<a class="" href="http://maps.google.com/?q='.$value["address"].'"><img src="http://isangat.org/map.png" border="0"></a><br>';
                 echo '</div>';
         //</div>';
-        echo '<div class="col-sm-3 visible-sm visible-md visible-lg">  <img class="img-thumbnail" src="'.$value["imageurl"].'" style="max-height:200px" onclick="showImage(this)" val="'.$value["imageurl"].'"/></div></div>';
+        echo '<div class="col-sm-3 visible-sm visible-md visible-lg">  <img class="img-thumbnail" src="'.$value["imageurl"].'" style="max-height:170px" onclick="showImage(this)" val="'.$value["imageurl"].'"/></div></div>';
 
         echo '</div>'; //end row
 

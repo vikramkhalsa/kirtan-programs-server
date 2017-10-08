@@ -7,9 +7,21 @@ if(isset($_GET['source'])){
     $returned_content = get_data('http://www.isangat.org/json2.php');
         echo $output = str_replace(array("\r\n", "\r"), "", $returned_content);
   }
+   if ($src =="isangat2"){ //return only isangat programs
+    $returned_content = get_data('http://www.isangat.org/json3.php');
+        echo $output = str_replace(array("\r\n", "\r"), "", $returned_content);
+  }
 
   if ($src =="ekhalsa"){ //return only ekhalsa programs
     $returned_content = get_data('http://www.sikh.events/source_parser.php');
+    echo $returned_content;
+  }
+  if ($src =="akjorg"){ //return only ekhalsa programs
+    $returned_content = get_data('http://www.sikh.events/akj_parser.php');
+    echo $returned_content;
+  }
+   if ($src =="samagams"){ //return only ekhalsa programs
+    $returned_content = get_data('http://www.sikh.events/samagams_parser.php');
     echo $returned_content;
   }
 }
@@ -20,7 +32,7 @@ else { //get all sikh.events programs
   include('config.php');
 
   //get specific fields and address from joined location tables so as to return in the format mobile apps expect
-  $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description, programtbl.type, programtbl.rrule, programtbl.imageurl, programtbl.siteurl, locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE programtbl.ed >= DATE(NOW() - INTERVAL 1 WEEK)";
+  $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description, programtbl.type, programtbl.rrule, programtbl.imageurl, programtbl.siteurl, locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE programtbl.ed >= DATE(NOW())";
 // $sql = "SELECT * FROM events_all.programtbl WHERE programtbl.ed >= DATE(NOW())"; 
 
 //check region filter
@@ -170,6 +182,10 @@ $count = (isset($rrules['COUNT']) && $rrules['COUNT'] !== '')
 $until=$enddate;
 
 $currdate = new DateTime(null,(new DateTimeZone("America/Los_Angeles")));
+
+$byday = (isset($rrules['BYDAY']) && $rrules['BYDAY'] !== '')
+? $rrules['BYDAY']
+: null;
               //  if (isset($rrules['UNTIL'])) {
                     // Get Until
                 //    $until = new DateTime($rrules['UNTIL']);    
@@ -231,6 +247,44 @@ switch ($frequency) {
         } 
         break;
     case 'MONTHLY'://handle by weekday case, also need to handle for weekly.. hmm
+        if ($byday != null){
+          //$byday = "1SU";
+          $weekno = intval($byday)-1;
+          $dayofweek = substr($byday,-2);
+
+          $weekdays = array('SU'=>'sunday','MO'=> 'monday','TU'=>'tuesday','WE'=>'wednesday','TH'=>'thursday','FR'=>'friday','SA'=>'saturday');
+          $numwords = ['first','second','third','fourth','fifth'];
+
+
+        $interval = 1;
+        $newsd = $startdate;//->add(new DateInterval('P'.$interval.'D'));
+        $tempd = clone $newsd;
+
+        $newed = $tempd->add(new DateInterval('PT'.$duration.'M'));
+
+        $ii = 0;
+        while ($newed<=$until){
+        //for($i=0;$i<$count;$i++){
+          if($newed>=$currdate){
+            $tempevent = $event;
+            $tempevent['id'] = $event["id"]."0".$ii;
+            $tempevent['sd'] = $newsd->format('Y-m-d H:i:s'); 
+            $tempevent['ed'] = $newed->format('Y-m-d H:i:s');
+       // echo $tempevent['sd'].' '.$tempevent['ed'];
+        //echo '<br>';
+            $events[] = $tempevent;
+            $ii++;
+          }
+
+          //echo json_encode($tempevent);
+          //echo $newsd->format('Y-m-d H:i');
+          //echo '<br>';
+          $newsd = $startdate->add(DateInterval::createFromDateString($numwords[$weekno]." ".$weekdays[$dayofweek]." of next month"));
+          $tempd = clone $newsd;
+          $newed = $tempd->add(new DateInterval('PT'.$duration.'M'));
+        }
+      }
+
         break;
       }
       return $events;

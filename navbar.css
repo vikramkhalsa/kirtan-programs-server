@@ -13,7 +13,9 @@ padding:5px;
 }
 
 .programTitle {
-  font-size: 1.4em;
+  font-size: 1.45em;
+  padding-bottom:.4em;
+  height:15%;
 }
 
 .programSubtitle {
@@ -22,20 +24,29 @@ padding:5px;
 }
 
 body {
-    background: #fff;
+    background: #f2f2f2;
 }
 
 .cell{
-    width:100%;
-    padding: 10px;
-    border-bottom: 1px solid gray;
-    border-top: 1px solid gray;
+    
+    padding: 20px 10px 20px 10px;
     overflow:auto;
+    margin:7px 30px;
+    background-color:white;
+    box-shadow:1px 1px 2px 2px #0004;
+    border-radius:4px;
+}
 
+.sd{
+  font-size:1.1em;
+}
+
+.phone {
+  padding:.5em 0;
 }
 
 /*.cell:hover {
-    background-color: #ebaa2d;
+    background-color: #fefefe;
 }*/
 
 .img-thumbnail:hover{

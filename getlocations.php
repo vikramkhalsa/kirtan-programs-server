@@ -14,9 +14,10 @@ if($regions=="current"){
 
 $sql = "SELECT DISTINCT regiontbl.name, regiontbl.regionid FROM events_all.programtbl 
  JOIN locationtbl on programtbl.locationid = locationtbl.locationid
- JOIN  regiontbl on locationtbl.region = regiontbl.regionid";
+ JOIN  regiontbl on locationtbl.region = regiontbl.regionid
+ WHERE programtbl.ed >= DATE(NOW()) AND programtbl.approved=1";
 }
-// WHERE programtbl.ed >= DATE(NOW()) AND programtbl.approved=1";
+
  //$sql = "SELECT DISTINCT subtitle FROM events_all.programtbl WHERE programtbl.ed >= DATE(NOW()) AND programtbl.approved=1";
 $result = mysqli_query($conn, $sql);
 
