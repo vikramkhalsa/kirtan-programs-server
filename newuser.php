@@ -35,43 +35,47 @@
 
     if ($p1!= $p2){
       echo "<br>Passwords do not match</br>";
-    }else {
+    }
+    else if(strlen($p1) < 6 ){
+      echo "<br>Password must at least 6 characters or more</br>";
+    } 
+    else {
 
-     $encrypass = password_hash($p1, PASSWORD_DEFAULT);
-     $sql = "INSERT INTO events_all.usertbl (username, email, password)
-     VALUES ('$user', '$email', '$encrypass')";
-     if ($conn->query($sql) === TRUE) {
+      $encrypass = password_hash($p1, PASSWORD_DEFAULT);
+      $sql = "INSERT INTO events_all.usertbl (username, email, password)
+      VALUES ('$user', '$email', '$encrypass')";
+      if ($conn->query($sql) === TRUE) {
 
-      echo "<div class='alert alert-success' role='alert'>
-    </br>New user registered successfully.
-  </br>Visit <a href='submitprogram.php'> this page</a> to submit a program. 
-</div>";
+        echo "<div class='alert alert-success' role='alert'>
+              </br>New user registered successfully.
+              </br>Visit <a href='submitprogram.php'> this page</a> to submit a program. 
+              </div>";
 
-      //first send email to user
-$to = $email;
-$subject = "Sikh.Events Registration successful!";
-$body =  sprintf("Waheguru Ji Ka Khalsa Waheguru Ji Ki Fateh,\n\n
- Welcome %s, You have been successfully registered. You may now visit 
- http://sikh.events/submitprogram.php to submit programs.", $user);
+          //first send email to user
+        $to = $email;
+        $subject = "Sikh.Events Registration successful!";
+        $body =  sprintf("Waheguru Ji Ka Khalsa Waheguru Ji Ki Fateh,\n\n
+         Welcome %s, You have been successfully registered. You may now visit 
+         http://sikh.events/submitprogram.php to submit programs.", $user);
 
-if (mail($to, $subject, $body)) {
- echo "";
-}
+        if (mail($to, $subject, $body)) {
+         echo "";
+        }
 
-      //then send email to admin
-$to = "vsk@sikh.events";
-$subject = "New User Registered!";
-$body =  sprintf("WJKK WJKF,\n\n
- New user %s has been successfully registered.", $user);
-mail($to, $subject, $body);
+          //then send email to admin
+        $to = "vsk@sikh.events";
+        $subject = "New User Registered!";
+        $body =  sprintf("WJKK WJKF,\n\n
+         New user %s has been successfully registered.", $user);
+        mail($to, $subject, $body);
 
-} else {
- echo "<div class='alert alert-danger' role='alert'> 
- Error: " . $conn->error . 
- "<br> Please try again. </div>";
-}
-}
-}
+        } else {
+         echo "<div class='alert alert-danger' role='alert'> 
+         Error: " . $conn->error . 
+         "<br> Please try again. </div>";
+        }
+    }
+  }
 ?>
 
 <div class="row">

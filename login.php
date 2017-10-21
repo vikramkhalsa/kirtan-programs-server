@@ -1,7 +1,7 @@
 <?php 
 if ($error != '')
 {
-echo "div class='alert alert-danger' role='alert'>".$error."</div>";
+echo "<div class='alert alert-danger' role='alert'>".$error."</div>";
 }
 $loginer = "";
 
@@ -22,17 +22,19 @@ if ($result->num_rows > 0) {
   if (password_verify($p1, $row["password"])){
     //echo "Login was successful. <br>";
     session_start();
-    $_SESSION["user"] = $user;
-    $_SESSION["usertype"] = $row["type"];
+    $_SESSION["user"] = htmlspecialchars($user);
+    $_SESSION["usertype"] = htmlspecialchars($row["type"]);
     header("Location: " . "/submitprogram.php");
      exit();
   }
   else {
-   $loginer = "<div class='alert alert-danger' role='alert'>Username or Password is incorrect, please try again. </div>";
+   $loginer = "<div class='alert alert-danger' role='alert'>Username or Password is incorrect, please try again. 
+   <a href='resetpassword.php'>Click here to reset your password.</a> </div>";
   }
 }      
 else {
-       $loginer =  "<div class='alert alert-danger' role='alert'>Username or Password is incorrect, please try again. </div>";
+       $loginer =  "<div class='alert alert-danger' role='alert'>Username or Password is incorrect, please try again. 
+        <a href='resetpassword.php'>Click here to reset your password.</a> </div>";
 }
 
 

@@ -105,6 +105,7 @@ function onselectchange(){
 
     $filter = "";
     $regid = "";
+    $past = false;
     if (isset($_GET["type"])){
         $filter = "?type=".$_GET["type"];
     }
@@ -115,8 +116,10 @@ function onselectchange(){
         $filter = "?region=".$_GET["region"];
         $regid = $_GET["region"];
     }
-
-
+    else if (isset($_GET["past"])){
+        $filter = "?past=".$_GET["past"];
+        $past = true;
+    }
 
 
 
@@ -126,19 +129,29 @@ function onselectchange(){
     $regions = file_get_contents('http://www.sikh.events/getlocations.php?regions=current'.$filter);
     $regions = json_decode($regions, true);
 
- ?>
- <br>
-<label for="loc-city">Show Regions </label>
-            <select class="form-control" id="loc-region" onchange="onselectchange()">
-                <option value="" selected>All Events</option>
+     ?>
+     <br>
+    <label for="loc-city">Show Regions </label>
+    <div style="margin: 0 15px">
+    
+            <select class="form-control" id="loc-region" onchange="onselectchange()" style="width:calc( 100% - 150px); display:inline-block; padding-left:10px">
+                <option value="" selected>All Regions</option>
               <?php foreach ($regions as $region) { ?>
               <option value="<?php echo $region['regionid'];?>"  <?php echo ($region["regionid"] == $regid) ? ' selected="selected"' : '';?>>      <?php echo $region['name'];?></option>
               <?php } ?>
             </select>
-
-              </div>
-
- <div>
+          
+            <?php 
+            if ($past){
+                echo '<a href="index.php"><button class="btn btn-default">Hide past events</button></a>';
+            }
+            else {
+                  echo '<a href="index.php?past=60"><button class="btn btn-default">Show past events</button></a>';
+            }
+            ?>
+             
+    </div>
+<div>
 
     
 
