@@ -1,4 +1,12 @@
 <?php
+//getprograms.php
+//Vikram Singh
+//10/30/2017
+//This is the main entry point for the 'API'. It will take various query parameters and run the actual MYSQL query, and then return the events from the databse in JSON format for the website and mobile apps to use. 
+//This will also call the various custom parsers or files to get events from external sources.
+//It can filter events based on region, type, location, status, or id. It can also return events or events which haven't been approved (for debugging) 
+
+
 //check source filter
 if(isset($_GET['source'])){
   $src = $_GET['source'];
@@ -16,11 +24,11 @@ if(isset($_GET['source'])){
     $returned_content = get_data('http://www.sikh.events/source_parser.php');
     echo $returned_content;
   }
-  if ($src =="akjorg"){ //return only ekhalsa programs
+  if ($src =="akjorg"){ //return only akj.org programs
     $returned_content = get_data('http://www.sikh.events/akj_parser.php');
     echo $returned_content;
   }
-   if ($src =="samagams"){ //return only ekhalsa programs
+   if ($src =="samagams"){ //return only samagams.org programs
     $returned_content = get_data('http://www.sikh.events/samagams_parser.php');
     echo $returned_content;
   }
@@ -28,7 +36,7 @@ if(isset($_GET['source'])){
 else { //get all sikh.events programs
 
 
-// connect to the database
+  // connect to the database
   include('config.php');
 
   //get specific fields and address from joined location tables so as to return in the format mobile apps expect
@@ -42,7 +50,11 @@ else { //get all sikh.events programs
  {
    $pastdays =  $conn->real_escape_string($_GET['past']);
    $sql = $sql."programtbl.ed >=  DATE_SUB(NOW(), INTERVAL ".$pastdays." DAY) "; 
- }else {
+ }else if(isset($_GET['id'])){
+  $sql = $sql."programtbl.id > 0"; //just put this here so the WHERE clause doesn't break the query. 
+  //TBD figure out the proper way to do this.
+ }
+ else {
    $sql = $sql."programtbl.ed >= DATE(NOW())";
 
  }
@@ -54,7 +66,7 @@ else { //get all sikh.events programs
    $sql = $sql."  AND locationtbl.region = {$region} "; 
  }
 
-//check filter by name
+//check filter by location name
   if (isset($_GET['location']))
   {
    $loc =  $conn->real_escape_string($_GET['location']);
@@ -123,7 +135,9 @@ foreach($array as $row){
 }
 echo $output = json_encode($array2);
 
-}else {
+}
+
+else {
 $output = json_encode($array);
 //replace newlines with html tags so they show up in popup views
 echo $output1 = str_replace('\r\n', "<br>", $output);
@@ -179,6 +193,11 @@ $frequency = $rrules['FREQ'];
 $duration = (isset($rrules['DURATION']) && $rrules['DURATION'] !== '')
 ? $rrules['DURATION']
 : "120";
+//if it somehow got a negative duration, fix it.
+if (intval($duration) < 0){
+	$duration = "120";
+}
+//echo $duration;
 //$duration = explode(':',$duration);
 //$durHrs = $duration[0];
 //$durMins = $duration[1];
@@ -216,15 +235,16 @@ switch ($frequency) {
           //for($i=0;$i<$count;$i++){
             if($newed>=$currdate){
               $tempevent = $event;
-              $tempevent['id'] = $event["id"]."0".$ii;
+              $tempevent['id'] = $event["id"];//."0".$ii;
               $tempevent['sd'] = $newsd->format('Y-m-d H:i:s'); 
               $tempevent['ed'] = $newed->format('Y-m-d H:i:s');
-         // echo $tempevent['sd'].' '.$tempevent['ed'];
+              $tempevent['repeats'] = $frequency;
+              // echo $tempevent['sd'].' '.$tempevent['ed'];
               $events[] = $tempevent;
               $ii++;
             }
 
-          //echo json_encode($tempevent);
+            //echo json_encode($tempevent);
             //echo $newsd->format('Y-m-d H:i');
             //echo '<br>';
             $newsd = $startdate->add(new DateInterval('P'.$interval.'D'));
@@ -243,11 +263,12 @@ switch ($frequency) {
         //for($i=0;$i<$count;$i++){
           if($newed>=$currdate){
             $tempevent = $event;
-            $tempevent['id'] = $event["id"]."0".$ii;
+            $tempevent['id'] = $event["id"];//."0".$ii;
             $tempevent['sd'] = $newsd->format('Y-m-d H:i:s'); 
             $tempevent['ed'] = $newed->format('Y-m-d H:i:s');
-       // echo $tempevent['sd'].' '.$tempevent['ed'];
-        //echo '<br>';
+            $tempevent['repeats'] = $frequency;
+            // echo $tempevent['sd'].' '.$tempevent['ed'];
+            //echo '<br>';
             $events[] = $tempevent;
             $ii++;
           }
@@ -281,11 +302,12 @@ switch ($frequency) {
         //for($i=0;$i<$count;$i++){
           if($newed>=$currdate){
             $tempevent = $event;
-            $tempevent['id'] = $event["id"]."0".$ii;
+            $tempevent['id'] = $event["id"];//."0".$ii;
             $tempevent['sd'] = $newsd->format('Y-m-d H:i:s'); 
             $tempevent['ed'] = $newed->format('Y-m-d H:i:s');
-       // echo $tempevent['sd'].' '.$tempevent['ed'];
-        //echo '<br>';
+            $tempevent['repeats'] = $frequency;
+            //echo $tempevent['sd'].' '.$tempevent['ed'];
+            //echo '<br>';
             $events[] = $tempevent;
             $ii++;
           }

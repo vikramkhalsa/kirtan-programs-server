@@ -1,4 +1,11 @@
 <?php 
+//commitprogram.php
+//Vikram Singh
+//10/31/2017
+//This file receives the post data to create a new event and actually inserts it into the database
+//it performs a little validation and shows error or success messages. It also sends the moderation request. 
+//This will eventually be used as an API endpoint so it will need to return a json message rather than html. 
+
 session_start();
 if ($_SESSION['user'] == null){
 
@@ -22,124 +29,162 @@ if ($_SESSION['user'] == null){
 	<link href="navbar.css" rel="stylesheet">
 </head>
 <body>
-	<?php 
-	include('header.html');
-	?>
+<?php 
+include('header.html');
+?>
 	<div style="padding:10px">
 
-		You submitted the following: <br><br>
+	You submitted the following: <br><br>
 
-		<?php 
+	<?php 
 
-		echo "Title: ",$_POST["title"]; 
-		print "<br>";
-		echo "Location: ",$_POST["subtitle"]; 
-		print "<br>";
-//echo "Address: ",$_POST["address"]; 
-//print "<br>";
-		echo "Phone Number: ",$_POST["phone"];
-		print "<br>"; 
-		echo "Start: ",$_POST["sd"]; 
-		print "<br>";
-		echo "End: ",$_POST["ed"]; 
-		print "<br>";
-		echo "Type: ",$_POST["type"];
-		print "<br>";
-//echo "Zip Code: ",$_POST["zip"];
-//print "<br>";
-//echo "Source: ",$_POST["source"]; 
-//print "<br>";
-		echo "Description: ",$_POST["description"];
-		print "<br><br>";
+	echo "Title: ",$_POST["title"]; 
+	print "<br>";
+	echo "Location: ",$_POST["subtitle"]; 
+	print "<br>";
+	//echo "Address: ",$_POST["address"]; 
+	//print "<br>";
+	echo "Phone Number: ",$_POST["phone"];
+	print "<br>"; 
+	echo "Start: ",$_POST["sd"]; 
+	print "<br>";
+	echo "End: ",$_POST["ed"]; 
+	print "<br>";
+	echo "Type: ",$_POST["type"];
+	print "<br>";
+	//echo "Zip Code: ",$_POST["zip"];
+	//print "<br>";
+	//echo "Source: ",$_POST["source"]; 
+	//print "<br>";
+	echo "Description: ",$_POST["description"];
+	print "<br><br>";
 
-//echo "Repeat",$_POST['repeat'];
+	//echo "Repeat",$_POST['repeat'];
 
+	$id="";
 
-		$id="";
-		if (isset($_POST['id']))
-		{ 
-	//echo $_POST['id'];
- // confirm that the 'id' value is a valid integer before getting the form data
-			if (is_numeric($_POST['id']))
-			{
- // get form data, making sure it is valid
-				$id = $_POST['id'];
-			}
+	if (isset($_POST['id'])){ 
+		//echo $_POST['id'];
+		// confirm that the 'id' value is a valid integer before getting the form data
+		if (is_numeric($_POST['id']))
+		{
+			// get form data, making sure it is valid
+			$id = $_POST['id'];
 		}
-// connect to the database
-		include('config.php');
+	}
+	// connect to the database
+	include('config.php');
 
-		$clone = $_POST["clone"];
-		$title = $conn->real_escape_string($_POST["title"]);
-		$phone = $conn->real_escape_string($_POST["phone"]);
-		$sd = $conn->real_escape_string($_POST["sd"]);
-		//$sd = date ("Y-m-d H:i:s", strtotime($sd));
-		$ed = $conn->real_escape_string($_POST["ed"]);
-		//$ed = date ("Y-m-d H:i:s", strtotime($sd));
-		$type = $conn->real_escape_string($_POST["type"]);
-		//$source = $conn->real_escape_string($_POST["source"]);
-		$description = $conn->real_escape_string($_POST["description"]);
-		$imageurl = $conn->real_escape_string($_POST["imageurl"]);
-		$siteurl = $conn->real_escape_string($_POST["siteurl"]);
-		$locationid = $conn->real_escape_string($_POST["locationid"]);
-		$rrule= $conn->real_escape_string($_POST["repeat"]);
-		if ($rrule ==""){
-			$rrule = null;
+	//Do some server side validation first. 
+	$errors = array();      // array to hold validation er
+	
+	if (empty($_POST['title']))
+		$errors['title'] = 'Title is required';
+	
+	if (empty($_POST['subtitle']))
+		$errors['location'] = 'Location is required';
+	
+	if (empty($_POST['sd']))
+		$errors['startdate'] = 'Start Date/Time is required';
+	
+
+	//validate phone number?
+	//validate type
+
+	// if there are any errors in our errors array, show them (for now.. ultimately make it more like an API and return them)
+	if (!empty($errors)) {
+
+   		// if there are items in our errors array, return those errors
+		echo "<div class='alert alert-danger' role='alert'>Error: ";
+		foreach ($errors as $err){
+			echo $err."<br>";
 		}
+		print "<br>Please try again.</div>";
+	   	return;
+
+	}
 
 
-		if ($id == "" or ($clone=="Clone")){
-		//need to check if values are blank, validate form data in submit program page??
-			$sql = "INSERT INTO events_all.programtbl (title, locationid, phone, sd, ed, user, description, type, rrule, imageurl, siteurl)
-			VALUES ('$title', '$locationid','$phone', '$sd','$ed', '$user', '$description', '$type', '$rrule', '$imageurl', '$siteurl')";
-			if ($conn->query($sql) === TRUE) 
+	$clone = $_POST["clone"];
+	$title = $conn->real_escape_string($_POST["title"]);
+	$phone = $conn->real_escape_string($_POST["phone"]);
+	$sd = $conn->real_escape_string($_POST["sd"]);
+	$sd1 = strtotime($sd);
+	$ed = $conn->real_escape_string($_POST["ed"]);
+	$ed1 = strtotime($ed);
+
+	//check if end date is before start date, don't allow
+	if ($sd1 > $ed1) {
+		echo "<div class='alert alert-danger' role='alert'>Error: End time must be later than start time.";
+		print "<br>Please try again.</div>";
+	   	return;
+	}
+
+	$type = $conn->real_escape_string($_POST["type"]);
+	//$source = $conn->real_escape_string($_POST["source"]);
+	$description = $conn->real_escape_string($_POST["description"]);
+	$imageurl = $conn->real_escape_string($_POST["imageurl"]);
+	$siteurl = $conn->real_escape_string($_POST["siteurl"]);
+	$locationid = $conn->real_escape_string($_POST["locationid"]);
+	$rrule= $conn->real_escape_string($_POST["repeat"]);
+	if ($rrule ==""){
+		$rrule = null;
+	}
+
+
+
+
+	if ($id == "" or ($clone=="Clone")){
+
+		$sql = "INSERT INTO events_all.programtbl (title, locationid, phone, sd, ed, user, description, type, rrule, imageurl, siteurl)
+		VALUES ('$title', '$locationid','$phone', '$sd','$ed', '$user', '$description', '$type', '$rrule', '$imageurl', '$siteurl')";
+		if ($conn->query($sql) === TRUE) 
+		{
+			echo "<div class='alert alert-success' role='alert'>New event submitted successfully! <br>";
+			
+			$to = "vsk@sikh.events";
+			$subject = "New BayAreaKirtan Program Submitted";
+			$body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted: 
+				\n\n Title: %s \n Location: %s \n Phone: %s\n Start: %s\n End: %s\n  User: %s\n Description: %s \n\n 
+				To moderate, visit: http://sikh.events/programsadmin.php",
+				$title, $locationid, $phone, $sd,$ed, $user, $description );
+
+			if (mail($to, $subject, $body)) 
 			{
-				echo "<div class='alert alert-success' role='alert'>New event submitted successfully! <br>";
-				
-				$to = "vsk@sikh.events";
-				$subject = "New BayAreaKirtan Program Submitted";
-				$body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted: 
-					\n\n Title: %s \n Location: %s \n Phone: %s\n Start: %s\n End: %s\n  User: %s\n Description: %s \n\n 
-					To moderate, visit: http://sikh.events/programsadmin.php",
-					$title, $locationid, $phone, $sd,$ed, $user, $description );
-
-				if (mail($to, $subject, $body)) 
-				{
-					echo("<p>Your submission has been sent for moderation.</p>");
-				} 
-				else 
-				{
-					echo("<p>Failed to send moderation request.</p>");
-				}
-
-				echo "</div>";
-			}
+				echo("<p>Your submission has been sent for moderation.</p>");
+			} 
 			else 
 			{
-				echo "<div class='alert alert-danger' role='alert'>Error: ". $conn->error;
-				print "<br>Please try again.</div>";
+				echo("<p>Failed to send moderation request.</p>");
 			}
 
-		} 
+			echo "</div>";
+		}
 		else 
 		{
-			$sql = "UPDATE events_all.programtbl SET title ='$title', locationid='$locationid', phone ='$phone', 
-			sd = '$sd', ed ='$ed', description ='$description', type ='$type', rrule='$rrule', imageurl='$imageurl', siteurl='$siteurl' WHERE id = '$id'";
-			if ($conn->query($sql) === TRUE) {
-				echo "<div class='alert alert-info' role='alert'>Event updated successfully!<br></div>";
-			} else {
-				echo "<div class='alert alert-danger' role='alert'> Error: " . $sql . "<br>" . $conn->error."</div>";
-			}
-
+			echo "<div class='alert alert-danger' role='alert'>Error: ". $conn->error;
+			print "<br>Please try again.</div>";
 		}
 
-//} else {
-//	echo "Invalid Password.";
-//}
+	} 
+	else 
+	{
+		$sql = "UPDATE events_all.programtbl SET title ='$title', locationid='$locationid', phone ='$phone', 
+		sd = '$sd', ed ='$ed', description ='$description', type ='$type', rrule='$rrule', imageurl='$imageurl', siteurl='$siteurl' WHERE id = '$id'";
+		if ($conn->query($sql) === TRUE) {
+			echo "<div class='alert alert-info' role='alert'>Event updated successfully!<br></div>";
+		} else {
+			echo "<div class='alert alert-danger' role='alert'> Error: " . $sql . "<br>" . $conn->error."</div>";
+		}
 
-		?>
-		<br>
+	}
 
+	//} else {
+	//	echo "Invalid Password.";
+	//}
+
+	?>
+	<br>
 
 	</div>
 

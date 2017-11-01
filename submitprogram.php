@@ -1,10 +1,16 @@
-<?php 
+<?php
+//submitprogram.php
+//Vikram Singh
+// 2017
+//This file provides the main form for users to submit new events. It is also used to edit and clone existing events. 
+//There is a lot of complex js code to handle the date times and recursion. it also has a 'sub'form embedded into it for adding new locations inline.  Ideally that should be shared between the new location add form page. 
+
+ 
 session_start();
 if ($error != '')
 {
   echo '<div style="padding:4px; border:1px solid red; color:red;">'.$error.'</div>';
 }
-
 
 
 if ($_SESSION['user'] == null){
@@ -34,7 +40,7 @@ if ($_SESSION['user'] == null){
  // var locNames = [];
 
  <?php 
-
+//get all locations from the database and put them into a javascript object for autocomplete control
  include('config.php');
  $sql = "SELECT * FROM events_all.locationtbl";   
  $result = mysqli_query($conn, $sql);
@@ -52,29 +58,33 @@ print "var locNames = ".json_encode($names).";\n";
 mysqli_close($conn);
 ?>
 
+//what does this do? I think it sets  start date and time into the format that we want for php/mysql?
+//converts 12 hr time to 24 hour time...
 function setTimes(prefix){
 
   var sdate = $("#" + prefix + "d").val();
   var stime = $("#"+prefix + "t").val();
   var sm = $("#s" + prefix +"m").val();
-//handle midnight and noon still!!! use val for 12 =0
-var hrs = parseInt(stime.substring(0,2));
+  //handle midnight and noon still!!! use val for 12 =0
+  var hrs = parseInt(stime.substring(0,2));
 
-if (sm=="PM"){
-  if (hrs < 12)
-    stime = (hrs + 12) + stime.substring(2,5);
-}else {
-  if (hrs >=12)
-    stime = (hrs -12) + stime.substring(2,5);
-}
+  if (sm =="PM"){
+    if (hrs < 12)
+      stime = (hrs + 12) + stime.substring(2,5);
+  }else {
+    if (hrs >=12)
+      stime = (hrs -12) + stime.substring(2,5);
+  }
 
-var date = sdate + " " + stime;
-$("#" + prefix + "dfull").val(date);
+  var date = sdate + " " + stime;
+  $("#" + prefix + "dfull").val(date);
 
 }
 
 
 $(document).ready(function () {
+
+  //initalize datetime controls. 
 
   $("#sd1").datetimepicker({
     controlType: 'select',
@@ -106,6 +116,7 @@ $(document).ready(function () {
   });
 
 
+  //show/hide recurrence panel if repeat box is checked
   $('#repeat').on('change', function(){
     if ($(this).is(":checked")){
       $('#recurrence-panel').show(400);
@@ -115,6 +126,7 @@ $(document).ready(function () {
    }
  });
 
+  //show additioanl controls if repeat frequency is monthly
   $('#freq').on('change', function(){
     if ($(this).val() =="MONTHLY"){
       $('#monthrow').show(200);
@@ -124,6 +136,7 @@ $(document).ready(function () {
    }
  });
 
+  //if the location they selected is not from list of known locations, prompt user to add new or select one
   $("#location").blur(function() {
 
     if (locNames.indexOf($("#location").val()) < 0){
@@ -132,6 +145,8 @@ $(document).ready(function () {
     }
   });
 
+  //if end date has not been set, set it to start date + 2 hours when start date is being set
+  //just for convenient user experience. 
   $("#sd1").on("change", function(){
     if($('#ed1').val()){
     }
@@ -140,23 +155,24 @@ $(document).ready(function () {
      time.setHours(time.getHours() + 2);
      $("#ed1").datetimepicker('setDate', time);
     //$('#ed1').val($(this).val());
-  }
+    }
   
-});
+  }); 
 
+  //set up autocomplete location select box and change handlers
   var select = document.createElement("select");
   locations = JSON.parse(data);
 
   $( "#location" ).on( "autocompleteselect", function( event, ui ) {
-    var key = ui.item.label;
-    $("#address-info").removeClass("redfont");
-    $("#address-info").html("Address: " + locations[key].address +', ' + locations[key].city + ' ' + locations[key].state);
-    $("#locationid").val(locations[key].locationid);
-  //locations[key].locationid;  
-  //$("#address").val(locations[key].address +', ' + locations[key].city + ' ' + locations[key].state);
-  //$("#zip").val(locations[key].zip);
-  $("#phone").val(locations[key].phone);
-} );
+      var key = ui.item.label;
+      $("#address-info").removeClass("redfont");
+      $("#address-info").html("Address: " + locations[key].address +', ' + locations[key].city + ' ' + locations[key].state);
+      $("#locationid").val(locations[key].locationid);
+    //locations[key].locationid;  
+    //$("#address").val(locations[key].address +', ' + locations[key].city + ' ' + locations[key].state);
+    //$("#zip").val(locations[key].zip);
+    $("#phone").val(locations[key].phone);
+  });
 
   $("#location").autocomplete({
     source: locNames
@@ -164,50 +180,53 @@ $(document).ready(function () {
 
 //$("[required]").before("<span style='color:red'>*</span>");
 
+}); //end doc.ready functions
 
-});
 
 function submitForm(){
+  
   if(!$("#locationid").val()){
-//$("#address-info").html("Please select an existing location or add a new location");
-return false;
-}
+    //$("#address-info").html("Please select an existing location or add a new location");
+    return false;
+  }
   //VALIDATE FORM
 
   var input = document.getElementById("#title");
 
-//check/fix  dates and don't submit if they are invalid!~
+  //check/fix  dates and don't submit if they are invalid!~
 
-//style invalid controls only after submitting
-var form= $(this).closest('#addprogram');
-var ips =  form.find('[required]');
-ips.addClass('notvalid');
+  //style invalid controls only after submitting
+  var form= $(this).closest('#addprogram');
+  var ips =  form.find('[required]');
+  ips.addClass('notvalid');
 
 
-var repeat = $('#repeat').is(":checked");
-if(repeat){
-  var tim = $('#ed1').datetimepicker('getDate')- $('#sd1').datetimepicker('getDate');
-  var mins = tim/(1000*60);
-  //var interval = $('#interval').val();
-  var freq = $('#freq').val();
- 
-var rep = "FREQ="+freq+";DURATION="+mins;
-//for monthly recurrence, get day of week and number
-if (freq=="MONTHLY"){
-  const weekno = $('#weekno').val();
-  const day = $('#weekday').val();
-rep = rep+";BYDAY="+weekno+day;
+  //handle reccuring event setup
+  var repeat = $('#repeat').is(":checked");
+  if(repeat){
+    var tim = $('#ed1').datetimepicker('getDate')- $('#sd1').datetimepicker('getDate');
+    var mins = tim/(1000*60);
+    //var interval = $('#interval').val();
+    var freq = $('#freq').val();
+   
+  var rep = "FREQ="+freq+";DURATION="+mins;
+  //for monthly recurrence, get day of week and number
+  if (freq=="MONTHLY"){
+    const weekno = $('#weekno').val();
+    const day = $('#weekday').val();
+  rep = rep+";BYDAY="+weekno+day;
 
-}
+  }
 
- $('#repeat').val(rep);
-  var newed = $('#ed2').val();
-  var oldet =$('#ed').val().slice(10)
-  $('#ed').val(newed+ oldet);
-}
-else {
-  $('#repeat').val("");
-}
+  $('#repeat').val(rep);
+    var newed = $('#ed2').val();
+    var oldet =$('#ed').val().slice(10)
+    $('#ed').val(newed+ oldet);
+  }
+  else {
+    $('#repeat').val("");
+  }
+
 }
 
 
@@ -225,19 +244,17 @@ else {
 
 //show Add New Location panel
 function showlocpanel(){
-
  $('#location-panel').show(400);
 }
 
 //hide Add New Location panel
 function hidelocpanel(){
-
  $('#location-panel').hide(400);
 }
 
 
-    // process the form
-    function savelocation() {
+ // process the add location form
+function savelocation() {
 
 //this needs to be done in a better way
  // if(!$('#loc-name').get(0).checkValidity()){
@@ -256,86 +273,84 @@ function hidelocpanel(){
  //  return;
  // }
 
-        // get the form data
-        // there are many ways to get this data using jQuery (you can use the class or id also)
-        var formData = {
-          'name'          : $('#loc-name').val(),
-          'address'       : $('#loc-address').val(),
-          'zip'           : $('#loc-zip').val(),
-          'city'           : $('#loc-city').val(),
-          'state'           : $('#loc-state').val(),
-          'region'           : $('#loc-region').val(),
-          'public'           : $('#loc-public').get(0).checked
-        };
+  // get the form data
+  // there are many ways to get this data using jQuery (you can use the class or id also)
+  var formData = {
+    'name'          : $('#loc-name').val(),
+    'address'       : $('#loc-address').val(),
+    'zip'           : $('#loc-zip').val(),
+    'city'          : $('#loc-city').val(),
+    'state'         : $('#loc-state').val(),
+    'region'        : $('#loc-region').val(),
+    'public'        : $('#loc-public').get(0).checked
+  };
 
-        // process the form
-        $.ajax({
-            type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
-            url         : 'addlocation.php', // the url where we want to POST
-            data        : formData, // our data object
-            dataType    : 'json', // what type of data do we expect back from the server
-            encode          : true
-          })
-            // using the done promise callback
-            .done(function(data) {
+  // process the form
+  $.ajax({
+      type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+      url         : 'addlocation.php', // the url where we want to POST
+      data        : formData, // our data object
+      dataType    : 'json', // what type of data do we expect back from the server
+      encode          : true
+    })
+    // using the done promise callback
+    .done(function(data) {
+      // log data to the console so we can see
+      //console.log(data); 
+      $('#location-message').html('');
+      $('#location-message').removeClass();
 
-                // log data to the console so we can see
-                //console.log(data); 
-                $('#location-message').html('');
-                $('#location-message').removeClass();
-                if(data.success){
-                 $('#location-message').addClass("alert alert-success");
-                 $('#location-message').html("Location added successfully!");
-                 $("#location").val($('#loc-name').val());
-                 $("#locationid").val(data.locationid);
-                 $("#address-info").removeClass("redfont");
-                 $("#address-info").html("Address: " + formData.address +', ' + formData.city + ' ' + formData.state);
-                 $("#location-panel").delay(2000).fadeOut(500);
-//add id to hidden field
-}else {
- $('#location-message').addClass("alert alert-danger");
+      if(data.success){
 
- for (var error in data.errors){
-  $('#location-message').append(data.errors[error] +"<br>");
-}
-$('#location-message').append(data.message);
+        $('#location-message').addClass("alert alert-success");
+        $('#location-message').html("Location added successfully!");
+        $("#location").val($('#loc-name').val());
+        $("#locationid").val(data.locationid);
+        $("#address-info").removeClass("redfont");
+        $("#address-info").html("Address: " + formData.address +', ' + formData.city + ' ' + formData.state);
+        $("#location-panel").delay(2000).fadeOut(500);
+        //add id to hidden field
+      }else {
+        
+        $('#location-message').addClass("alert alert-danger");
 
-}
+        for (var error in data.errors){
+          $('#location-message').append(data.errors[error] +"<br>");
+        }
 
+        $('#location-message').append(data.message);
+      }   
 
-
-                // here we will handle errors and validation messages
-              });
+    // here we will handle errors and validation messages
+    });
 
         // stop the form from submitting the normal way and refreshing the page
-      }
+}
 
-      </script>
+</script>
 
-      <style>
+<style>
 
-      .notvalid{
-       box-shadow: 0 0 3px 1px red; 
-     }
+.notvalid{
+box-shadow: 0 0 3px 1px red; 
+}
 
-     
-     /*input[required]:invalid:focus { box-shadow: 0 0 3px 1px red }*/
+/*input[required]:invalid:focus { box-shadow: 0 0 3px 1px red }*/
 
-     .notvalid:valid{
-      box-shadow: 0 0 3px 1px green; 
-    }
+.notvalid:valid{
+box-shadow: 0 0 3px 1px green; 
+}
 
-    .redfont {
-     color:red;
-   }
+.redfont {
+color:red;
+}
 
+.require::after{
+content :"*";
+color:red;
+}
 
-   .require::after{
-    content :"*";
-    color:red;
-  }
-
-  </style>
+</style>
 
 </head>
 <body>
@@ -396,6 +411,10 @@ $('#location-message').append(data.message);
      $duration = (isset($rrules['DURATION']) && $rrules['DURATION'] !== '')
      ? $rrules['DURATION']
      : "120";
+     //if it somehow got a negative duration, fix it.
+     if (intval($duration) < 0){
+        $duration = "120";
+      }
      $freq = $rrules["FREQ"];
 
 $weekno = null;
@@ -575,9 +594,6 @@ Day of week
       <option value="<?php echo $value;?>" <?php echo ($value== $dayofweek) ? ' selected="selected"' : '';?>><?php echo ucfirst($day);?></option>
       <?php } ?>
     </select>
-   
-
-
 
 
    </div>
