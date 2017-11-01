@@ -1,4 +1,11 @@
 <?php
+//programsadmin.php
+//Vikram Singh
+//11/1/2017
+//Provides a centralized dashboard for viewing all events a user has submitted as well as being able to edit and delete them.
+//Admins have access to all events
+//also provides links to other functionality such as logging out, resetting password, and managing locations. 
+
 session_start();
 
 if ($_SESSION['user'] == null){
@@ -37,18 +44,25 @@ if ($_SESSION['user'] == null){
       </style>
     </head>
     <body>
-      <?php
-      include('header.html');
 
-//Add links to create new event, log out, reset password here. 
- //and description of what they can do. 
+     <?php include('header.html'); 
+     //Add links to create new event, log out, reset password here. 
+ 	//and description of what they can do. ?>
 
-      echo "Welcome! Here you can view the past events you have added and modify them.  <br>
-      If you click edit you can also clone the event to create a new one just like it with some of the values changed. <br><br>";
+    	<div style="padding:10px;">
+      Welcome! Here you can view the past events you have added and modify them.  <br>
+      If you click edit you can also clone the event to create a new one just like it with some of the values changed. <br><br>
 
-      echo "<form action='submitedit.php' method='POST'><input type='hidden' name='action' value='logout'/><input type='submit' name='submit-btn' value='Log Out' class='btn btn-default' /></form><br>";
+      <form action='submitedit.php' method='POST'>
+      	<input type='hidden' name='action' value='logout'/>
+      	<input type='submit' name='submit-btn' value='Log Out' class='btn btn-default' />
+      </form>
 
-// connect to the database
+      <a href="resetpassword.php"> Reset Password </a><br>
+      <a href="locationsadmin.php"> Manage My Locations </a><br><br>
+
+ 	<?php 
+	// connect to the database
       include('config.php');
 
       $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
@@ -67,7 +81,7 @@ if ($_SESSION['user'] == null){
 //<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>';
 
       echo '<table cellpadding="0" cellspacing="0" class="db-table">';
-      echo '<tr><th>ID</th><th>Start/End</th><th>Title</th><th>Location<th>Address</th><th>Phone</th><th>Description</th><th>type</th>';
+      echo '<tr><th>ID</th><th>Start/End</th><th>Title</th><th>Location</th><th>Address</th><th>Phone</th><th>Description</th><th>Type</th>';
       if ($_SESSION['usertype'] == "admin"){
         echo '<th>User</th>';
       }
@@ -112,6 +126,7 @@ if ($_SESSION['user'] == null){
   mysqli_close($conn);
 
   ?>
+</div>
 
 </body>
 </html>

@@ -267,7 +267,7 @@ switch ($frequency) {
             $tempevent['sd'] = $newsd->format('Y-m-d H:i:s'); 
             $tempevent['ed'] = $newed->format('Y-m-d H:i:s');
             $tempevent['repeats'] = $frequency;
-            // echo $tempevent['sd'].' '.$tempevent['ed'];
+            //echo $tempevent['sd'].' '.$tempevent['ed'];
             //echo '<br>';
             $events[] = $tempevent;
             $ii++;
@@ -306,7 +306,7 @@ switch ($frequency) {
             $tempevent['sd'] = $newsd->format('Y-m-d H:i:s'); 
             $tempevent['ed'] = $newed->format('Y-m-d H:i:s');
             $tempevent['repeats'] = $frequency;
-            //echo $tempevent['sd'].' '.$tempevent['ed'];
+            // echo $tempevent['sd'].' '.$tempevent['ed'];
             //echo '<br>';
             $events[] = $tempevent;
             $ii++;
