@@ -12,6 +12,13 @@ session_start();
     <meta name="viewport" content="user-scalable=yes, width=device-width" />
 
 
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#ebaa2d">
+    <meta name="theme-color" content="#466eb4">
+
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
@@ -89,7 +96,7 @@ function onselectchange(){
 </head>
 <body>
   <?php include('header.html'); ?>  
-  <div style="padding:10px;">
+  <div class="container"">
 
     <p>Welcome! Upcoming programs are listed below. 
         We hope to expand to include more Gurdwaras and locations soon. 

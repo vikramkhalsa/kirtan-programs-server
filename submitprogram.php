@@ -1,9 +1,11 @@
 <?php
 //submitprogram.php
 //Vikram Singh
-// 2017
+//11-15-2017
 //This file provides the main form for users to submit new events. It is also used to edit and clone existing events. 
-//There is a lot of complex js code to handle the date times and recursion. it also has a 'sub'form embedded into it for adding new locations inline.  Ideally that should be shared between the new location add form page. 
+//There is a lot of complex js code to handle the date times and recursion. it also has a 'sub'form embedded into it for adding new locations inline.  Ideally that should be shared between the new location add form page (TBD).
+//Added ability to import event details from facebook using the event url and fb graph API.
+
 
  
 session_start();
@@ -84,6 +86,10 @@ function setTimes(prefix){
 
 $(document).ready(function () {
 
+	$("#fbPanel-link").on('click',function(){
+		$("#fbimport-panel").toggle();
+	});
+
   //initalize datetime controls. 
 
   $("#sd1").datetimepicker({
@@ -126,7 +132,7 @@ $(document).ready(function () {
    }
  });
 
-  //show additioanl controls if repeat frequency is monthly
+  //show additional controls if repeat frequency is monthly
   $('#freq').on('change', function(){
     if ($(this).val() =="MONTHLY"){
       $('#monthrow').show(200);
@@ -145,19 +151,19 @@ $(document).ready(function () {
     }
   });
 
+  var update_end = 0; 
   //if end date has not been set, set it to start date + 2 hours when start date is being set
   //just for convenient user experience. 
   $("#sd1").on("change", function(){
-    if($('#ed1').val()){
-    }
-    else{
+    if(update_end<=2){
      var time = $(this).datetimepicker('getDate');
      time.setHours(time.getHours() + 2);
      $("#ed1").datetimepicker('setDate', time);
+     update_end +=1;
     //$('#ed1').val($(this).val());
     }
-  
   }); 
+
 
   //set up autocomplete location select box and change handlers
   var select = document.createElement("select");
@@ -359,6 +365,7 @@ color:red;
 
   $showpanel = 'style="display: none"';
   $showmonth = 'style="display: none"';
+  $importerror = "";
   if (is_numeric($_POST['id'])) 
   {
     $id = $_POST['id'];
@@ -440,17 +447,107 @@ $dayofweek = null;
 
  }
 }
+else if (isset($_GET['fburl'])){
+  	$fbid = $_GET['fburl'];
+  
+	$events_pos = strpos($fbid, "events/"); //get position of 'events/' in url
+	if ($events_pos === False) {
+		$importerror =
+			"<div class='row'>
+				<div class='col-xs-6'>
+					<div class='alert alert-danger'>
+						Invalid url, please ensure url is correct and try again.
+					</div>
+				</div>
+			</div>";
+	} else {
+	$fbid = substr($fbid,$events_pos+7); //trim off everthing left of events/, leaving {id}/blahblahblah
+
+	//keep going until there are no more numbers. apparently the link won't always end with /
+	$end_pos = 0;
+	while (is_numeric($fbid[$end_pos])){
+		$end_pos++;
+	}
+
+	//$end_pos = strpos($fbid, "/");
+	$fbid = substr($fbid,0,$end_pos);
+
+	$url = "https://graph.facebook.com/v2.11/".$fbid."?fields=name,description,cover,start_time,end_time,place,event_times&access_token=".$token;
+
+	$json = curl_get_contents($url);
+	$event = json_decode($json, true);
+
+	if ($event["error"]){
+		$importerror = 
+			"<div class='row'>
+				<div class='col-xs-6'>
+					<div class='alert alert-danger'>
+						There was an error trying to import, please ensure url is correct and try again.
+					</div>
+			  	</div>
+			</div>";
+	}
+
+	$description = $event['description'];
+	$title = $event['name'];
+	$address = "Please type '".$event['place']['name']."' above or add new if it does not show up.";
+	$sd = $event['start_time'];
+	$sd = date_format(new DateTime($sd),'Y-m-d H:i');
+	$sd1 = date_format(new DateTime($sd),'Y-m-d h:i a');
+	$edt = $event['end_time'];
+	if ($edt!= null){
+		 $ed = date_format(new DateTime($edt),'Y-m-d H:i');
+	     $ed1 = date_format(new DateTime($edt),'Y-m-d h:i a');
+	     $ed2 = date_format(new DateTime($edt),'Y-m-d');
+	 }
+	$imageurl= $event["cover"]["source"];
+	$siteurl = "https://www.facebook.com/events/".$fbid;
+	}
 
 
-    $contents = file_get_contents('http://www.sikh.events/getlocations.php'.$filter);
+}
 
-    $regions = json_decode($contents, true);
+function curl_get_contents($url)
+{
+  $ch = curl_init($url);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+  $data = curl_exec($ch);
+  curl_close($ch);
+  return $data;
+}
+
+
+$contents = file_get_contents('http://www.sikh.events/getlocations.php'.$filter);
+
+$regions = json_decode($contents, true);
 
 ?>
 <div style="padding:10px">
   Welcome! Please submit a program by filling out the fields below. 
-  <br><br>
+  <br>
+<a href="#" id="fbPanel-link" >Import from Facebook</a><sup>NEW!</sup> <br><br>
 
+<?php  echo $importerror;   ?>
+
+<div id="fbimport-panel"  style="display:none;">
+  	<div class="row">
+  		<div class="col-sm-6">
+  			<form  action="submitprogram.php" method="get" class="form-group" style="background-color:#EEE; padding:10px;">
+  			Paste the Facebook Event URL below and click "Import". Please verify imported data and complete missing fields before submitting. <br><br>
+  			<div class="input-group">
+  			<input name="fburl" type="text" class="form-control" required/>
+  	   		<span class="input-group-btn">
+  				<input name="submit" type="submit" value="Import" class="btn btn-primary"/>
+ 			</span>
+ 			  </form>
+  			</div>
+  		</div>
+  	</div>
+
+</div>
   <form id="addprogram" action="commitprogram.php" method="post" class="form-group" onsubmit="return submitForm()">
     <div class="row">
       <div class="col-sm-6">
@@ -604,10 +701,10 @@ Day of week
 <label for="type">Event Type:</label>
 
 
-<?php $plan = array("kirtan","katha","fundraiser","discussion","samaagam","camp", "other"); ?>
+<?php $types = array("kirtan","katha","camp","discussion","samaagam","seva","fundraiser","other"); ?>
 
 <select name="type" class="form-control">
-  <?php foreach ($plan as $value) { ?>
+  <?php foreach ($types as $value) { ?>
   <option value="<?php echo $value;?>" <?php echo ($value== $type) ? ' selected="selected"' : '';?>><?php echo ucfirst($value);?></option>
   <?php } ?>
 </select></br>

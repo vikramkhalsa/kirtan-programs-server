@@ -14,7 +14,7 @@ session_start();
 </head>
 <body>
   <?php include('header.html'); ?>  
-   <div class="container-fluid">
+   <div class="container">
 <h3>About </h3>
 <p>
 Sikh Events is a platform which shows Sikhi-related events taking place all around the world in one convenient location. This will include kirtan programs, fundraisers, camps, and others types of events. Users can submit events through the website enabling anyone to see what is going on around them.
@@ -41,7 +41,8 @@ Sikh Events is a platform which shows Sikhi-related events taking place all arou
         If you are not already logged in, you will be prompted to <a href="http://sikh.events/login.php">log in</a> before you can submit new programs or view/edit programs you have already submitted. 
         Once you are logged in you will be able to submit programs. You will also see the "Account" button in the menu
         where you can view programs you have alrady submitted. You can also Edit and Delete programs you have already submitted from here. 
-        There is also a logout button on this page and other features will be added here in the future. 
+        You can also log out or reset your password from this page. In addition, you can view and manage locations you have created. 
+        Other features will be added here in the future, as they  become available. 
        </div>
        </div>
 
@@ -68,7 +69,12 @@ Sikh Events is a platform which shows Sikhi-related events taking place all arou
             <li>Fill in the details</li>
             <li>Enter Start and End Date/Times for a single occurence</li>
             <li>Check the Repeat box</li>
-            <li>Select the repeat mode (currently only supports "Daily") This means the event will repeat each day until the "Until" date.</li>
+            <li>Select the repeat mode. Available options are:
+            	<ol>
+            		<li>Daily - repeat this event each day from the Start Date</li>
+            		<li>Weekly - repeat this event once a week on the same day of week as the Start Day</li>
+            		<li>Monthly - repeat every [first,second,third, or fourth] [selected day of week]</li>
+            	</ol>
             <li>Choose "Until" date - when the repeating events should stop (the last date of the event)</li>
           </ol>
 

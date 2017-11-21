@@ -3,3 +3,4 @@ $ cat .gitignore
 config.php
 flights.php
 password_protect.php
+error_log

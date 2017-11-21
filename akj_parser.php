@@ -1,84 +1,76 @@
 <?php
-// $doc = new DOMDocument();
-// $html = file_get_contents('http://samagams.org/');
-// //echo $html;
 
-// @$doc->loadHTML($html);
 
-//  $a = new DOMXPath($doc);
+//check if cache file exists
 
-//  $cells = $a->query("//tr/td/p");
-//  //echo $cells;
-//  echo $cells->length;
-//  echo '<br>';
-//   for ($i = 0; $i < $cells->length; $i++) {
-//   	$item = $cells[$i];
-//   	echo $i;
-//   	echo '<br>';
-// $input_str = $item->nodeValue;
-//   echo $input_str;
+if (file_exists("akjcache.json")){
+//if cache file is recent, just load from it
 
-//   }
+  $modtime  = filemtime("akjcache.json");
 
-// require 'class.iCalReader.php';
+  //check if mod time is within last 24 hrs
+  if (time() - $modtime < 24 * 60 * 60){
+    // echo time();
+    // echo '<br>';
+    // echo $modtime;
 
-// $ical = new ical('Events.ics');
-// $arr2 = [];
-// //print_r($ical->events());
+    $myfile = fopen("akjcache.json", "r");
+    //assume data in file is valid!! or find some way to check.. 
+    $data = fread($myfile, 99999999);
 
-// foreach($ical->events() as $ar){
-// 	//print_r($ar);
-// 	echo $ar['SUMMARY'];
-// 	echo $ar['LOCATION'];
-// 	ECHO '<br>';
-// }
+    echo $data;
+    fclose($myfile);
+    return;
+  }
 
+}
+
+//else parse from akj again and update file. 
 
 $doc = new domdocument();
 $html = file_get_contents('https://www.akj.org/programs.php');
 //echo $html;
-echo '[';
+$result =  '[';
 @$doc->loadhtml($html);
 
  $a = new domxpath($doc);
 
 $classname='prog-div-rep';
- $cells = $a->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' $classname ')]");
- //echo $cells;
- //echo $cells->length;
- //echo '<br>';
+$cells = $a->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' $classname ')]");
+//echo $cells;
+//echo $cells->length;
+//echo '<br>';
 
- $arr = [];
-  for ($i = 0; $i < $cells->length; $i++) {
-  	$items = $cells[$i]->getElementsByTagName('div');
-  	$item = $items[0];
-  	$contact = $items[1];
- $nodes = $item->getElementsByTagName('h4');
- $ar = [];
-    foreach ($nodes as $node) {
+$arr = [];
+for ($i = 0; $i < $cells->length; $i++) {
+	$items = $cells[$i]->getElementsByTagName('div');
+	$item = $items[0];
+	$contact = $items[1];
+$nodes = $item->getElementsByTagName('h4');
+$ar = [];
+foreach ($nodes as $node) {
     
-//print_r($node);
-//echo'<br>';
-    	$class = $node->getAttribute('class');
-    	//echo $class;
-    	$val = $node->nodeValue;
-    	//echo $val;
-    	if ($ar[$class]!= null){
-    	$ar[$class.'b'] = $val;
-    	}else {
-    		    	$ar[$class] = $val;
-    	}
-    	if ($class=='prog-name'){
-    		$ar['siteurl'] = "www.akj.org/".$node->firstChild->getAttribute('href');
-    	}
+  //print_r($node);
+  //echo'<br>';
+  $class = $node->getAttribute('class');
+  //echo $class;
+  $val = $node->nodeValue;
+  //echo $val;
+  if ($ar[$class]!= null){
+  $ar[$class.'b'] = $val;
+  }else {
+  	    	$ar[$class] = $val;
+  }
+  if ($class=='prog-name'){
+  	$ar['siteurl'] = "www.akj.org/".$node->firstChild->getAttribute('href');
+  }
 
+  // if ($class=='prog-name'){
+  // echo 'Name: '.$node->nodeValue;
+  // }
 
-    	// if ($class=='prog-name'){
-    	// echo 'Name: '.$node->nodeValue;
-    	// }
-
-      //echo $node->hasAttributes(). "\n";
-    }
+  //echo $node->hasAttributes(). "\n";
+}
 
 $jar = [];
 
@@ -89,12 +81,8 @@ $jar = [];
     		$val = $num->nodeValue;
     		if ($val != null && trim($val)!=='')
     			$jar['phone'] = $val;
-
     	}
     }
-
-
-
 
 $date = explode("To",$ar['prog-date']);
 $sd = $date[0];
@@ -102,15 +90,15 @@ $ed= $date[1];
 
 $times = explode("to",$ar['prog-time']);
 
- $starttime = $sd." ".$times[0];
+$starttime = $sd." ".$times[0];
 
- if($ed!= null)
-    $endtime = $ed." ".$times[1];
-  else
-     $endtime = $sd." ".$times[1];
+if($ed!= null)
+  $endtime = $ed." ".$times[1];
+else
+  $endtime = $sd." ".$times[1];
    
-    $sd1 = date("Y-m-d H:i:00",strtotime($starttime));//date_parse($starttime);
-    $ed1 = date("Y-m-d H:i:00",strtotime($endtime));
+$sd1 = date("Y-m-d H:i:00",strtotime($starttime));//date_parse($starttime);
+$ed1 = date("Y-m-d H:i:00",strtotime($endtime));
 //echo '<br>';
 //echo $sd1;
 //echo $ed1;
@@ -122,19 +110,25 @@ $jar['ed'] = $ed1;
 $jar['id']=99999+$i;
 $jar['siteurl'] = $ar['siteurl'];
 $jar['description'] = "See details on original website.";
+$jar['source'] = "akj.org";
  //$arr[] = $jar;
 
-echo json_encode($jar);
-   if ($i < $cells->length-1)
-  		echo ',';
+$result = $result.json_encode($jar);
+if ($i < $cells->length-1)
+	$result = $result.',';
 
-  }
-  //print_r($arr);
+}
+//print_r($arr);   
+
+$result = $result. ']';
+
+echo $result;
+
+$myfile = fopen("akjcache.json", "w");
+fwrite($myfile,$result);
+fclose($myfile);
 
 
-    
-
-echo ']';
-  ?>
+?>
 
 
