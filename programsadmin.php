@@ -66,7 +66,7 @@ if ($_SESSION['user'] == null){
       include('config.php');
 
       $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
-      programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user,  
+      programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user,  programtbl.locationid,
       locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address
       FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid";
 
@@ -93,8 +93,7 @@ if ($_SESSION['user'] == null){
        // for ($i = 0; $i< mysql_num_fields($row); $i++)
        echo '<td>'.$row["id"].'</td><td>'.$row["sd"].'<br>'.$row["ed"].'</td><td>'.$row["title"].'</td><td>'.$row["subtitle"];
        if ($_SESSION['usertype'] == "admin")
-        { echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/></br>
-      <input type='hidden' name='action' value='saveloc'/><input type='submit' name='submit-btn' value='Save' class='btn btn-default'/></form>";
+        { echo '<br><a href="editlocation.php?id='.$row['locationid'].'">Edit</a>';
     }
     echo '</td><td>'.$row["address"].'</td><td>'.$row["phone"].
     '</td><td>'.$row["description"].'</td><td>'.$row["type"].'</td>';
