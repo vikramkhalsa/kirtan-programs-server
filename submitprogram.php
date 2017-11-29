@@ -25,7 +25,7 @@ if ($_SESSION['user'] == null){
 <html>
 <head>
   <title>Submit a Program</title>
-  <script src="datetimepicker_css.js"></script>
+<!--   <script src="datetimepicker_css.js"></script> -->
   <meta name="viewport" content="user-scalable=yes, width=device-width" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
@@ -192,7 +192,8 @@ $(document).ready(function () {
 function submitForm(){
   
   if(!$("#locationid").val()){
-    //$("#address-info").html("Please select an existing location or add a new location");
+    $("#address-info").addClass("redfont");
+    $("#address-info").html("Please select an existing location or add a new location");
     return false;
   }
   //VALIDATE FORM
@@ -330,7 +331,7 @@ function savelocation() {
     // here we will handle errors and validation messages
     });
 
-        // stop the form from submitting the normal way and refreshing the page
+    // stop the form from submitting the normal way and refreshing the page
 }
 
 </script>
@@ -370,8 +371,8 @@ color:red;
   {
     $id = $_POST['id'];
 
-//echo $id;
-// connect to the database
+    //echo $id;
+    // connect to the database
     include('config.php');
 
     $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
@@ -379,7 +380,7 @@ color:red;
     locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address
     FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE id = '$id'";
     if ($result = mysqli_query($conn, $sql)){
- // echo "success";
+    // echo "success";
      $arr = $result->fetch_array();
 
      $title = htmlspecialchars($arr["title"]);
@@ -392,15 +393,13 @@ color:red;
      $ed1 = date_format(new DateTime($ed),'Y-m-d h:i a');
      $ed2 = date_format(new DateTime($ed),'Y-m-d');
      $type = htmlspecialchars($arr["type"]);
- //$zip = htmlspecialchars($arr["zip"]);
+      //$zip = htmlspecialchars($arr["zip"]);
      $locationid = htmlspecialchars($arr["locationid"]);
- //$source = $arr["source"];
+      //$source = $arr["source"];
      $description = $arr["description"];
      $imageurl = $arr["imageurl"];
      $siteurl = $arr["siteurl"];
-     $recurr = ($arr["rrule"] != null && $arr["rrule"] !== '')
-     ? true
-     : false;
+     $recurr = ($arr["rrule"] != null && $arr["rrule"] !== '') ? true : false;
 
      $repeat =  $recurr ? "checked" : "";
      if ($recurr)
@@ -415,27 +414,25 @@ color:red;
      }
 
           //get duration
-     $duration = (isset($rrules['DURATION']) && $rrules['DURATION'] !== '')
-     ? $rrules['DURATION']
-     : "120";
+     $duration = (isset($rrules['DURATION']) && $rrules['DURATION'] !== '')     ? $rrules['DURATION']     : "120";
      //if it somehow got a negative duration, fix it.
      if (intval($duration) < 0){
         $duration = "120";
       }
      $freq = $rrules["FREQ"];
 
-$weekno = null;
-$dayofweek = null;
+      $weekno = null;
+      $dayofweek = null;
 
      if (isset($rrules['BYDAY']) && $rrules['BYDAY']!= null){
 
-      $byday = $rrules['BYDAY'];
+        $byday = $rrules['BYDAY'];
         $weekno = intval($byday);
-          $dayofweek = substr($byday,-2);
-          $showmonth = '';
+        $dayofweek = substr($byday,-2);
+        $showmonth = '';
      }
 
- //echo "DURATION";
+    //echo "DURATION";
      echo $duration;
 
  //update end date 
@@ -460,7 +457,7 @@ else if (isset($_GET['fburl'])){
 					</div>
 				</div>
 			</div>";
-	} else {
+} else {
 	$fbid = substr($fbid,$events_pos+7); //trim off everthing left of events/, leaving {id}/blahblahblah
 
 	//keep going until there are no more numbers. apparently the link won't always end with /
@@ -490,7 +487,25 @@ else if (isset($_GET['fburl'])){
 
 	$description = $event['description'];
 	$title = $event['name'];
-	$address = "Please type '".$event['place']['name']."' above or add new if it does not show up.";
+  $locname = $event['place']['name'];
+  $subtitle = "";
+
+  $address = "Please try searching for '".$event['place']['name']."' above manually. If it does not appear, click 'Add New' and add this location.";
+
+  //search through known locations to find this place
+  foreach($names as $locc){
+    if (strpos($locc, $locname)===false){
+      //do nothing
+    }
+    else {//if found, update location, id, and address
+      $subtitle = $locc;
+      $address = $array[$locc]['address'].', '.$array[$locc]['city'].' '.$array[$locc]['state'];
+      $locationid = $array[$locc]['locationid'];
+      $phone = $array[$locc]['phone'];
+    }
+  }
+
+
 	$sd = $event['start_time'];
 	$sd = date_format(new DateTime($sd),'Y-m-d H:i');
 	$sd1 = date_format(new DateTime($sd),'Y-m-d h:i a');
@@ -502,8 +517,8 @@ else if (isset($_GET['fburl'])){
 	 }
 	$imageurl= $event["cover"]["source"];
 	$siteurl = "https://www.facebook.com/events/".$fbid;
-	}
 
+  }
 
 }
 

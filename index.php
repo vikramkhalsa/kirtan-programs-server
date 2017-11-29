@@ -28,16 +28,16 @@ session_start();
 
     <script type="text/javascript">
 
-        function showDescription(el){
+     	function showDescription(el){
            var val = el.getAttribute("val");
            $('#myModal').find(".modal-body").html(val);
            $('#myModal').modal();
        }
 
-            function showImage(el){
+        function showImage(el){
            var val = el.getAttribute("val");
            var img = $('<img id="dynamic" class="img-responsive" style="display:block; margin:auto;">'); //Equivalent: $(document.createElement('img'))
-            img.attr('src', val);
+           img.attr('src', val);
            $('#myModal').find(".modal-body").html(img);
            $('#myModal').modal();
        }
@@ -63,34 +63,42 @@ session_start();
         filedata = header + sd + ed + loc + sum + uid + des +footer;
 
         save("sikhevent.ics", filedata);
-//window.open( "data:text/calendar;charset=utf8," + escape( filedata ) , "sikhevent.ics");
+		//window.open( "data:text/calendar;charset=utf8," + escape( filedata ) , "sikhevent.ics");
+	}
 
-}
 
-function save(filename, data) {
-    var blob = new Blob([data], {type: 'text/calendar'});
-    if(window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveBlob(blob, filename);
-    }
-    else{
-        var elem = window.document.createElement('a');
-        elem.href = window.URL.createObjectURL(blob);
-        elem.download = filename;        
-        document.body.appendChild(elem);
-        elem.click();        
-        document.body.removeChild(elem);
-    }
-}
 
-function onselectchange(){
-    var e = $('#loc-region')[0];
-    var regid = e.options[e.selectedIndex].value;
-    if(regid == 0)
-        window.location.href="index.php";
-    else{
-    window.location.href="index.php?region="+regid;
-    }
-}
+	function save(filename, data) {
+
+	    var blob = new Blob([data], {type: 'text/calendar'});
+
+	    if(window.navigator.msSaveOrOpenBlob) {
+	        window.navigator.msSaveBlob(blob, filename);
+	    }
+	    else{
+	        var elem = window.document.createElement('a');
+	        elem.href = window.URL.createObjectURL(blob);
+	        elem.download = filename;        
+	        document.body.appendChild(elem);
+	        elem.click();        
+	        document.body.removeChild(elem);
+	    }
+	}
+
+
+
+	function onselectchange(){
+
+	    var e = $('#loc-region')[0];
+	    var regid = e.options[e.selectedIndex].value;
+
+	    if(regid == 0)
+	        window.location.href="index.php";
+	    else{
+	    window.location.href="index.php?region="+regid;
+    	}
+	}
+
 </script>
 
 </head>
@@ -140,101 +148,110 @@ function onselectchange(){
      <br>
     <label for="loc-city">Show Regions </label>
     <div style="margin: 0 15px">
-    
-            <select class="form-control" id="loc-region" onchange="onselectchange()" style="width:calc( 100% - 150px); display:inline-block; padding-left:10px">
-                <option value="" selected>All Regions</option>
-              <?php foreach ($regions as $region) { ?>
-              <option value="<?php echo $region['regionid'];?>"  <?php echo ($region["regionid"] == $regid) ? ' selected="selected"' : '';?>>      <?php echo $region['name'];?></option>
-              <?php } ?>
-            </select>
-          
-            <?php 
-            if ($past){
-                echo '<a href="index.php"><button class="btn btn-default">Hide past events</button></a>';
-            }
-            else {
-                  echo '<a href="index.php?past=60"><button class="btn btn-default">Show past events</button></a>';
-            }
-            ?>
-             
+
+        <select class="form-control" id="loc-region" onchange="onselectchange()" style="width:calc( 100% - 150px); display:inline-block; padding-left:10px">
+          <option value="" selected>All Regions</option>
+          <?php foreach ($regions as $region) { ?>
+          <option value="<?php echo $region['regionid'];?>"  <?php echo ($region["regionid"] == $regid) ? ' selected="selected"' : '';?>>      <?php echo $region['name'];?></option>
+          <?php } ?>
+        </select>
+      
+
+        <?php 
+        if ($past){
+           echo '<a href="index.php"><button class="btn btn-default">Hide past events</button></a>';
+        }
+        else {
+           echo '<a href="index.php?past=60"><button class="btn btn-default">Show past events</button></a>';
+        }
+        ?>
+       
     </div>
 <div>
 
     
+<?php
 
-    <?php
+if (!is_array($array)){
+    echo "<h3>We're sorry, there was an error processing your request. </h3>";
+}
+else {
+	foreach($array as $value){
 
-    foreach($array as $value){
-        echo '<div class="row">';
-        echo '<div class="cell" id="'.$value['id'].'">
-        <div class="col-xs-3 col-sm-2">';
-       // <div class="left" stye="width:30%; float:left; font-size:1.1em;  top: 50%; ">';
-        $sdate = strtotime($value['sd']); // date('D M d Y H:i:s -0000', $sdate)
-        $edate = strtotime($value['ed']);
-        echo '<div class="sd" start="'.date('Ymd\THis', $sdate).'" end="'.date('Ymd\THis', $edate).'">'; //saving in this format for export to iCal
-        echo date('D, M j', $sdate);
-        if(date('d',$sdate) != date('d',$edate)){
-             echo ' - '.date('D, M j', $edate);
-        }
-        echo "<br><br>";
-        echo date('g:ia', $sdate).' to ';
-        echo "<br>";
-        echo date('g:ia', $edate);
-        echo "</div>";
-        $desc = str_replace("'", "\'", $value["description"]);
-        if(!($desc == "")){
-        echo '<br> <button class="infoBtn" onClick="showDescription(this)" val="'.$desc.'""><span class="glyphicon glyphicon-info-sign" aria-hidden="true" aria-label="description"></span></button>';
-        }
-        echo '<button class="infoBtn" onclick="downloadiCal('.$value['id'].')"><span class="glyphicon glyphicon-calendar" aria-hidden="true" aria-label="Export to Calendar"></span></button>';
-        echo '</div> 
-        <div class="col-xs-9 col-sm-7">
-            <div class="programTitle">';
-                echo '<a href="eventdetails.php?id='.$value['id'].'">' . $value["title"] . '</a>';
-                echo'</div><div class="programSubtitle">';
-                echo $value["subtitle"];
-                echo'</div><a href="http://maps.google.com/?q='.$value["address"].'">';
-                echo $value["address"];
-                echo"</a><div class='phone'>";
-                echo $value["phone"];
-                echo"</div>";
-                if ($value["imageurl"]){
-                    echo '<div class="visible-xs" onclick="showImage(this)" val="'.$value["imageurl"].'">View Poster</div>';
-                   // echo '<a  href="'.$value["imageurl"].'">View Poster</a>';
-                    echo "<br>";
+	    echo '<div class="row">';
+	    echo '<div class="cell" id="'.$value['id'].'">
+	    <div class="col-xs-3 col-sm-2">';
+	   // <div class="left" stye="width:30%; float:left; font-size:1.1em;  top: 50%; ">';
+	    $sdate = strtotime($value['sd']); // date('D M d Y H:i:s -0000', $sdate)
+	    $edate = strtotime($value['ed']);
+	    echo '<div class="sd" start="'.date('Ymd\THis', $sdate).'" end="'.date('Ymd\THis', $edate).'">'; //saving in this format for export to iCal
+	    echo date('D, M j', $sdate);
+	    if(date('d',$sdate) != date('d',$edate)){
+	         echo ' - '.date('D, M j', $edate);
+	    }
+	    echo "<br><br>";
+	    echo date('g:ia', $sdate).' to ';
+	    echo "<br>";
+	    echo date('g:ia', $edate);
+	    echo "</div>";
+	    $desc = str_replace("'", "\'", $value["description"]);
+	    $desc = str_replace('"','&quot;',$value["description"]);
+
+	    if(!($desc == "")){
+
+	    echo '<br> <button class="infoBtn" onClick="showDescription(this)" val="'.$desc.'""><span class="glyphicon glyphicon-info-sign" aria-hidden="true" aria-label="description"></span></button>';
+
+	    }
+	    echo '<button class="infoBtn" onclick="downloadiCal('.$value['id'].')"><span class="glyphicon glyphicon-calendar" aria-hidden="true" aria-label="Export to Calendar"></span></button>';
+	    echo '</div> 
+	    <div class="col-xs-9 col-sm-7">
+	        <div class="programTitle">';
+            echo '<a href="eventdetails.php?id='.$value['id'].'">' . $value["title"] . '</a>';
+            echo'</div><div class="programSubtitle">';
+            echo $value["subtitle"];
+            echo'</div><a href="http://maps.google.com/?q='.$value["address"].'">';
+            echo $value["address"];
+            echo"</a><div class='phone'>";
+            echo $value["phone"];
+            echo"</div>";
+
+            if ($value["imageurl"]){
+                echo '<div class="visible-xs" onclick="showImage(this)" val="'.$value["imageurl"].'">View Poster</div>';
+               // echo '<a  href="'.$value["imageurl"].'">View Poster</a>';
+                echo "<br>";
+            }
+
+            if ($value["siteurl"]){
+                $siteurl = $value["siteurl"];
+                //if it doesn't contain http OR https, add https
+                if((strpos($siteurl, "http://") === false) && (strpos($siteurl, "https://") === false))
+                {
+                	  $siteurl = "https://".$siteurl; 
                 }
-                if ($value["siteurl"]){
-                    $siteurl = $value["siteurl"];
-                    if((strpos($siteurl, "http://") != false) && (strpos($siteurl, "https://") != false))
-                    {
-                     $a=0;
-                    }
-                    else 
-                    { 
-                       // $siteurl = "https://".$siteurl; 
-                    }
-                    echo '<a  href="'.$siteurl.'">'.$value["siteurl"].'</a>';
-                    echo "<br>";
-                }
+                echo '<a  href="'.$siteurl.'">'.$value["siteurl"].'</a>';
+                echo "<br>";
+            }
 
-        //echo '<a class="" href="http://maps.google.com/?q='.$value["address"].'"><img src="http://isangat.org/map.png" border="0"></a><br>';
-                echo '</div>';
-        //</div>';
-        echo '<div class="col-sm-3 visible-sm visible-md visible-lg">  <img class="img-thumbnail" src="'.$value["imageurl"].'" style="max-height:170px" onclick="showImage(this)" val="'.$value["imageurl"].'"/></div></div>';
+	    //echo '<a class="" href="http://maps.google.com/?q='.$value["address"].'"><img src="http://isangat.org/map.png" border="0"></a><br>';
+	        echo '</div>';
+	    //</div>';
+	    echo '<div class="col-sm-3 visible-sm visible-md visible-lg">  <img class="img-thumbnail" src="'.$value["imageurl"].'" style="max-height:170px" onclick="showImage(this)" val="'.$value["imageurl"].'"/></div></div>';
+	    echo '</div>'; //end row
+    }
+}
 
-        echo '</div>'; //end row
+?>
 
-            
-        }
-        ?>
+<div id="myModal" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  	<div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	        <div class="modal-body">
+	        </div>
+	    </div>
+	</div>
+</div>
 
-        <div id="myModal" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                </div>
-            </div>
-        </div>
-    </div>
+
 
 </body>
 </html>
