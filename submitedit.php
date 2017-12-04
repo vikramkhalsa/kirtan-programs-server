@@ -1,4 +1,8 @@
 <?php 
+//submitedit.php
+//Vikram Singh
+// 12016
+//internal endpoint for admin dashboard page, handles actions like approve, disprove, delete events. 
 
 session_start();
 
@@ -18,22 +22,22 @@ $user = $_SESSION['user'];
 if (isset($_POST['id']))
 { 
 	//echo $_POST['id'];
- // confirm that the 'id' value is a valid integer before getting the form data
+ 	// confirm that the 'id' value is a valid integer before getting the form data
 	if (is_numeric($_POST['id']))
 	{
- // get form data, making sure it is valid
+	 	// get form data, making sure it is valid
 		$id = $_POST['id'];
-	 //echo $id;
- //$firstname = mysql_real_escape_string(htmlspecialchars($_POST['firstname']));
- //$lastname = mysql_real_escape_string(htmlspecialchars($_POST['lastname']));
+	 	//echo $id;
+	 	//$firstname = mysql_real_escape_string(htmlspecialchars($_POST['firstname']));
+		//$lastname = mysql_real_escape_string(htmlspecialchars($_POST['lastname']));
 		
 
-// connect to the database
+		// connect to the database
 		include('config.php');
 
 		$action = $_POST["action"];
 
-
+		//only admin can approve/disprove
 		if ($_SESSION['usertype'] == "admin")
 		{
 
@@ -43,24 +47,15 @@ if (isset($_POST['id']))
 			elseif ($action == "disprove"){
 				$sql = "UPDATE events_all.programtbl SET approved='0' WHERE id = '$id'";
 			}
-			elseif ($action == "saveloc"){
-				$sql = "SELECT subtitle, address, phone, zip FROM events_all.programtbl where id='$id'";
-	//now insert into location table
-				$result = mysqli_query($conn, $sql);
-
-				while($row=mysqli_fetch_assoc($result)){
-					$name = $row["subtitle"];
-					$addr = $row["address"];
-					$phone = $row["phone"];
-					$zip = $row["zip"];
-	    	//echo $name.$addr.$phone;//.$zip;
-					$sql = "INSERT INTO events_all.locationtbl (name, address, phone, zip)
-					VALUES ('$name','$addr','$phone','$zip')";
-				}
-			}
 		}
-		if ($action == "delete"){
+
+		if ($action == "delete"){ 
 			$sql = "DELETE FROM events_all.programtbl WHERE id = '$id'";
+
+			//admin can delete anything, other users can only delete event if its theirs
+			if ($_SESSION['usertype'] != "admin"){
+				$sql = $sql . " AND user = '$user'";
+			}
 		}	
 		
 

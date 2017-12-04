@@ -109,7 +109,7 @@ while($row=mysqli_fetch_assoc($result))
   }else {
 
    $array[] = $row;
- }
+  }
 }
 
 
@@ -121,27 +121,30 @@ header('Content-Type: application/json; charset=utf-8');
 if(isset($_GET['alexa']))
 {
 
+  $array2 = array();
+  $dt = gmdate("Y-m-d\TH:i:s\Z");
+  foreach($array as $row){
+    $row1 = array();
+    $row1["uid"] =  $row["id"];
+      $row1["updateDate"] = $dt;//"2017-07-30T00:00:00.0Z";//$row['sd'];
+    $row1["titleText"] =  $row["title"];
+    $row1["mainText"] = $row["title"].' on '.date('l, M j \a\t g:ia', strtotime($row['sd']));//$row["description"];
+    $row1["redirectionUrl"] = "http://www.sikh.events/eventdetails.php?id=".$row['id'];
+    $array2[] = $row1;
+  }
 
-$array2 = array();
-$dt = gmdate("Y-m-d\TH:i:s\Z");
-foreach($array as $row){
-  $row1 = array();
-  $row1["uid"] =  $row["id"];
-    $row1["updateDate"] = $dt;//"2017-07-30T00:00:00.0Z";//$row['sd'];
-  $row1["titleText"] =  $row["title"];
-  $row1["mainText"] = $row["title"].' on '.date('l, M j \a\t g:ia', strtotime($row['sd']));//$row["description"];
-  $row1["redirectionUrl"] = "http://www.sikh.events/eventdetails.php?id=".$row['id'];
-  $array2[] = $row1;
+  echo $output = json_encode($array2);
+  
 }
-echo $output = json_encode($array2);
 
 }
 
-else {
-$output = json_encode($array);
-//replace newlines with html tags so they show up in popup views
-echo $output1 = str_replace('\r\n', "<br>", $output);
-//echo $output;
+else 
+{
+  $output = json_encode($array);
+  //replace newlines with html tags so they show up in popup views
+  echo $output1 = str_replace('\r\n', "<br>", $output);
+  //echo $output;
 }
 
 }

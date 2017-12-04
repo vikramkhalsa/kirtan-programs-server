@@ -540,10 +540,10 @@ $contents = file_get_contents('http://www.sikh.events/getlocations.php'.$filter)
 $regions = json_decode($contents, true);
 
 ?>
-<div style="padding:10px">
+<div class="container">
   Welcome! Please submit a program by filling out the fields below. 
   <br>
-<a href="#" id="fbPanel-link" >Import from Facebook</a><sup>NEW!</sup> <br><br>
+<strong><a href="#" id="fbPanel-link" >Import from Facebook</a><sup>NEW!</sup></strong> <br><br>
 
 <?php  echo $importerror;   ?>
 

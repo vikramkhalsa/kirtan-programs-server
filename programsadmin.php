@@ -63,7 +63,7 @@ if ($_SESSION['user'] == null){
 
  	<?php 
 	// connect to the database
-      include('config.php');
+    include('config.php');
 
       $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
       programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user,  programtbl.locationid,
@@ -77,52 +77,53 @@ if ($_SESSION['user'] == null){
       $sql = $sql." ORDER BY sd DESC";
       $result = mysqli_query($conn, $sql);
 
-      $array = array();
-//<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>';
+    $array = array();
+    //<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>';
 
-      echo '<table cellpadding="0" cellspacing="0" class="db-table">';
-      echo '<tr><th>ID</th><th>Start/End</th><th>Title</th><th>Location</th><th>Address</th><th>Phone</th><th>Description</th><th>Type</th>';
-      if ($_SESSION['usertype'] == "admin"){
-        echo '<th>User</th>';
-      }
-      echo '<th>Moderate</th></tr>';
-      while($row=mysqli_fetch_assoc($result))
-      {
-       echo '<tr>';
-     //foreach($row as $key=>$value) {
-       // for ($i = 0; $i< mysql_num_fields($row); $i++)
-       echo '<td>'.$row["id"].'</td><td>'.$row["sd"].'<br>'.$row["ed"].'</td><td>'.$row["title"].'</td><td>'.$row["subtitle"];
-       if ($_SESSION['usertype'] == "admin")
-        { echo '<br><a href="editlocation.php?id='.$row['locationid'].'">Edit</a>';
-    }
-    echo '</td><td>'.$row["address"].'</td><td>'.$row["phone"].
-    '</td><td>'.$row["description"].'</td><td>'.$row["type"].'</td>';
+    echo '<table cellpadding="0" cellspacing="0" class="db-table">';
+    echo '<tr><th>ID</th><th>Start/End</th><th>Title</th><th>Location</th><th>Address</th><th>Phone</th><th>Description</th><th>Type</th>';
     if ($_SESSION['usertype'] == "admin"){
-      echo '<td>'.$row["user"]."</td>";
+      echo '<th>User</th>';
     }
-    
-    echo "<td>";
-
-    if ($_SESSION['usertype'] == "admin")
+    echo '<th>Moderate</th></tr>';
+    while($row=mysqli_fetch_assoc($result))
     {
+      echo '<tr>';
+      //foreach($row as $key=>$value) {
+      // for ($i = 0; $i< mysql_num_fields($row); $i++)
+      echo '<td>'.$row["id"].'</td><td>'.$row["sd"].'<br>'.$row["ed"].'</td><td>'.$row["title"].'</td><td>'.$row["subtitle"];
+      if ($_SESSION['usertype'] == "admin")
+      { 
+        echo '<br><a href="editlocation.php?id='.$row['locationid'].'">Edit</a>';
+      }
+      echo '</td><td>'.$row["address"].'</td><td>'.$row["phone"].
+      '</td><td>'.$row["description"].'</td><td>'.$row["type"].'</td>';
+      if ($_SESSION['usertype'] == "admin"){
+        echo '<td>'.$row["user"]."</td>";
+      }
 
-      if ($row["approved"]==0){
-        echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='approve'/><input type='submit' name='submit-btn' value='Approve' class='btn btn-success'/></form>";
+      echo "<td>";
+
+      if ($_SESSION['usertype'] == "admin")
+      {
+
+        if ($row["approved"]==0){
+          echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='approve'/><input type='submit' name='submit-btn' value='Approve' class='btn btn-success'/></form>";
+        }
+        else {
+          echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='disprove'/><input type='submit' name='submit-btn' value='Disprove' class='btn btn-warning' /></form>";
+        }
       }
-      else {
-        echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='disprove'/><input type='submit' name='submit-btn' value='Disprove' class='btn btn-warning' /></form>";
-      }
+      echo "<form action='submitprogram.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='edit'/><input type='submit' name='submit-btn' value='Edit' class='btn btn-default'/></form>";
+      echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='delete'/><input type='submit' name='submit-btn' value='Delete' class='btn btn-danger' /></form></td></tr>";
     }
-    echo "<form action='submitprogram.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='edit'/><input type='submit' name='submit-btn' value='Edit' class='btn btn-default'/></form>";
-    echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='delete'/><input type='submit' name='submit-btn' value='Delete' class='btn btn-danger' /></form></td></tr>";
-  }
 
 
-  echo '</table><br />';
+    echo '</table><br />';
 
-//echo json_encode($array); 
+    //echo json_encode($array); 
 
-  mysqli_close($conn);
+    mysqli_close($conn);
 
   ?>
 </div>

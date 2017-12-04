@@ -1,4 +1,11 @@
 <?php
+//akj_parser.php
+//Vikram Singh
+//11/17/2017
+//Pulls and parses events from the website www.akj.org, 
+//caches to a local file if last check was over a day ago, otherwise just reads from the cache file. 
+//Can't get detailed description or schedules because you have to follow the link one more level. 
+//TBA - follow links and get detailed descriptions. 
 
 
 //check if cache file exists

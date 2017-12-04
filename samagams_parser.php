@@ -1,5 +1,11 @@
 <?php
 
+//samagams_parser.php
+//Vikram Singh
+//11/17/2017
+//pulls and parses events from samagams.org saved to a csv excel file. 
+//waiting for them to expose an API or better website which is easier to parse. 
+
 $ar = [];
 $row = 1;
 

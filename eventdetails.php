@@ -1,3 +1,9 @@
+<!-- 
+eventdetails.php
+Vikram Singh
+10/30/2017
+This file displays details about a single event. It can be used to share a url for the specific event -->
+
 <!DOCTYPE html>
 <html>
 <head>

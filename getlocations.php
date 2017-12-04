@@ -1,4 +1,9 @@
 <?php
+//getlocations.php
+//Vikram Singh
+//8/18/2017
+//Provides an API endpoint to return all the regions in the DB for dynamically listing in mobile apps
+//optionally filter to only give current regions (which have active events in them)
 
 // connect to the database
 include('config.php');
