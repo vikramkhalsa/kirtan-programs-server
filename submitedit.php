@@ -98,7 +98,7 @@ if (isset($_POST['id']))
 		}
 		
 		mysqli_close($conn);
- // once saved, redirect back to the view page
+ 		// once saved, redirect back to the view page
 		header("Location: programsadmin.php"); 
 	}
 }

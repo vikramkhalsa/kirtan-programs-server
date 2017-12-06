@@ -7,6 +7,7 @@
 //This will eventually be used as an API endpoint so it will need to return a json message rather than html. 
 
 session_start();
+
 if ($_SESSION['user'] == null){
 
 	header("Location:" . "login.php");
@@ -18,7 +19,6 @@ if ($_SESSION['user'] == null){
 <html>
 <head>
 	<meta name="viewport" content="user-scalable=yes, width=device-width" />
-	<script src="datetimepicker_css.js"></script>
 	<meta name="viewport" content="user-scalable=yes, width=device-width" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
@@ -32,7 +32,7 @@ if ($_SESSION['user'] == null){
 <?php 
 include('header.html');
 ?>
-	<div style="padding:10px">
+	<div class="container">
 
 	You submitted the following: <br><br>
 
@@ -64,7 +64,6 @@ include('header.html');
 	$id="";
 
 	if (isset($_POST['id'])){ 
-		//echo $_POST['id'];
 		// confirm that the 'id' value is a valid integer before getting the form data
 		if (is_numeric($_POST['id']))
 		{
@@ -72,18 +71,15 @@ include('header.html');
 			$id = $_POST['id'];
 		}
 	}
-	// connect to the database
-	include('config.php');
+
 
 	//Do some server side validation first. 
 	$errors = array();      // array to hold validation er
 	
 	if (empty($_POST['title']))
 		$errors['title'] = 'Title is required';
-	
-	if (empty($_POST['subtitle']))
-		$errors['location'] = 'Location is required';
-	
+	if (empty($_POST['locationid']))
+		$errors['location'] = 'Location ID is required';
 	if (empty($_POST['sd']))
 		$errors['startdate'] = 'Start Date/Time is required';
 	
@@ -104,21 +100,16 @@ include('header.html');
 
 	}
 
+	// connect to the database
+	include('config.php');
 
 	$clone = $_POST["clone"];
 	$title = $conn->real_escape_string($_POST["title"]);
 	$phone = $conn->real_escape_string($_POST["phone"]);
 	$sd = $conn->real_escape_string($_POST["sd"]);
-	$sd1 = strtotime($sd);
+	// $sd1 = strtotime($sd);
 	$ed = $conn->real_escape_string($_POST["ed"]);
-	$ed1 = strtotime($ed);
-
-	//check if end date is before start date, don't allow
-	if ($sd1 > $ed1) {
-		echo "<div class='alert alert-danger' role='alert'>Error: End time must be later than start time.";
-		print "<br>Please try again.</div>";
-	   	return;
-	}
+	// $ed1 = strtotime($ed);
 
 	$type = $conn->real_escape_string($_POST["type"]);
 	//$source = $conn->real_escape_string($_POST["source"]);
@@ -131,57 +122,26 @@ include('header.html');
 		$rrule = null;
 	}
 
-
-
-
-	if ($id == "" or ($clone=="Clone")){
-
-		$sql = "INSERT INTO events_all.programtbl (title, locationid, phone, sd, ed, user, description, type, rrule, imageurl, siteurl)
-		VALUES ('$title', '$locationid','$phone', '$sd','$ed', '$user', '$description', '$type', '$rrule', '$imageurl', '$siteurl')";
-		if ($conn->query($sql) === TRUE) 
-		{
-			echo "<div class='alert alert-success' role='alert'>New event submitted successfully! <br>";
-			
-			$to = "vsk@sikh.events";
-			$subject = "New BayAreaKirtan Program Submitted";
-			$body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted: 
-				\n\n Title: %s \n Location: %s \n Phone: %s\n Start: %s\n End: %s\n  User: %s\n Description: %s \n\n 
-				To moderate, visit: http://sikh.events/programsadmin.php",
-				$title, $locationid, $phone, $sd,$ed, $user, $description );
-
-			if (mail($to, $subject, $body)) 
-			{
-				echo("<p>Your submission has been sent for moderation.</p>");
-			} 
-			else 
-			{
-				echo("<p>Failed to send moderation request.</p>");
-			}
-
-			echo "</div>";
-		}
-		else 
-		{
-			echo "<div class='alert alert-danger' role='alert'>Error: ". $conn->error;
-			print "<br>Please try again.</div>";
 		}
 
-	} 
-	else 
-	{
-		$sql = "UPDATE events_all.programtbl SET title ='$title', locationid='$locationid', phone ='$phone', 
-		sd = '$sd', ed ='$ed', description ='$description', type ='$type', rrule='$rrule', imageurl='$imageurl', siteurl='$siteurl' WHERE id = '$id'";
-		if ($conn->query($sql) === TRUE) {
-			echo "<div class='alert alert-info' role='alert'>Event updated successfully!<br></div>";
 		} else {
-			echo "<div class='alert alert-danger' role='alert'> Error: " . $sql . "<br>" . $conn->error."</div>";
 		}
 
 	}
+	//use common functions to update or submit event and show response. 
+	include("functions.php");
 
-	//} else {
-	//	echo "Invalid Password.";
-	//}
+	if ($id == '' or $clone == "Clone")
+		$result = createEvent($title, $phone, $sd, $ed, $type, $description, $imageurl, $siteurl, $locationid, $rrule, $user);
+	else 
+		$result = updateEvent($id, $title, $phone, $sd, $ed, $type, $description, $imageurl, $siteurl, $locationid, $rrule, $user);
+		
+	if (strpos($result, 'Error') === false){
+		echo "<div class='alert alert-success' role='alert'>".$result."</div>";
+	}
+	else {
+		echo "<div class='alert alert-danger' role='alert'>".$result."</div>";
+	}
 
 	?>
 	<br>

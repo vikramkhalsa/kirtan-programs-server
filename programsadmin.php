@@ -45,9 +45,7 @@ if ($_SESSION['user'] == null){
     </head>
     <body>
 
-     <?php include('header.html'); 
-     //Add links to create new event, log out, reset password here. 
- 	//and description of what they can do. ?>
+     <?php include('header.html');?>
 
     	<div style="padding:10px;">
       Welcome! Here you can view the past events you have added and modify them.  <br>
@@ -58,6 +56,9 @@ if ($_SESSION['user'] == null){
       	<input type='submit' name='submit-btn' value='Log Out' class='btn btn-default' />
       </form>
 
+
+      <!--Add links to create new event, log out, reset password here. 
+      and description of what they can do.  -->
       <a href="resetpassword.php"> Reset Password </a><br>
       <a href="locationsadmin.php"> Manage My Locations </a><br><br>
 
@@ -65,17 +66,16 @@ if ($_SESSION['user'] == null){
 	// connect to the database
     include('config.php');
 
-      $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
-      programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user,  programtbl.locationid,
-      locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address
-      FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid";
+    include('functions.php');
+    
+    if ($_SESSION['usertype'] == "admin")
+    {
+      $result = getEvents();
+    }
+    else {
+      $result = getEvents($_SESSION['user']);
+    }
 
-      if ($_SESSION['usertype'] != "admin"){
-        $user =$_SESSION['user'];
-        $sql = $sql." WHERE user='$user'";
-      }
-      $sql = $sql." ORDER BY sd DESC";
-      $result = mysqli_query($conn, $sql);
 
     $array = array();
     //<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>';
@@ -114,6 +114,15 @@ if ($_SESSION['user'] == null){
           echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='disprove'/><input type='submit' name='submit-btn' value='Disprove' class='btn btn-warning' /></form>";
         }
       }
+      else {
+        if ($row["approved"] == 1){
+           echo "<span>Status:<br><em>Approved</em></span>";
+        }
+        else {
+          echo "<span>Status:<br><em>Pending</em></span>";
+        }
+      }
+
       echo "<form action='submitprogram.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='edit'/><input type='submit' name='submit-btn' value='Edit' class='btn btn-default'/></form>";
       echo "<form action='submitedit.php' method='POST'><input type='hidden' name='id' value='".$row["id"]."'/><input type='hidden' name='action' value='delete'/><input type='submit' name='submit-btn' value='Delete' class='btn btn-danger' /></form></td></tr>";
     }
