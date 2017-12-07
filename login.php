@@ -34,10 +34,10 @@ if (isset($_POST['username'])){
       //set in session
       $_SESSION["user"] = htmlspecialchars($user);
       $_SESSION["usertype"] = htmlspecialchars($row["type"]);
-      // if (isset($_POST['redirurl']) && $_POST['redirurl']!= "")
-      // 	header("Location: " . $_POST['redirurl']);
-      // else
-      header("Location: " . "/programsadmin.php");
+      if (isset($_SESSION['enter_url']) &&  !empty($_SESSION['enter_url']))
+      	header("Location: " . $_SESSION['enter_url']);
+      else
+        header("Location: " . "/programsadmin.php");
       exit();
     }
     else {

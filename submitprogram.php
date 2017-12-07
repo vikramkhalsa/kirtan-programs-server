@@ -16,8 +16,9 @@ if ($error != '')
 
 
 if ($_SESSION['user'] == null){
- header("Location:" . "login.php");
- exit();
+  $_SESSION['enter_url'] = "submitprogram.php";
+  header("Location:" . "login.php");
+  exit();
 }
 ?>
 
@@ -82,6 +83,14 @@ function setTimes(prefix){
   $("#" + prefix + "dfull").val(date);
 
 }
+
+    $(document).on('change', ':file', function() {
+        var input = $(this),
+        //numFiles = input.get(0).files ? input.get(0).files.length : 1,
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+        $('#imageurl').val(label);
+    });
+
 
 
 $(document).ready(function () {
@@ -563,7 +572,7 @@ $regions = json_decode($contents, true);
   	</div>
 
 </div>
-  <form id="addprogram" action="commitprogram.php" method="post" class="form-group" onsubmit="return submitForm()">
+  <form id="addprogram" action="commitprogram.php" method="post" class="form-group" onsubmit="return submitForm()" enctype="multipart/form-data">
     <div class="row">
       <div class="col-sm-6">
         <label for="title" class="require">Title: </label>
@@ -739,9 +748,20 @@ Day of week
  <textarea name="description" class="form-control"><?php echo $description; ?></textarea>
  <br>
 
-<label for="poster">Link to event poster or image:</label>
-<input type="text" name="imageurl" id="imageurl" value="<?php echo  $imageurl; ?>" class="form-control">
-<br>  
+<label for="poster">Upload event poster or paste image url</label>
+<!-- <input type="text" name="imageurl" id="imageurl" value="<?php echo  $imageurl; ?>" class="form-control">
+<br> -->
+<!-- <input type="file" name="fileToUpload" id="fileToUpload" class="form-control"> -->
+
+<div class="input-group">
+  <input type="text" name="imageurl" id="imageurl" value="<?php echo  $imageurl; ?>" class="form-control" style="z-index: 1;">
+  <span class="input-group-btn style="z-index: 1;">
+    <label class="btn btn-default btn-file">
+      Browse <input type="file" style="display: none;" name="fileToUpload" id="fileToUpload">
+    </label>
+  </span>
+</div>
+<br>
 
 <label for="poster">Website Url:</label>
 <input type="text" name="siteurl" id="siteurl" value="<?php echo  $siteurl; ?>" class="form-control">
