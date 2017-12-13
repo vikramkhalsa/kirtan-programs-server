@@ -35,28 +35,33 @@ echo '<div class="panel panel-default" style="width:90%; margin:10px"> <div clas
 
 if(isset($_GET['id'])){
 $id = $_GET['id'];
-$contents = file_get_contents('http://www.sikh.events/getprograms.php?id='.$id);
-$array = json_decode($contents, true);
 
-if ($array == null OR count($array) <1){
+include ("functions.php");
+$result = getEventByID($id);
+
+if ($result->num_rows < 1){
 	echo "<h3>Sorry, we were unable to find this event.</h3>";
 }
 else {
 
-	$array = $array[0]; 
+	$array = $result->fetch_array();
 
 	echo "<h2>".$array["title"]."</h2>"; 
 	echo "<h3>";
 	$sdate = strtotime($array['sd']); 
 	$edate = strtotime($array['ed']);
 	echo date('l, F jS', $sdate);
-
+	//only show end date if it differs from start date. 
 	if(date('d',$sdate) != date('d',$edate)){
 	     echo ' - '.date('l, F jS', $edate);
 	}
 
 	echo "</h3>";
-	echo "<h4>". date('g:ia', $sdate).' to ' . date('g:ia', $edate) . "</h4>";
+	//only show times if not all day
+	if ($array["allday"]!= 1)
+		echo "<h4>". date('g:ia', $sdate).' to ' . date('g:ia', $edate) . "</h4>";
+	else 
+		echo "<h4> All Day Event </h4>";
 	if (isset($array['repeats'])){
 		echo "<h5><em> Repeats ".ucfirst(strtolower($array['repeats']))."</em></h5>";
 	}

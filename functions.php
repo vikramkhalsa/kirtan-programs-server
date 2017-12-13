@@ -1,55 +1,55 @@
 <?php 
 
 //creates a new event
-function createEvent($title, $phone, $sd, $ed, $type, $description, $imageurl, $siteurl, $locationid, $rrule, $user){
+function createEvent($title, $phone, $sd, $ed, $type, $description, $imageurl, $siteurl, $locationid, $rrule, $user, $allday=0){
 	
   // connect to the database
 	include('config.php');
+  if ($allday != 1)
+	{
+    $sd1 = strtotime($sd);
+  	//$ed1 = null;
+  	//if ($ed!=null and $ed!=""){
+  	$ed1 = strtotime($ed);
+  	//check if end date is before start date, don't allow
+  	if ($sd1 > $ed1) {
+  		return "Error: End time must be later than start time.";
+  	}	
+	}
 
-	$sd1 = strtotime($sd);
-	//$ed1 = null;
-	//if ($ed!=null and $ed!=""){
-		$ed1 = strtotime($ed);
-			//check if end date is before start date, don't allow
-		if ($sd1 > $ed1) {
-		   	return "Error: End time must be later than start time.";
-		}	
-	//}
 
+	$sql = "INSERT INTO events_all.programtbl (title, locationid, phone, sd, ed, user, description, type, rrule, imageurl, siteurl, allday)
+	VALUES ('$title', '$locationid','$phone', '$sd','$ed', '$user', '$description', '$type', '$rrule', '$imageurl', '$siteurl', '$allday')";
+	if ($conn->query($sql) === TRUE) 
+	{
 
-		$sql = "INSERT INTO events_all.programtbl (title, locationid, phone, sd, ed, user, description, type, rrule, imageurl, siteurl)
-		VALUES ('$title', '$locationid','$phone', '$sd','$ed', '$user', '$description', '$type', '$rrule', '$imageurl', '$siteurl')";
-		if ($conn->query($sql) === TRUE) 
+		$ret = "New event submitted successfully! ";
+
+		$to = "vsk@sikh.events";
+		$subject = "New BayAreaKirtan Program Submitted";
+		$body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted: 
+			\n\n Title: %s \n Location: %s \n Phone: %s\n Start: %s\n End: %s\n  User: %s\n Description: %s \n\n 
+			To moderate, visit: http://sikh.events/programsadmin.php",
+			$title, $locationid, $phone, $sd,$ed, $user, $description );
+
+		if (mail($to, $subject, $body)) 
 		{
-
-			$ret = "New event submitted successfully! ";
-
-			$to = "vsk@sikh.events";
-			$subject = "New BayAreaKirtan Program Submitted";
-			$body =  sprintf("WJKK WJKF,\n\nThe following program has been submitted: 
-				\n\n Title: %s \n Location: %s \n Phone: %s\n Start: %s\n End: %s\n  User: %s\n Description: %s \n\n 
-				To moderate, visit: http://sikh.events/programsadmin.php",
-				$title, $locationid, $phone, $sd,$ed, $user, $description );
-
-			if (mail($to, $subject, $body)) 
-			{
-				return $ret. "\nYour submission has been sent for moderation.";
-			} 
-			else 
-			{
-				return $ret. "\nFailed to send moderation request.";
-			}
-		}
+			return $ret. "\nYour submission has been sent for moderation.";
+		} 
 		else 
 		{
-
-			return "Error:". $conn->error;
+			return $ret. "\nFailed to send moderation request.";
 		}
+	}
+	else 
+	{
+		return "Error:". $conn->error;
+	}
 
 }
 
 //updates an existing event
-function updateEvent($id, $title, $phone, $sd, $ed, $type, $description, $imageurl, $siteurl, $locationid, $rrule, $user){
+function updateEvent($id, $title, $phone, $sd, $ed, $type, $description, $imageurl, $siteurl, $locationid, $rrule, $user, $allday=0){
 
   // connect to the database
   include('config.php');
@@ -64,7 +64,7 @@ function updateEvent($id, $title, $phone, $sd, $ed, $type, $description, $imageu
     } 
   
   $sql = "UPDATE events_all.programtbl SET title ='$title', locationid='$locationid', phone ='$phone', 
-    sd = '$sd', ed ='$ed', description ='$description', type ='$type', rrule='$rrule', imageurl='$imageurl', siteurl='$siteurl' WHERE id = '$id'";
+    sd = '$sd', ed ='$ed', description ='$description', type ='$type', rrule='$rrule', imageurl='$imageurl', siteurl='$siteurl', allday=$allday WHERE id = '$id'";
     if ($conn->query($sql) === TRUE) {
       return "Event updated successfully!";
     } else {
@@ -95,21 +95,21 @@ function deleteEvent($id){
 
 }
 
-
+//gets an event by its ID
 function getEventByID($id){
 
   include('config.php');
 
   $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
-  programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user,  programtbl.locationid,
+  programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user, programtbl.allday, programtbl.locationid,
   locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address
   FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE id = '$id'";
 
-    $result = mysqli_query($conn, $sql);
+  $result = mysqli_query($conn, $sql);
   mysqli_close($conn);
   return $result;
 
-
+  //needs to give error message if event not found
 }
 
 //returns list of all events or user-specific events if a user is specified
@@ -118,7 +118,7 @@ function getEvents($user = null){
 	include('config.php');
 
 	$sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
-	programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user,  programtbl.locationid,
+	programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user, programtbl.allday, programtbl.locationid,
 	locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address
 	FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid";
 
@@ -139,11 +139,13 @@ function get_data($url) {
   curl_setopt($ch, CURLOPT_URL, $url);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
   $data = curl_exec($ch);
   curl_close($ch);
   return $data;
 }
-
 
 
 //parses and generates recurring event instances

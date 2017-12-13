@@ -117,6 +117,11 @@ include('header.html');
 	$siteurl = $conn->real_escape_string($_POST["siteurl"]);
 	$locationid = $conn->real_escape_string($_POST["locationid"]);
 	$rrule= $conn->real_escape_string($_POST["repeat"]);
+	if (isset($_POST["allday"]))
+		$allday = 1;
+	else
+		$allday = 0;
+
 	if ($rrule ==""){
 		$rrule = null;
 	}
@@ -178,9 +183,9 @@ include('header.html');
 	include("functions.php");
 
 	if ($id == '' or $clone == "Clone")
-		$result = createEvent($title, $phone, $sd, $ed, $type, $description, $imageurl, $siteurl, $locationid, $rrule, $user);
+		$result = createEvent($title, $phone, $sd, $ed, $type, $description, $imageurl, $siteurl, $locationid, $rrule, $user, $allday);
 	else 
-		$result = updateEvent($id, $title, $phone, $sd, $ed, $type, $description, $imageurl, $siteurl, $locationid, $rrule, $user);
+		$result = updateEvent($id, $title, $phone, $sd, $ed, $type, $description, $imageurl, $siteurl, $locationid, $rrule, $user, $allday);
 		
 	if (strpos($result, 'Error') === false){
 		echo "<div class='alert alert-success' role='alert'>".$result."</div>";

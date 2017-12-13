@@ -26,7 +26,6 @@ if ($_SESSION['user'] == null){
 <html>
 <head>
   <title>Submit a Program</title>
-<!--   <script src="datetimepicker_css.js"></script> -->
   <meta name="viewport" content="user-scalable=yes, width=device-width" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
@@ -130,6 +129,15 @@ $(document).ready(function () {
     dateFormat: 'yy-mm-dd'
   });
 
+  //show/hide note about all day times. Better way to do this would be hiding the time values completely. 
+  $('#allday').on('change', function(){
+    if ($(this).is(":checked")){
+      $('#alldaynote').css('visibility', 'visible');
+    }
+    else{
+      $('#alldaynote').css('visibility', 'hidden');
+   }
+ });
 
   //show/hide recurrence panel if repeat box is checked
   $('#repeat').on('change', function(){
@@ -383,12 +391,10 @@ color:red;
     //echo $id;
     // connect to the database
     include('config.php');
+    include('functions.php');
+    $result = getEventByID($id);
 
-    $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
-    programtbl.type, programtbl.rrule, programtbl.imageurl, programtbl.siteurl, programtbl.locationid, 
-    locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address
-    FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE id = '$id'";
-    if ($result = mysqli_query($conn, $sql)){
+    if ($result){
     // echo "success";
      $arr = $result->fetch_array();
 
@@ -409,7 +415,7 @@ color:red;
      $imageurl = $arr["imageurl"];
      $siteurl = $arr["siteurl"];
      $recurr = ($arr["rrule"] != null && $arr["rrule"] !== '') ? true : false;
-
+     $allday = (!empty($arr["allday"]) && $arr["allday"] ==1) ? "checked": ""; 
      $repeat =  $recurr ? "checked" : "";
      if ($recurr)
       $showpanel = "";
@@ -442,19 +448,19 @@ color:red;
      }
 
     //echo "DURATION";
-     echo $duration;
+     //echo $duration;
 
  //update end date 
      $ed3 = new DateTime($sd);
      $ed3->add(new DateInterval('PT'.$duration.'M'));
      $ed1 = date_format($ed3,'Y-m-d h:i a');
-     echo $ed1;
+     //echo $ed1;
    }
 
  }
 }
 else if (isset($_GET['fburl'])){
-  	$fbid = $_GET['fburl'];
+  $fbid = $_GET['fburl'];
   
 	$events_pos = strpos($fbid, "events/"); //get position of 'events/' in url
 	if ($events_pos === False) {
@@ -480,7 +486,9 @@ else if (isset($_GET['fburl'])){
 
 	$url = "https://graph.facebook.com/v2.11/".$fbid."?fields=name,description,cover,start_time,end_time,place,event_times&access_token=".$token;
 
-	$json = curl_get_contents($url);
+ include('functions.php'); 
+
+	$json = get_data($url);
 	$event = json_decode($json, true);
 
 	if ($event["error"]){
@@ -530,19 +538,6 @@ else if (isset($_GET['fburl'])){
   }
 
 }
-
-function curl_get_contents($url)
-{
-  $ch = curl_init($url);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-  curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-  $data = curl_exec($ch);
-  curl_close($ch);
-  return $data;
-}
-
 
 $contents = file_get_contents('http://www.sikh.events/getlocations.php'.$filter);
 
@@ -649,7 +644,10 @@ $regions = json_decode($contents, true);
 <input type="tel" name="phone" id="phone" value="<?php echo  $phone; ?>" class="form-control" maxlength=16 placeholder="1234567890"><br>  
 
 
-
+<label for="allday">All Day Event </label>
+<input type="checkbox" id="allday" name="allday" value="" <?php echo $allday; ?> >
+<span id="alldaynote" style="visibility:hidden"><em>Start and End Times will be ignored.</em></span>
+<br>
 <input type='hidden' name='sd' id='sd' value="<?php echo $sd; ?>">
 <input type='hidden' name='ed' id='ed' value = "<?php echo $ed; ?>">
 <label for="sd1" class="require">Start Date and Time: </label>

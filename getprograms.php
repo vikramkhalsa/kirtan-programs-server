@@ -43,7 +43,7 @@ else { //get all sikh.events programs
   include('config.php');
 
   //get specific fields and address from joined location tables so as to return in the format mobile apps expect
-  $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description, programtbl.type, programtbl.rrule, programtbl.imageurl, programtbl.siteurl, locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE ";
+  $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description, programtbl.type, programtbl.rrule, programtbl.imageurl, programtbl.siteurl, programtbl.allday, locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE ";
 
 // $sql = "SELECT * FROM events_all.programtbl WHERE programtbl.ed >= DATE(NOW())"; 
   // See past events DATE_SUB(NOW(), INTERVAL 60 DAY)

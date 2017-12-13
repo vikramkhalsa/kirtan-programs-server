@@ -141,7 +141,7 @@ session_start();
     $contents = file_get_contents('http://www.sikh.events/getprograms.php'.$filter);
     $array = json_decode($contents, true);
 
-    $regions = file_get_contents('http://www.sikh.events/getlocations.php?regions=current'.$filter);
+    $regions = file_get_contents('http://www.sikh.events/getlocations.php?regions=current');
     $regions = json_decode($regions, true);
 
      ?>
@@ -186,13 +186,16 @@ else {
 	    $edate = strtotime($value['ed']);
 	    echo '<div class="sd" start="'.date('Ymd\THis', $sdate).'" end="'.date('Ymd\THis', $edate).'">'; //saving in this format for export to iCal
 	    echo date('D, M j', $sdate);
+	    //only show end date if different from start date
 	    if(date('d',$sdate) != date('d',$edate)){
 	         echo ' - '.date('D, M j', $edate);
 	    }
 	    echo "<br><br>";
-	    echo date('g:ia', $sdate).' to ';
-	    echo "<br>";
-	    echo date('g:ia', $edate);
+	    if ($value["allday"]!=1){
+	    	echo date('g:ia', $sdate).' to ';
+	    	echo "<br>";
+	    	echo date('g:ia', $edate);
+		}
 	    echo "</div>";
 	    $desc = str_replace("'", "\'", $value["description"]);
 	    $desc = str_replace('"','&quot;',$value["description"]);
