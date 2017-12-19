@@ -557,7 +557,7 @@ $regions = json_decode($contents, true);
   			<form  action="submitprogram.php" method="get" class="form-group" style="background-color:#EEE; padding:10px;">
   			Paste the Facebook Event URL below and click "Import". Please verify imported data and complete missing fields before submitting. <br><br>
   			<div class="input-group">
-  			<input name="fburl" type="text" class="form-control" required/>
+  			<input name="fburl" type="text" class="form-control" required placeholder="https://www.facebook.com/events/12345" />
   	   		<span class="input-group-btn">
   				<input name="submit" type="submit" value="Import" class="btn btn-primary"/>
  			</span>
@@ -567,7 +567,7 @@ $regions = json_decode($contents, true);
   	</div>
 
 </div>
-  <form id="addprogram" action="commitprogram.php" method="post" class="form-group" onsubmit="return submitForm()" enctype="multipart/form-data">
+  <form id="addprogram" action="commitprogram.php" method="post" class="form-group" onsubmit="return submitForm()" enctype="multipart/form-data" autocomplete="on">
     <div class="row">
       <div class="col-sm-6">
         <label for="title" class="require">Title: </label>
@@ -655,9 +655,9 @@ $regions = json_decode($contents, true);
 pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}" required>
 <br>
 
-<label for="ed1">End Date and Time: </label>
+<label for="ed1" class="require">End Date and Time: </label>
 <input type="text" name="ed1" value="<?php echo $ed1; ?>" id="ed1" class="form-control" placeholder="yyyy-mm-dd hh:mm am" 
-pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}">
+pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}\s[a-z]{2}" required>
 <br>
 
 <label for="repeat">Repeat </label>

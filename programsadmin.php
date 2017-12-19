@@ -41,6 +41,21 @@ if ($_SESSION['user'] == null){
         table.db-table      { border-right:1px solid #ccc; border-bottom:1px solid #ccc; font-size:1.1em;}
         table.db-table th   { background:#eee; padding:5px; border-left:1px solid #ccc; border-top:1px solid #ccc; }
         table.db-table td   { padding:5px; border-left:1px solid #ccc; border-top:1px solid #ccc; }
+        
+        .visible-lg{
+          display:none;
+        }
+
+        @media screen and (min-width: 400px) {
+        
+          .visible-lg{
+            display:initial;
+          }
+
+        }
+
+
+
       </style>
     </head>
     <body>
@@ -81,7 +96,7 @@ if ($_SESSION['user'] == null){
     //<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>';
 
     echo '<table cellpadding="0" cellspacing="0" class="db-table">';
-    echo '<tr><th>ID</th><th>Start/End</th><th>Title</th><th>Location</th><th>Address</th><th>Phone</th><th>Description</th><th>Type</th>';
+    echo '<tr><th>ID</th><th>Start/End</th><th>Title</th><th>Location</th><th class="visible-lg">Address</th><th class="visible-lg">Phone</th><th class="visible-lg">Description</th><th>Type</th>';
     if ($_SESSION['usertype'] == "admin"){
       echo '<th>User</th>';
     }
@@ -96,8 +111,8 @@ if ($_SESSION['user'] == null){
       { 
         echo '<br><a href="editlocation.php?id='.$row['locationid'].'">Edit</a>';
       }
-      echo '</td><td>'.$row["address"].'</td><td>'.$row["phone"].
-      '</td><td>'.$row["description"].'</td><td>'.$row["type"].'</td>';
+      echo '</td><td class="visible-lg">'.$row["address"].'</td><td class="visible-lg">'.$row["phone"].
+      '</td><td class="visible-lg">'.substr($row["description"],0,200).'...</td><td>'.$row["type"].'</td>';
       if ($_SESSION['usertype'] == "admin"){
         echo '<td>'.$row["user"]."</td>";
       }

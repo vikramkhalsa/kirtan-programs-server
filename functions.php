@@ -19,7 +19,7 @@ function createEvent($title, $phone, $sd, $ed, $type, $description, $imageurl, $
 
 
 	$sql = "INSERT INTO events_all.programtbl (title, locationid, phone, sd, ed, user, description, type, rrule, imageurl, siteurl, allday)
-	VALUES ('$title', '$locationid','$phone', '$sd','$ed', '$user', '$description', '$type', '$rrule', '$imageurl', '$siteurl', '$allday')";
+	VALUES ('$title', '$locationid','$phone', '$sd','$ed', '$user', '$description', '$type', '$rrule', '$imageurl', '$siteurl', $allday)";
 	if ($conn->query($sql) === TRUE) 
 	{
 
@@ -101,7 +101,7 @@ function getEventByID($id){
   include('config.php');
 
   $sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
-  programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user, programtbl.allday, programtbl.locationid,
+  programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user, programtbl.allday, programtbl.siteurl, programtbl.imageurl, programtbl.locationid,
   locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address
   FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid WHERE id = '$id'";
 
@@ -118,7 +118,7 @@ function getEvents($user = null){
 	include('config.php');
 
 	$sql = "SELECT programtbl.id, programtbl.sd, programtbl.ed, programtbl.title, programtbl.phone, programtbl.description,
-	programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user, programtbl.allday, programtbl.locationid,
+	programtbl.type, programtbl.rrule, programtbl.approved, programtbl.user, programtbl.allday, programtbl.siteurl, programtbl.imageurl, programtbl.locationid,
 	locationtbl.name AS subtitle, CONCAT(locationtbl.address,', ', locationtbl.city, ' ', locationtbl.state) as address
 	FROM events_all.programtbl JOIN locationtbl on programtbl.locationid = locationtbl.locationid";
 

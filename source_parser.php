@@ -13,7 +13,7 @@ $html = file_get_contents('http://ekhalsa.com/m');
 
 $classname = "box";
 
-$pattern = "/.:..../";
+$pattern = "/..:..../";
 $pattern2 = "/[A-Z][^a-z]*[A-Z]/";
 $pattern3 ="/\S.*,.*\S/";
 
