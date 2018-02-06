@@ -71,7 +71,7 @@ if (isset($_POST['username'])){
 
  <?php include('header.html'); ?>  
 
-  <div style="padding:10px;">
+  <div class="container">
     Welcome! Please enter your login details below.
     <br>
     <br>

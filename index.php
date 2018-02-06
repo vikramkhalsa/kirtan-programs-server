@@ -21,7 +21,7 @@ session_start();
 
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <link href="navbar.css" rel="stylesheet">
@@ -104,7 +104,7 @@ session_start();
 </head>
 <body>
   <?php include('header.html'); ?>  
-  <div class="container"">
+  <div class="container">
 
     <p>Welcome! Upcoming programs are listed below. 
         We hope to expand to include more Gurdwaras and locations soon. 
@@ -138,10 +138,10 @@ session_start();
 
 
 
-    $contents = file_get_contents('http://www.sikh.events/getprograms.php'.$filter);
+    $contents = file_get_contents('https://www.sikh.events/getprograms.php'.$filter);
     $array = json_decode($contents, true);
 
-    $regions = file_get_contents('http://www.sikh.events/getlocations.php?regions=current');
+    $regions = file_get_contents('https://www.sikh.events/getlocations.php?regions=current');
     $regions = json_decode($regions, true);
 
      ?>

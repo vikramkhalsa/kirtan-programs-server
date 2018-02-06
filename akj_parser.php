@@ -52,7 +52,8 @@ $arr = [];
 for ($i = 0; $i < $cells->length; $i++) {
 	$items = $cells[$i]->getElementsByTagName('div');
 	$item = $items[0];
-	$contact = $items[1];
+  $datetime =$items[1];
+	$contact = $items[2];
 $nodes = $item->getElementsByTagName('h4');
 $ar = [];
 foreach ($nodes as $node) {
@@ -78,6 +79,21 @@ foreach ($nodes as $node) {
 
   //echo $node->hasAttributes(). "\n";
 }
+//loop through second div of nodes which contains date time.
+//looks like they changed html structure of page which broke things. 
+//fixed on 1/5/18 - VS
+$nodes = $datetime->getElementsByTagName('h4');
+foreach ($nodes as $node) {
+    
+  $class = $node->getAttribute('class');
+  $val = $node->nodeValue;
+  if ($ar[$class]!= null){
+  $ar[$class.'b'] = $val;
+  }else {
+          $ar[$class] = $val;
+  }
+}
+
 
 $jar = [];
 
@@ -96,6 +112,9 @@ $sd = $date[0];
 $ed= $date[1];
 
 $times = explode("to",$ar['prog-time']);
+//var_dump($ar);
+//echo $times[0];
+//echo $times[1];
 
 $starttime = $sd." ".$times[0];
 

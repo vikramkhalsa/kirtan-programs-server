@@ -70,6 +70,9 @@ include('header.html');
 			// get form data, making sure it is valid
 			$id = $_POST['id'];
 		}
+		else {
+			//echo "<div class='alert alert-danger' role='alert'>Error:Invalid ID </div>";
+		}
 	}
 
 
@@ -188,7 +191,12 @@ include('header.html');
 		$result = updateEvent($id, $title, $phone, $sd, $ed, $type, $description, $imageurl, $siteurl, $locationid, $rrule, $user, $allday);
 		
 	if (strpos($result, 'Error') === false){
-		echo "<div class='alert alert-success' role='alert'>".$result."</div>";
+		echo "<div class='alert alert-success' role='alert'>".$result."
+		<br>
+		<a href='programsadmin.php'>Back to dashboard</a>
+		<br>
+		<a href='submitprogram.php'>Submit another Event</a>
+		</div>";
 	}
 	else {
 		echo "<div class='alert alert-danger' role='alert'>".$result."</div>";

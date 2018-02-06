@@ -15,12 +15,34 @@ if(isset($_GET['source'])){
   $src = $_GET['source'];
 
   if ($src =="isangat"){ //return only isangat programs
-    $returned_content = get_data('http://www.isangat.org/json2.php');
-        echo $output = str_replace(array("\r\n", "\r"), "", $returned_content);
+    //$returned_content = get_data('http://www.isangat.org/json2.php');
+      // echo $output = str_replace(array("\r\n", "\r"), "", $returned_content);
+     echo '{"programs":[{
+        "id":"1",
+        "sd": "2018-02-02 00:00:00",
+        "ed":"2018-02-02 00:00:00",
+        "title":"Please visit www.isangat.org for these programs",
+        "subtitle":"Programs from isangat.org are no longer supported in this app.",
+        "siteurl":"www.isangat.org",
+        "address":"",
+        "description":"This website is no longer supported by Sikh Events. Please visit the website directly to view programs."
+
+      }]}';  
   }
    if ($src =="isangat2"){ //return only isangat programs
-    $returned_content = get_data('http://www.isangat.org/json3.php');
-        echo $output = str_replace(array("\r\n", "\r"), "", $returned_content);
+    // $returned_content = get_data('http://www.isangat.org/json3.php');
+    //     echo $output = str_replace(array("\r\n", "\r"), "", $returned_content);
+     echo '[{
+        "id":"1",
+        "sd": "2018-02-02 00:00:00",
+        "ed":"2018-02-02 00:00:00",
+        "title":"Please visit www.isangat.org for these programs",
+        "subtitle":"Programs from isangat.org are no longer supported in this app.",
+        "siteurl":"www.isangat.org",
+        "address":"",
+        "description":"This website is no longer supported by Sikh Events. Please visit the website directly to view programs."
+
+      }]';  
   }
 
   if ($src =="ekhalsa"){ //return only ekhalsa programs
@@ -74,6 +96,12 @@ else { //get all sikh.events programs
   {
    $loc =  $conn->real_escape_string($_GET['location']);
    $sql = $sql." AND locationtbl.name LIKE '{$loc}' "; 
+ }
+
+  if (isset($_GET['locationid']))
+  {
+   $locid =  $conn->real_escape_string($_GET['locationid']);
+   $sql = $sql." AND locationtbl.locationid = {$locid} "; 
  }
 
  //check filter by type
